@@ -1,0 +1,74 @@
+# DjangoMail
+
+This is a SE intro program of HNU
+
+DHPPSWeb
+│  manage.py
+│  
+├─backend                         //后端应用
+│  │  admin.py                    //管理站点模型的声明文件，默认为空
+│  │  apps.py                     //应用信息定义文件。在其中生成了类Appconfig，类用于定义应用名等Meta数据
+│  │  models.py                   //应用涉及的数据模型，使用ORM来操作数据对象
+│  │  tests.py                    //应用涉及的数据模型，使用ORM来操作数据对象
+│  │  views.py                    //应用涉及的视图，创建ViewSet来操作数据表
+│  │  __init__.py                 //一个空文件，告诉 Python 该目录是一个 Python 包
+│  │  
+│  └─migrations
+│          __init__.py
+│          
+├─DHPPSWeb                        //Django项目
+│      asgi.py                    //一个 ASGI 兼容的 Web 服务器的入口，以便运行项目
+│      settings.py                //该 Django 项目的设置/配置
+│      urls.py                    //该 Django 项目的 URL 声明; 一份由 Django 驱动的网站"目录"
+│      wsgi.py                    //一个 WSGI 兼容的 Web 服务器的入口，以便运行你的项目
+│      __init__.py                //一个空文件，告诉 Python 该目录是一个 Python 包
+│      
+└─frontend                        //Vue前端项目
+    │  .babelrc
+    │  .editorconfig
+    │  .gitignore
+    │  .postcssrc.js
+    │  index.html
+    │  package-lock.json
+    │  package.json
+    │  README.md
+    │  
+    ├─build                       //用于前端项目打包，前端完成后需要将前端项目打包放入后端
+    │      build.js
+    │      check-versions.js
+    │      logo.png
+    │      utils.js
+    │      vue-loader.conf.js
+    │      webpack.base.conf.js
+    │      webpack.dev.conf.js
+    │      webpack.prod.conf.js
+    │      
+    ├─config                      //前端项目的一些设置项，包括打包的目标设置等等
+    │      dev.env.js             //项目开发环境配置
+    │      index.js               //项目主要配置，包括监听端口，打包路径
+    │      prod.env.js            //项目生产环境
+    │      
+    ├─dist                        //前端项目的打包结果，默认设置下会生成在dist包内
+    │  │  index.html
+    │  │  
+    │  └─static
+    │
+    ├─node_modules                //前端项目的一些npm加载的项目依赖模块
+    │              
+    ├─src                         ///前端要开发的主要目录，基本要做的事情都在此目录内
+    │  │  App.vue                 ///项目根组件，组件较少时也可以直接写在这里
+    │  │  main.js                 ///项目核心文件，各个组件的入口。
+    │  │  
+    │  ├─assets                   //项目一些图片资源，如logo等
+    │  │      logo.png
+    │  │  │
+    │  │  ├─layui                 //项目使用的Layui框架相关资源
+    │  │  └─images                //项目图片资源
+    │  ├─components               ///项目组件放置目录
+    │  │  │  HelloWorld.vue       ///单组件的内容
+    │  │  │  
+    │  │  └─views
+    │  └─router                   ///项目路由，在这里设置前端页面URL与对应网页页面
+    │          index.js           ///项目配置文件，定义路由以及对应页面
+    │          
+    └─static                      //项目静态资源，包括css,js，各类图形化框架
