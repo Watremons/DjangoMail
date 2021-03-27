@@ -1,0 +1,21 @@
+{
+    "eslint.validate": [
+      "javascript",
+      "javascriptreact",
+      "html",
+      "vue",
+    ],
+    "prettier.eslintIntegration": true,
+    "search.exclude": {
+      "**/dist": true
+    },
+    "vetur.validation.template": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    },
+    "python.formatting.provider": "yapf",
+    "python.linting.pylintArgs": [
+        "--load-plugins",
+        "pylint_django"
+    ]
+}   
