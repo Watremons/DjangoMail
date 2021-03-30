@@ -77,11 +77,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'djangomail',
-        'HOST': '127.0.0.1',
+        'HOST': '81.70.104.60',
         # SERVER IP ADDRESS
         'PORT': 3306,
         'USER': 'root',
-        "PASSWORD": 'z3876390'
+        "PASSWORD": '123456cc'
     }
 }
 
