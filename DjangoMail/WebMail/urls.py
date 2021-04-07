@@ -31,14 +31,7 @@ urlpatterns = [
     # # 忘记密码请求
     # path('forgetPwd/', views.ForgetPwd, name="forgetPwd"),
 
-    # # 保存案例请求
-    # path('saveCase/', views.SaveCase, name="saveCase"),
 
-    # # 开始模拟请求
-    # path('startSimulate/', views.StartSimulate, name="startSimulate"),
-
-    # # 请求对应caseId的案例信息
-    # path('getCaseInfo/', views.GetCaseInfos, name="getCaseInfo"),
 
     # # 用户管理数据请求
     # path('userManage/', views.GetUserInfos, name="userManage"),
@@ -52,22 +45,28 @@ urlpatterns = [
 
 
     # 以下为对任意模型的增删改查列
-
-    # 关于accountInfo的请求：
+    # 关于user的请求：
     # 无参数：get=list all,post=create new
-    path('accountInfo/', views.AccountViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('users/', views.UsersViewSet.as_view({'get': 'list', 'post': 'create'})),
     # 有参数：get=retrieve one,put=partial_update one,delete=delete one
-    path('accountInfo/<int:pk>/', views.AccountViewSet.as_view({'get': 'retrieve', 'put': 'partial_update', 'delete': 'destroy'})),
+    path('users/<int:pk>/', views.UserViewSet.as_view({'get': 'retrieve', 'put': 'partial_update', 'delete': 'destroy'})),
 
-    # 关于CaseData的请求
+    # 关于mail的请求
     # 无参数：get=list all,post=create new
-    path('case/', views.CaseViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('mails/', views.MailsViewSet.as_view({'get': 'list', 'post': 'create'})),
     # 有参数：get=retrieve one,put=partial_update one,delete=delete one
-    path('case/<int:pk>/', views.CaseViewSet.as_view({'get': 'retrieve', 'put': 'partial_update', 'delete': 'destroy'})),
+    path('mails/<int:pk>/', views.MailsViewSet.as_view({'get': 'retrieve', 'put': 'partial_update', 'delete': 'destroy'})),
 
-    # 关于PersonalProfile的请求
+    # 关于contacts的请求
     # 无参数：get=list all,post=create new
-    path('profile/', views.PersonalProfileViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('contacts/', views.ContactsViewSet.as_view({'get': 'list', 'post': 'create'})),
     # 有参数：get=retrieve one,put=partial_update one,delete=delete one
-    path('profile/<int:pk>/', views.PersonalProfileViewSet.as_view({'get': 'retrieve', 'put': 'partial_update', 'delete': 'destroy'})),
+    path('contacts/<int:pk>/', views.ContactsViewSet.as_view({'get': 'retrieve', 'put': 'partial_update', 'delete': 'destroy'})),
+    
+    # 关于attachments的请求
+    # 无参数：get=list all,post=create new
+    path('attachments/', views.AttachmentsViewSet.as_view({'get': 'list', 'post': 'create'})),
+    # 有参数：get=retrieve one,put=partial_update one,delete=delete one
+    path('attachments/<int:pk>/', views.AttachmentsViewSet.as_view({'get': 'retrieve', 'put': 'partial_update', 'delete': 'destroy'})),
+
 ]

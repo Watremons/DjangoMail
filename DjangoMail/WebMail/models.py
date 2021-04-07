@@ -8,6 +8,7 @@
 from django.db import models
 from django.utils import timezone
 
+
 class User(models.Model):
     userNo = models.AutoField(db_column='userNo', primary_key=True)
     userName = models.CharField(db_column='userName', max_length=50, blank=True)
@@ -18,6 +19,7 @@ class User(models.Model):
 
     class Meta:
         db_table = 'User'
+
 
 class Mail(models.Model):
     mailNo = models.AutoField(db_column='mailNo', primary_key=True)
@@ -34,6 +36,7 @@ class Mail(models.Model):
     class Meta:
         db_table = 'Mail'
 
+
 class LoginData(models.Model):
     userId = models.OneToOneField(User, models.CASCADE, db_column='userId', primary_key=True)
     userPassword = models.CharField(db_column='userPassword', max_length=32)
@@ -41,6 +44,7 @@ class LoginData(models.Model):
 
     class Meta:
         db_table = 'LoginData'
+
 
 class Contacts(models.Model):
     contactNo = models.AutoField(db_column='contactNo', primary_key=True)
@@ -51,6 +55,7 @@ class Contacts(models.Model):
 
     class Meta:
         db_table = 'Contacts'
+
 
 class Attachments(models.Model):
     attachmentNo = models.AutoField(db_column='attachmentNo', primary_key=True)
