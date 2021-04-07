@@ -1,0 +1,9 @@
+*.pyc
+
+/DjangoMail/WebMail/__pycache__
+
+/DjangoMail/WebMail/migrations/__pycache__
+
+/DjangoMail/DjangoMail/__pycache__
+
+/.VSCodeCounter

@@ -1,9 +1,10 @@
 {
-    "configurations": [{
+    "configurations": [
+        {
         "name": "Python: Django",
         "type": "python",
         "request": "launch",
-        "program": "${workspaceFolder}\\manage.py",
+        "program": "${workspaceFolder}\\DjangoMail\\manage.py",
         "args": ["runserver"],
         "django": true
     }]
