@@ -1,26 +1,29 @@
-# 引用Django库
+# Django lib
 from django.shortcuts import render
 from django.http import JsonResponse
 from django_redis import get_redis_connection
 from django.utils import timezone
 from django.core import paginator
-
-# 引用DRF框架库
+import logging
+# Django Restful Framework
 from rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework import viewsets
 
-# 引用项目文件
+# Other app files
 from WebMail import models
 from WebMail import customSerializers
 from WebMail import filters
 from WebMail import paginations
+
 # Create your views here.
 
-# 设置日志文件的生成
+# Set log file
 logger = logging.getLogger("django")
 
-# 登录验证函数，通过method_decorator作为装饰器装饰给各个视图
+
+# Authenticate whether user logined in
+# Used by method_decorator
 def LoginAuthenticate(function):
     def authenticate(request, *args, **kwargs):
         if request.COOKIES.get('sessionid', None):
@@ -33,7 +36,8 @@ def LoginAuthenticate(function):
     return authenticate
 
 
-# 管理员验证函数，通过method_decorator作为装饰器装饰给各个视图
+# Authenticate whether admin logined in
+# Used by method_decorator
 def AdminAuthenticate(function):
     def authenticate(request, *args, **kwargs):
         if request.COOKIES.get('sessionid', None):
@@ -47,7 +51,8 @@ def AdminAuthenticate(function):
     return authenticate
 
 
-# 超级管理员验证函数，通过method_decorator作为装饰器装饰给各个视图
+# Authenticate whether super admin logined in
+# Used by method_decorator
 def SuperAdminAuthenticate(function):
     def authenticate(request, *args, **kwargs):
         if request.COOKIES.get('sessionid', None):
@@ -61,7 +66,24 @@ def SuperAdminAuthenticate(function):
     return authenticate
 
 
-# 以下均为继承ModelViewSet类的视图集类，其中成员变量均为继承而来
+# Function: log in
+
+# Function: log out
+
+# Function: help doc
+
+
+# Function: send mails
+def SendMails(request):
+    return JsonResponse({
+        "message": "发送完成",
+        "status": 200
+        })
+
+# Function: config
+
+
+# Classes inherited from ModelViewSet which can generate RESTFUL URI
 # @method_decorator(LoginAuthenticate, name='dispatch')
 class UsersViewSet(viewsets.ModelViewSet):
     queryset = models.Users.objects.all()
