@@ -18,7 +18,7 @@ class Users(models.Model):
     userState = models.BooleanField(db_column='userState', default=True)#true:normal false:banned
 
     class Meta:
-        db_table = 'User'
+        db_table = 'Users'
 
 
 class Mails(models.Model):
@@ -31,14 +31,14 @@ class Mails(models.Model):
     isServed = models.IntegerField(db_column='authorityValue', default=0)#0:serving 1:haveServed 2:failToServe
     content = models.CharField(db_column='content', max_length=500, blank=True)
     rendOrReceiptDate = models.DateField(db_column='rendOrReceiptDate', default=timezone.now)
-    userNo = models.ForeignKey(User, models.CASCADE, db_column='userNo', default='1')
+    userNo = models.ForeignKey(Users, models.CASCADE, db_column='userNo', default='1')
 
     class Meta:
-        db_table = 'Mail'
+        db_table = 'Mails'
 
 
 class LoginData(models.Model):
-    userId = models.OneToOneField(User, models.CASCADE, db_column='userId', primary_key=True)
+    userId = models.OneToOneField(Users, models.CASCADE, db_column='userId', primary_key=True)
     userPassword = models.CharField(db_column='userPassword', max_length=32)
     salt = models.CharField(max_length=20)
 
@@ -51,7 +51,7 @@ class Contacts(models.Model):
     contactName = models.CharField(db_column='userName', max_length=50)
     tel = models.CharField(db_column='tel', max_length=50, blank=True)
     mailAddress = models.CharField(db_column='mailAddress', max_length=50, blank=True)
-    userNo = models.ForeignKey(User, models.CASCADE, db_column='userNo', default='1')
+    userNo = models.ForeignKey(Users, models.CASCADE, db_column='userNo', default='1')
 
     class Meta:
         db_table = 'Contacts'
@@ -62,7 +62,7 @@ class Attachments(models.Model):
     attachmentName = models.CharField(db_column='attachmentName', max_length=100)
     savedAddress = models.CharField(db_column='savedAddress', max_length=200)
     attachmentSize = models.FloatField(db_column='attachmentSize')
-    mailNo = models.ForeignKey(Mail, models.CASCADE, db_column='mailNo', default='1')
+    mailNo = models.ForeignKey(Mails, models.CASCADE, db_column='mailNo', default='1')
 
     class Meta:
         db_table = 'Attachments'
