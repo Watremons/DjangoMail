@@ -9,7 +9,7 @@ from django.db import models
 from django.utils import timezone
 
 
-class User(models.Model):
+class Users(models.Model):
     userNo = models.AutoField(db_column='userNo', primary_key=True)
     userName = models.CharField(db_column='userName', max_length=50, blank=True)
     createDate = models.DateField(db_column='createDate', default=timezone.now)
@@ -21,7 +21,7 @@ class User(models.Model):
         db_table = 'User'
 
 
-class Mail(models.Model):
+class Mails(models.Model):
     mailNo = models.AutoField(db_column='mailNo', primary_key=True)
     receiver = models.CharField(db_column='receive', max_length=200, blank=True)
     sender = models.CharField(db_column='sender', max_length=200, blank=True)
