@@ -11,14 +11,18 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-import os
 import mimetypes
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
+from MailSystem.server import Server
+
+mailSystemServer = Server()
 
 mimetypes.add_type("text/css", ".css", True)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -31,7 +35,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,17 +44,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'django_filters',
+    'WebMail'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'WebMail',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 'DjangoMail.urls'
@@ -74,7 +79,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'DjangoMail.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -90,25 +94,32 @@ DATABASES = {
     }
 }
 
+# Settings Of REST_FRAMEWROK
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.AutoSchema',
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -123,12 +134,10 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
 
 # corsheaders settings
 CORS_ALLOW_CREDENTIALS = True
@@ -158,18 +167,17 @@ CORS_ALLOW_HEADERS = (
     'Pragma',
 )
 
-
 # session settings
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"  # session存储方式为cache
 SESSION_CACHE_ALIAS = "default"
-SESSION_COOKIE_NAME = "sessionid"                          # Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串（默认）
-SESSION_COOKIE_PATH = "/"                                  # Session的cookie保存的路径（默认）
-SESSION_COOKIE_DOMAIN = None                               # Session的cookie保存的域名（默认）
-SESSION_COOKIE_SECURE = False                               # 是否Https传输cookie（默认）
-SESSION_COOKIE_HTTPONLY = True                             # 是否Session的cookie只支持http传输（默认）
-SESSION_COOKIE_AGE = 86400                                 # Session的cookie失效日期24小时（默认2周）
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False                    # 是否关闭浏览器使得Session过期（默认）
-SESSION_SAVE_EVERY_REQUEST = False                         # 是否每次请求都保存Session，默认修改之后才保存（默认）
+SESSION_COOKIE_NAME = "sessionid"  # Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串（默认）
+SESSION_COOKIE_PATH = "/"  # Session的cookie保存的路径（默认）
+SESSION_COOKIE_DOMAIN = None  # Session的cookie保存的域名（默认）
+SESSION_COOKIE_SECURE = False  # 是否Https传输cookie（默认）
+SESSION_COOKIE_HTTPONLY = True  # 是否Session的cookie只支持http传输（默认）
+SESSION_COOKIE_AGE = 86400  # Session的cookie失效日期24小时（默认2周）
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # 是否关闭浏览器使得Session过期（默认）
+SESSION_SAVE_EVERY_REQUEST = False  # 是否每次请求都保存Session，默认修改之后才保存（默认）
 
 SESSION_COOKIE_SAMESITE = None
 CSRF_COOKIE_SAMESITE = None
@@ -214,12 +222,14 @@ LOGGING = {
     'formatters': {
         # 详细的日志格式
         'standard': {
-            'format': '[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(filename)s:%(lineno)d]'
-                      '[%(levelname)s][%(message)s]'
+            'format':
+            '[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(filename)s:%(lineno)d]'
+            '[%(levelname)s][%(message)s]'
         },
         # 简单的日志格式
         'simple': {
-            'format': '[%(levelname)s][%(asctime)s][%(filename)s:%(lineno)d]%(message)s'
+            'format':
+            '[%(levelname)s][%(asctime)s][%(filename)s:%(lineno)d]%(message)s'
         },
         # 定义一个特殊的日志格式
         'collect': {
@@ -245,7 +255,7 @@ LOGGING = {
         'default': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',  # 保存到文件，自动切
-            'filename': os.path.join(BASE_LOG_DIR, "backend_info.log"),  # 日志文件
+            'filename': os.path.join(BASE_LOG_DIR, "djangomail_info.log"),  # 日志文件
             'maxBytes': 1024 * 1024 * 50,  # 日志大小 50M
             'backupCount': 3,  # 最多备份几个
             'formatter': 'standard',
@@ -255,7 +265,7 @@ LOGGING = {
         'error': {
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',  # 保存到文件，自动切
-            'filename': os.path.join(BASE_LOG_DIR, "backend_err.log"),  # 日志文件
+            'filename': os.path.join(BASE_LOG_DIR, "djangomail_err.log"),  # 日志文件
             'maxBytes': 1024 * 1024 * 50,  # 日志大小 50M
             'backupCount': 5,
             'formatter': 'standard',
@@ -265,7 +275,7 @@ LOGGING = {
         'collect': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',  # 保存到文件，自动切
-            'filename': os.path.join(BASE_LOG_DIR, "backend_collect.log"),
+            'filename': os.path.join(BASE_LOG_DIR, "djangomail_collect.log"),
             'maxBytes': 1024 * 1024 * 50,  # 日志大小 50M
             'backupCount': 5,
             'formatter': 'collect',
