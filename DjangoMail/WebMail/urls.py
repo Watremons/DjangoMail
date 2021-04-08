@@ -62,7 +62,7 @@ urlpatterns = [
     path('contacts/', views.ContactsViewSet.as_view({'get': 'list', 'post': 'create'})),
     # 有参数：get=retrieve one,put=partial_update one,delete=delete one
     path('contacts/<int:pk>/', views.ContactsViewSet.as_view({'get': 'retrieve', 'put': 'partial_update', 'delete': 'destroy'})),
-    
+
     # 关于attachments的请求
     # 无参数：get=list all,post=create new
     path('attachments/', views.AttachmentsViewSet.as_view({'get': 'list', 'post': 'create'})),
