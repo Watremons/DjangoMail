@@ -1,12 +1,13 @@
 import pymysql
 
+
 def sqlHandle(tableName, handle, *data):
-    usableTables = ['test', 'user', 'sendmail', 'recvmail', 'sendmail_', 'recvmail_']
-    #ip = '123.56.118.225'
-    ip = '127.0.0.1'
+    usableTables = ['Mails', 'Users', 'Contacts', 'LoginData', 'Attachments']
+    # ip = '123.56.118.225'
+    ip = '81.70.104.60'
     sqluser = 'root'
-    sqlpass = 'fqs2020!'
-    database = 'mail'
+    sqlpass = '123456cc'
+    database = 'djangomail'
 
     if tableName not in usableTables:
         print('no such table')
@@ -23,9 +24,9 @@ def sqlHandle(tableName, handle, *data):
 
     if handle == 'SELECT':
         if len(data) == 1:
-            sql = 'SELECT ' + data[0] + ' FROM ' + tableName + ';';
+            sql = 'SELECT ' + data[0] + ' FROM ' + tableName + ';'
         elif len(data) == 2:
-            sql = 'SELECT ' + data[0] + ' FROM ' + tableName + ' WHERE ' + data[1] + ';';
+            sql = 'SELECT ' + data[0] + ' FROM ' + tableName + ' WHERE ' + data[1] + ';'
         else:
             print('select handle, parameter error')
             db.close()
@@ -42,8 +43,8 @@ def sqlHandle(tableName, handle, *data):
         if len(data) > 1:
             for di in data[1:]:
                 sql = sql + ', ' + di
-        
-        sql = sql +');'
+
+        sql = sql + ');'
 
     elif handle == 'DELETE':
         if len(data) == 1:

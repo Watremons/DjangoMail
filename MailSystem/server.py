@@ -16,8 +16,9 @@ from user import *
 from smtp import Smtp
 from pop3 import Pop3
 
+
 class Server:
-    default = [{'domain': 'test.com', 'mailMaxSize' : 65565, 'logMaxSize' : 65535}, {'port': 8025, 'logDir': '/log/smtp', 'banIPs': [], 'banActs': []}, {'port': 8110, 'logDir': '/log/pop3', 'banIPs': [], 'banActs': []}]
+    default = [{'domain': 'test.com', 'mailMaxSize': 65565, 'logMaxSize': 65535}, {'port': 8025, 'logDir': '/log/smtp', 'banIPs': [], 'banActs': []}, {'port': 8110, 'logDir': '/log/pop3', 'banIPs': [], 'banActs': []}]
 
     def __init__(self, configs=default):
         self.state = 'stop'

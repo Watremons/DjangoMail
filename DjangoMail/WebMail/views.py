@@ -64,13 +64,13 @@ def SuperAdminAuthenticate(function):
 # 以下均为继承ModelViewSet类的视图集类，其中成员变量均为继承而来
 # @method_decorator(LoginAuthenticate, name='dispatch')
 class UsersViewSet(viewsets.ModelViewSet):
-    queryset = models.User.objects.all()
+    queryset = models.Users.objects.all()
     serializer_class = customSerializers.UsersSerializer
 
 
 # @method_decorator(LoginAuthenticate, name='dispatch')
 class MailsViewSet(viewsets.ModelViewSet):
-    queryset = models.Mail.objects.all()
+    queryset = models.Mails.objects.all()
     serializer_class = customSerializers.MailsSerializer
 
 

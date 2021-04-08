@@ -15,63 +15,67 @@ import getopt
 import datetime
 import threading
 from socket import *
-
 from user import *
 from server import *
-
+from MailSystem.mysql import sqlHandle
 type = 0
 connection = None
 state = 0
 error = False
 
+
 def input__():
     global connection
     global error
-    if connection == None:
+    if connection is None:
         return input()
     else:
         try:
             data = connection.recv(1024).decode('utf-8')[:-2]
         except:
             error = True
-            if connection != None:
+            if connection is not None:
                 connection.close()
             return '?'
         print(data)
         return data
 
+
 def input_(string):
     global connection
     print_(string)
-    if connection == None:
+    if connection is None:
         return input()
     else:
         try:
             data = connection.recv(1024).decode('utf-8')[:-2]
         except:
             error = True
-            if connection != None:
+            if connection is not None:
                 connection.close()
         print(data)
         return data
+
 
 def print_(string):
     global connection
     global error
     print(string)
-    if connection != None:
+    if connection is not None:
         try:
             connection.send((string + '\r\n').encode('utf-8'))
         except:
             error = True
             print('send failed')
-            if connection != None:
+            if connection is not None:
                 connection.close()
+
 
 def helpInfo():
     print_('type "quit" to quit')
     print_('type "help" for these messages')
     print_('type "auth" to login')
+
 
 def helpInfo_():
     print_('type "quit" to quit')
@@ -82,7 +86,7 @@ def helpInfo_():
     print_('type "user type" to change the type of a user')
     print_('type "user usable" to change the usable of a user')
     print_('type "user delete" to delete a user')
-    print_('type "change password" to change the password')   
+    print_('type "change password" to change the password')
     print_('type "send to" to send a message to many user')
     print_('---------these below can only do on local------------')
     print_('type "server start" to start smtp and pop3 server')
@@ -102,10 +106,11 @@ def helpInfo_():
     print_('type "logs check" to check a log')
     print_('type "logs delete" to delete a log')
 
+
 def sendToMany(sender, allUser, users, data):
-    if allUser == True:
+    if allUser is True:
         users = []
-        results = sqlHandle('user', 'SELECT', 'username')
+        results = sqlHandle('Users', 'SELECT', 'username')
         for result in results:
             users.append(result[0])
 
@@ -114,7 +119,7 @@ def sendToMany(sender, allUser, users, data):
         return
 
     for user in users:
-        results = sqlHandle('user', 'SELECT', 'userID', 'username = \'' + user + '\'')
+        results = sqlHandle('Users', 'SELECT', 'userID', 'username = \'' + user + '\'')
         if len(results) == 0:
             print_('send error, no such user, pass')
             continue
@@ -126,12 +131,15 @@ def sendToMany(sender, allUser, users, data):
         rcptTo = user
         content = data
         time_ = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        if sqlHandle('recvmail', 'INSERT', '\'' + mailID + '\'', '\'' + recvID + '\'', '\'' + heloFrom + '\'', '\'' + ip + '\'',
-                    '\'' + mailFrom + '\'', '\'' + rcptTo + '\'', '\'' + content + '\'', '\'' + time_ + '\'') == False:
-            
+        if sqlHandle(
+                'recvmail', 'INSERT', '\'' + mailID + '\'', '\'' + recvID + '\'',
+                '\'' + heloFrom + '\'', '\'' + ip + '\'', '\'' + mailFrom + '\'', '\'' + rcptTo + '\'', '\'' + content + '\'', '\'' + time_ + '\''
+                ) is False:
+
             print_('send to ' + user + 'failed')
         else:
             print_('send successfully')
+
 
 def main(argv):
     config = None
@@ -153,10 +161,10 @@ def main(argv):
                 print('turn to online mode, you can only use with tcp socket')
             elif opt[0] == '-c':
                 configFile = opt[1]
-    
+
     fileDir = os.path.abspath(os.path.dirname(__file__))
     os.chdir(fileDir)
-    if configFile != None:
+    if configFile is not None:
         if not os.path.exists(configFile):
             print('no such json file, please check')
             return
@@ -193,6 +201,7 @@ def main(argv):
         else:
             print('admin is using at remote, please wait')
 
+
 def remote(tcpServer, server, config):
     while True:
         global state
@@ -213,6 +222,7 @@ def remote(tcpServer, server, config):
             co.close()
     print('connection closed')
 
+
 def run(server, config):
     global connection
     global state
@@ -221,22 +231,22 @@ def run(server, config):
     user = User()
     print_('welcome, type "help" for more, type "auth" to login, type "quit" to quit')
     while True:
-        if error == True:
+        if error is True:
             break
         cmd = input__().lower()
-        if user.state == False:
+        if user.state is False:
             if cmd == 'auth':
                 username = input_('username:')
                 password = input_('password:')
                 user.login(username, password)
-                if  user.state == False:
+                if user.state is False:
                     print_('Login failed, retry please.')
                 elif user.type == '1':
                     print_('permission denied.')
                     user.logout()
                 else:
                     user.initManager()
-                    if connection != None:
+                    if connection is not None:
                         connection.send('login successfully!\r\n'.encode('utf-8'))
                     print_('type "help" for more usages')
             elif cmd == 'quit':
@@ -247,11 +257,11 @@ def run(server, config):
             else:
                 print_('please type "auth" to login')
         else:
-            if connection != None:
+            if connection is not None:
                 if cmd == 'auth':
                     print_('you has already logined')
                 elif cmd == 'logout':
-                    user.logout()      
+                    user.logout()
                 elif cmd == 'user show':
                     users = user.manager.showUser()
                     for user_ in users:
@@ -261,17 +271,17 @@ def run(server, config):
                     password = input_('password:')
                     type_ = input_('type(0 for admin, 1 for normal)')
                     usable = '1'
-                    if user.manager.addNewUser(username, password, type_, usable) == True:
+                    if user.manager.addNewUser(username, password, type_, usable) is True:
                         print_('add new user successfully')
                 elif cmd == 'user type':
                     username = input_('username:')
                     type_ = input_('type(0 for admin, 1 for normal):')
-                    if user.manager.changeUserType(username, type_) == True:
+                    if user.manager.changeUserType(username, type_) is True:
                         print_('change user type successfully')
                 elif cmd == 'user usable':
                     username = input_('username:')
                     usable = input_('usable:(0 for disable, 1 for enable):')
-                    if user.manager.changeUserUsable(username, usable) == True:
+                    if user.manager.changeUserUsable(username, usable) is True:
                         print_('change user usable successfully')
                 elif cmd == 'user delete':
                     username = input_('username:')
@@ -282,7 +292,7 @@ def run(server, config):
                     print_('Are you sure to delete? Press return to continued')
                     re = input_('[return]')
                     if re == '\n' or re == '\r\n' or re == '':
-                        if user.manager.deleteUser(username) == True:
+                        if user.manager.deleteUser(username) is True:
                             print_('delete succussfully')
                 elif cmd == 'change password':
                     old = input_('old password:')
@@ -324,8 +334,8 @@ def run(server, config):
                                 mail = mail[:-5]
                                 break
                         else:
-                            print_('error')  
-                            
+                            print_('error')
+
                     send = threading.Thread(target=sendToMany, args=(user.username, allUser, users, mail))
                     send.start()
                     send.join()
@@ -379,11 +389,11 @@ def run(server, config):
                     t = int(input_('type(0 for smtp, 1 for pop3)'))
                     n = int(input_('the number of file'))
                     server.checkLogFile(t, n)
-                    
+
                 elif cmd == 'auth':
                     print_('you has already logined')
                 elif cmd == 'logout':
-                    user.logout()      
+                    user.logout()
                 elif cmd == 'user show':
                     users = user.manager.showUser()
                     for user_ in users:
@@ -393,17 +403,17 @@ def run(server, config):
                     password = input_('password:')
                     type_ = input_('type(0 for admin, 1 for normal)')
                     usable = '1'
-                    if user.manager.addNewUser(username, password, type_, usable) == True:
+                    if user.manager.addNewUser(username, password, type_, usable) is True:
                         print_('add new user successfully')
                 elif cmd == 'user type':
                     username = input_('username:')
                     type_ = input_('type(0 for admin, 1 for normal):')
-                    if user.manager.changeUserType(username, type_) == True:
+                    if user.manager.changeUserType(username, type_) is True:
                         print_('change user type successfully')
                 elif cmd == 'user usable':
                     username = input_('username:')
                     usable = input_('usable:(0 for disable, 1 for enable):')
-                    if user.manager.changeUserUsable(username, usable) == True:
+                    if user.manager.changeUserUsable(username, usable) is True:
                         print_('change user usable successfully')
                 elif cmd == 'user delete':
                     username = input_('username:')
@@ -414,7 +424,7 @@ def run(server, config):
                     print_('Are you sure to delete? Press return to continued')
                     re = input_('[return]')
                     if re == '\n' or re == '\r\n' or re == '':
-                        if user.manager.deleteUser(username) == True:
+                        if user.manager.deleteUser(username) is True:
                             print_('delete succussfully')
                 elif cmd == 'change password':
                     old = input_('old password:')
@@ -456,8 +466,8 @@ def run(server, config):
                                 mail = mail[:-5]
                                 break
                         else:
-                            print_('error')  
-                            
+                            print_('error')
+
                     send = threading.Thread(target=sendToMany, args=(user.username, allUser, users, mail))
                     send.start()
                     send.join()
@@ -469,6 +479,6 @@ def run(server, config):
                 else:
                     print_('unknown command, error')
 
+
 if __name__ == '__main__':
     main(sys.argv[1:])
-    
