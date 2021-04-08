@@ -4,9 +4,11 @@ from django.http import JsonResponse
 from django_redis import get_redis_connection
 from django.utils import timezone
 from django.core import paginator
+from django.conf import settings
 import logging
+
 # Django Restful Framework
-from rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework import viewsets
 
@@ -16,6 +18,8 @@ from WebMail import customSerializers
 from WebMail import filters
 from WebMail import paginations
 
+# Standard libs
+import json
 # Create your views here.
 
 # Set log file
@@ -72,13 +76,126 @@ def SuperAdminAuthenticate(function):
 
 # Function: help doc
 
+# Function: 
+
+# Function: show config
+def ShowConfig(request):
+    if request.session.get('isLogin', None):
+        auth = request.session.get('authorityValue', None)
+        if auth != "2":
+            return JsonResponse({
+                "message": "您未登录或权限不足",
+                "status": '404'
+                })
+    elif request.method == "GET":
+        configJson = settings.mailSystemServer.config_show()
+        return JsonResponse({
+            "data": json.dumps(configJson),
+            "message": "成功",
+            "status": 200
+        })
+    else:
+        return JsonResponse({
+            "message": "请求方式未注册",
+            "status": 404
+            })
+
+
+# Function: control pop3
+def ControlPop3Server(request):
+    if request.session.get('isLogin', None):
+        auth = request.session.get('authorityValue', None)
+        if auth != "2":
+            return JsonResponse({
+                "message": "您未登录或权限不足",
+                "status": 404
+                })
+    elif request.method == "POST":
+        method = request.POST.get("method", None)
+
+        if method == "start":
+            settings.mailSystemServer.pop3.start()
+        elif method == "restart":
+            settings.mailSystemServer.pop3.restart()
+        elif method == "stop":
+            settings.mailSystemServer.pop3.stop()
+        else:
+            return JsonResponse({
+                "message": "命令错误或未填写命令",
+                "status": 404
+                })
+        return JsonResponse({
+            "message": method+"successfully!",
+            "status": 200
+            })
+    else:
+        return JsonResponse({
+            "message": "请求方式未注册",
+            "status": 404
+            })
+
 
 # Function: send mails
 def SendMails(request):
-    return JsonResponse({
-        "message": "发送完成",
-        "status": 200
-        })
+    if request.session.get('isLogin', None):
+        return JsonResponse({"message": "你已经登录", "status": 404})
+    elif request.method == "POST":
+        receivers = request.POST.get("receviers", None)
+        subject = request.POST.get("subject", None)
+        copys = request.POST.get("copys", None)
+        content = request.POST.get("content", None)
+
+        userNo = request.session.get("userNo", None)
+
+        if receivers and subject and copys and content:
+            receiverList = json.loads(receivers)
+
+            try:
+                # Search for sender
+                sender = models.Users.objects.filter(userNo=int(userNo))
+                if not sender.exist():
+                    return JsonResponse({
+                        "message": "当前登录用户不合法！",
+                        "status": 404
+                    })
+
+                sender = sender.first()
+
+                # Create new mails
+                newMailList = []
+                for receiver in receiverList:
+                    newMailInfo = models.Mails.objects.create(
+                        receivers=receiver,
+                        sender=sender.mailAddress,
+                        subject=subject,
+                        isRead=False,
+                        isServed=0,
+                        content=content,
+                        userNo=sender
+                    )
+                    newMailList.append(newMailInfo)
+
+            except Exception as e:
+                logging.error('str(Exception):\t', str(Exception))
+                logging.error('str(e):\t\t', str(e))
+                logging.error('repr(e):\t', repr(e))
+                logging.error('########################################################')
+                return JsonResponse({"message": "数据库出错，邮件发送失败", "status": 404})
+        else:
+            return JsonResponse({
+                "message": "表单未填写完整",
+                "status": 404
+            })
+
+        return JsonResponse({
+            "message": "发送完成",
+            "status": 200
+            })
+    else:
+        return JsonResponse({
+            "message": "请求方式未注册",
+            "status": 404
+            })
 
 # Function: config
 

@@ -19,8 +19,8 @@ urlpatterns = [
     # # 登出请求
     # path('logout/', views.Logout, name="logout"),
 
-    # # 请求短信验证码
-    # path('requestSmsCode/', views.RequestSmsCode, name="requestSmsCode"),
+    # 邮件发送功能
+    path('sendmails/', views.SendMails, name="sendmails"),
 
     # # 注册请求
     # path('signup/', views.Signup, name="signup"),
@@ -30,8 +30,6 @@ urlpatterns = [
 
     # # 忘记密码请求
     # path('forgetPwd/', views.ForgetPwd, name="forgetPwd"),
-
-
 
     # # 用户管理数据请求
     # path('userManage/', views.GetUserInfos, name="userManage"),
@@ -49,7 +47,7 @@ urlpatterns = [
     # 无参数：get=list all,post=create new
     path('users/', views.UsersViewSet.as_view({'get': 'list', 'post': 'create'})),
     # 有参数：get=retrieve one,put=partial_update one,delete=delete one
-    path('users/<int:pk>/', views.UserViewSet.as_view({'get': 'retrieve', 'put': 'partial_update', 'delete': 'destroy'})),
+    path('users/<int:pk>/', views.UsersViewSet.as_view({'get': 'retrieve', 'put': 'partial_update', 'delete': 'destroy'})),
 
     # 关于mail的请求
     # 无参数：get=list all,post=create new

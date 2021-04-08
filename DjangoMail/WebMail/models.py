@@ -14,8 +14,8 @@ class Users(models.Model):
     userName = models.CharField(db_column='userName', max_length=50, blank=True)
     createDate = models.DateField(db_column='createDate', default=timezone.now)
     mailAddress = models.CharField(db_column='mailAddress', max_length=50, blank=True)
-    authorityValue = models.IntegerField(db_column='authorityValue', default=0)#0:user 1:admin 2:superAdmin
-    userState = models.BooleanField(db_column='userState', default=True)#true:normal false:banned
+    authorityValue = models.IntegerField(db_column='authorityValue', default=0)  # 0:user 1:admin 2:superAdmin
+    userState = models.BooleanField(db_column='userState', default=True)  # true:normal false:banned
 
     class Meta:
         db_table = 'Users'
@@ -27,8 +27,8 @@ class Mails(models.Model):
     sender = models.CharField(db_column='sender', max_length=200, blank=True)
     subject = models.CharField(db_column='subject', max_length=200, blank=True)
     copy = models.CharField(db_column='copy', max_length=200, blank=True)
-    isRead = models.BooleanField(db_column='isRead', default=False)#false:notRead true:haveRead
-    isServed = models.IntegerField(db_column='authorityValue', default=0)#0:serving 1:haveServed 2:failToServe
+    isRead = models.BooleanField(db_column='isRead', default=False)  # false:notRead true:haveRead
+    isServed = models.IntegerField(db_column='authorityValue', default=0)  # 0:serving 1:haveServed 2:failToServe
     content = models.CharField(db_column='content', max_length=500, blank=True)
     rendOrReceiptDate = models.DateField(db_column='rendOrReceiptDate', default=timezone.now)
     userNo = models.ForeignKey(Users, models.CASCADE, db_column='userNo', default='1')
