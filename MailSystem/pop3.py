@@ -1,4 +1,4 @@
-from mysql import sqlHandle
+from MailSystem.mysql import sqlHandle
 from socket import *
 from time import *
 import os

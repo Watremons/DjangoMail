@@ -1,6 +1,6 @@
 import django_filters
 
-from WebMail.models import CaseData, AccountInformation
+from WebMail.models import Users, Mails
 
 
 # class CaseFilter(django_filters.rest_framework.FilterSet):

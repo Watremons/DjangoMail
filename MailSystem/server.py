@@ -1,20 +1,10 @@
-'''
-@Author: One_Random
-@Date: 2020-04-13 17:21:23
-@LastEditors: One_Random
-@LastEditTime: 2020-05-26 18:05:14
-@FilePath: /mail/server.py
-@Description: Copyright © 2020 One_Random. All rights reserved.
-'''
-
 import os
 import sys
 
 import json
 
-from user import *
-from smtp import Smtp
-from pop3 import Pop3
+from MailSystem.smtp import Smtp
+from MailSystem.pop3 import Pop3
 
 
 class Server:
@@ -26,9 +16,9 @@ class Server:
         self.server_setup(configs)
 
     def server_setup(self, configs):
-        if configs == None:
+        if configs is None:
             configs = self.default
-            
+
         if self.state == 'stop':
             self.state = 'setup'
             self.currConfigs = configs
@@ -88,7 +78,7 @@ class Server:
             self.currConfigs = newConfigs
             self.server_shutdown()
             self.server_setup(self.currConfigs)
-        
+
     def config_show(self):
         print(self.currConfigs)
 
@@ -162,10 +152,12 @@ class Server:
         else:
             print(fileNames[num-1], 'deleted')
 
+
 def main():
     server = Server()
     # server.config_save("config.json")
     server.showAllLogFile(0)
+
 
 if __name__ == '__main__':
     main()

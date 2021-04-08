@@ -1,4 +1,4 @@
-from mysql import sqlHandle
+from MailSystem.mysql import sqlHandle
 from socket import *
 from time import *
 import os
@@ -26,7 +26,7 @@ class Smtp:
     maxClient = 10
     log = None
 
-    def __init__(self, domain = 'test.com', port=8025, logDir='/log/smtp', banIPs=[], banActs=[]):
+    def __init__(self, domain='test.com', port=8025, logDir='/log/smtp', banIPs=[], banActs=[]):
         self.ip = '0.0.0.0'
         self.port = port
         self.domain = domain
