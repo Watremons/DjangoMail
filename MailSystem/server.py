@@ -8,7 +8,11 @@ from MailSystem.pop3 import Pop3
 
 
 class Server:
-    default = [{'domain': 'test.com', 'mailMaxSize': 65565, 'logMaxSize': 65535}, {'port': 8025, 'logDir': '/log/smtp', 'banIPs': [], 'banActs': []}, {'port': 8110, 'logDir': '/log/pop3', 'banIPs': [], 'banActs': []}]
+    default = {
+        'server': {'domain': 'test.com', 'mailMaxSize': 65565, 'logMaxSize': 65535}, 
+        'smtp': {'port': 8025, 'logDir': '/log/smtp', 'banIPs': [], 'banActs': []}, 
+        'pop3': {'port': 8110, 'logDir': '/log/pop3', 'banIPs': [], 'banActs': []}
+    }
 
     def __init__(self, configs=default):
         self.state = 'stop'
@@ -22,9 +26,9 @@ class Server:
         if self.state == 'stop':
             self.state = 'setup'
             self.currConfigs = configs
-            server_config = configs[0]
-            smtp_config = configs[1]
-            pop3_config = configs[2]
+            server_config = configs['server']
+            smtp_config = configs['smtp']
+            pop3_config = configs['pop3']
             self.domain = server_config['domain']
             self.mailMaxSize = server_config['mailMaxSize']
             self.logMaxSize = server_config['logMaxSize']
@@ -53,38 +57,49 @@ class Server:
         self.server_shutdown()
         self.server_setup(self.currConfigs)
 
-    def config_update(self, serviceName, config, value):
-        if serviceName == 'server':
-            service = 0
-        elif serviceName == 'smtp':
-            service = 1
-        elif serviceName == 'pop3':
-            service = 2
-        else:
-            print('parameter error')
-            return
+    def config_modify(self, configJson): # 尚未判断value合法性
         
+        
+
         newConfigs = self.currConfigs
         try:
-            if config in newConfigs[service].keys():
-                newConfigs[service][config] = value
-            else:
-                print('parameter error')
-                return
+            for server in newConfigs.keys():
+                for config in newConfigs[server].keys():
+                    newConfigs[server][config] = configJson[server][config]
+
+            # for serverOld, serverNew in zip(newConfigs.values(), configJson.values()):
+            #     for configOld, configNew in zip(serverOld.values(), serverNew.values()):
+            #         configOld = configNew
         except:
             print('parameter error')
-            return
+            return -1
         else:
             self.currConfigs = newConfigs
             self.server_shutdown()
             self.server_setup(self.currConfigs)
+            return self.currConfigs
 
     def config_show(self):
-        print(self.currConfigs)
+        
+        try:
+            filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'config.json')
+
+            with open(filename, 'r', encoding='utf8')as fp:
+                config_json = json.load(fp)
+            return config_json
+
+        except Exception as e:
+            logging.error('str(Exception):\t', str(Exception))
+            logging.error('str(e):\t\t', str(e))
+            logging.error('repr(e):\t', repr(e))
+            logging.error('########################################################')
+            return -1
+
 
     def config_default(self):
         self.currConfigs = self.default
         print('the config set back to default')
+        return self.currConfigs
 
     def config_save(self, filename):
         filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), filename)

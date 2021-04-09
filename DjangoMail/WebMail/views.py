@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django_redis import get_redis_connection
 from django.utils import timezone
 from django.core import paginator
-from django.conf import settings
+from django.conf import settings   # = DjangoMail?
 import logging
 
 # Django Restful Framework
@@ -69,7 +69,6 @@ def SuperAdminAuthenticate(function):
             return JsonResponse({"message": "无登录信息，请先登录", "status": 404})
     return authenticate
 
-
 # Function: log in
 
 # Function: log out
@@ -82,24 +81,94 @@ def SuperAdminAuthenticate(function):
 def ShowConfig(request):
     if request.session.get('isLogin', None):
         auth = request.session.get('authorityValue', None)
-        if auth != "2":
+        if auth != '2':
+            return JsonResponse({
+                "message": "您的权限不足",
+                "status": 404
+            })
+        elif request.method == "GET":
+            configJson = settings.mailSystemServer.config_show()
+            if configJson == -1:
+                return JsonResponse({
+                    "message": "配置文件读取失败",
+                    "status": 404
+                })    
+
+            return JsonResponse({
+                "data": json.dumps(configJson),
+                "message": "成功",
+                "status": 200
+            })
+        else:
+            return JsonResponse({
+                "message": "请求方式未注册",
+                "status": 404
+            })
+    else: # 
+        return JsonResponse({
+            "message": "您尚未登录",
+            "status": 404
+        })
+
+# Function: modify config
+def ModifyConfig(request):
+    if request.session.get('isLogin', None):
+        auth = request.session.get('authorityValue', None)
+        if auth != '2':
             return JsonResponse({
                 "message": "您未登录或权限不足",
-                "status": '404'
+                "status": 404
+            })
+        elif request.method == 'POST':  # 判断合法性
+            configJson = request.POST.get('configJson', None)
+            if configJson != None:
+                updatedConfig = settings.mailSystemServer.config_modify(json.loads(configJson))
+                return JsonResponse({
+                    "data": json.dumps(updatedConfig)
+                    "message": "修改成功",
+                    "status": 200
                 })
-    elif request.method == "GET":
-        configJson = settings.mailSystemServer.config_show()
-        return JsonResponse({
-            "data": json.dumps(configJson),
-            "message": "成功",
-            "status": 200
-        })
+            else:
+                pass
+        else:
+            return JsonResponse({
+                "message": "请求方式未注册",
+                "status": 404
+            })
+            
     else:
         return JsonResponse({
-            "message": "请求方式未注册",
+            "message": "您尚未登录",
             "status": 404
-            })
+        })
 
+
+# Function: reset config
+
+def ResetConfig(request):
+    if request.session.get('isLogin', None):
+        auth = request.session.get('authorityValue', None)
+        if auth != '2':
+            return JsonResponse({
+                "message": "您未登录或权限不足",
+                "status": 404
+            })
+        elif request.method == 'GET':
+            return JsonResponse({
+                "data": json.dumps(settings.mailSystemServer.config_default()),
+                "message": "成功",
+                "status": 200
+            })
+        else:
+            return JsonResponse({
+                "message": "请求方式未注册",
+                "status": 404
+            })
+    else:
+        return JsonResponse({
+            "message": "您尚未登录",
+            "status": 404
+        })
 
 # Function: control pop3
 def ControlPop3Server(request):
