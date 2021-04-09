@@ -1,15 +1,19 @@
-[{
-    "domain": "test.com",
-    "mailMaxSize": 65565,
-    "logMaxSize": 65535
-}, {
-    "port": 8025,
-    "logDir": "/log/smtp",
-    "banIPs": [],
-    "banActs": []
-}, {
-    "port": 8110,
-    "logDir": "/log/pop3",
-    "banIPs": [],
-    "banActs": []
-}]
+{
+    "server": {
+        "domain": "test.com",
+        "mailMaxSize": 65565,
+        "logMaxSize": 65535
+    }, 
+    "smtp": {
+        "port": 8025,
+        "logDir": "/log/smtp",
+        "banIPs": [],
+        "banActs": []
+    }, 
+    "pop3": {
+        "port": 8110,
+        "logDir": "/log/pop3",
+        "banIPs": [],
+        "banActs": []
+    }
+}
