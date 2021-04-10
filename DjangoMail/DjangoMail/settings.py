@@ -18,7 +18,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 from MailSystem.server import Server
 
-mailSystemServer = Server()
+TMP = 'good'
+# mailSystemServer = Server()
 
 mimetypes.add_type("text/css", ".css", True)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
