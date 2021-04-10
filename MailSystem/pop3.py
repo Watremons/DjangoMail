@@ -1,11 +1,9 @@
 from MailSystem.mysql import sqlHandle
-from socket import *
-from time import *
+import socket
+import time
 import os
-import sys
 # import signal
 import threading
-import base64
 import re
 import datetime
 
@@ -13,6 +11,7 @@ selfMailDomain = 'test.com'
 otherMailDomain = 'other.com'
 otherIP = '127.0.0.1'
 otherPort = 8111
+
 
 class Pop3:
     STOPPED = 0
@@ -40,11 +39,11 @@ class Pop3:
             return True
 
         try:
-            self.server = socket(AF_INET, SOCK_STREAM)
-            self.server.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+            self.server = socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.server.bind((self.ip, self.port))
             self.server.listen(self.maxClient)
-            
+
         except:
             self.state = self.STOPPED
             print('start pop3 server failed, error')
@@ -55,7 +54,7 @@ class Pop3:
             self.connection = None
             print('pop3 server started.')
             print('pop3 server is listening...')
-            t = threading.Thread(target = self.listen)
+            t = threading.Thread(target=self.listen)
             t.start()
 
             try:
@@ -72,23 +71,23 @@ class Pop3:
                 self.log = None
             else:
                 self.log.write('pop3 start at ' + now + '\n')
-            
+
             return True
 
     def stop(self):
         if self.state == self.STOPPED:
             print('stop pop3 server passed, pop3 server is stopped')
             return True
-        
+
         try:
             self.LISTENING = False
-            sleep(1)
-            if self.connection != None:
+            time.sleep(1)
+            if self.connection is not None:
                 self.connection.close()
                 print('connection close!')
             self.server.close()
 
-            if self.log != None:
+            if self.log is not None:
                 now = datetime.datetime.now()
                 now = now.strftime("%Y-%m-%d-%H:%M:%S")
                 self.log.write('pop3 stop at ' + now + '\n')
@@ -115,7 +114,7 @@ class Pop3:
         self.maxClient = maxClient_
         print('max client number set successfully, the server is restarting...')
         self.restart()
-    
+
     # def signalHandler(self, signal, frame):
     #     if self.LISTENING == False:
     #         print('')
@@ -140,12 +139,12 @@ class Pop3:
                 return False, -1
 
     def listen(self):
-        if self.LISTENING == True:
-            t = threading.Thread(target = self.pop3Server, daemon = True)
+        if self.LISTENING is True:
+            t = threading.Thread(target=self.pop3Server, daemon=True)
             t.start()
 
         while True:
-            if self.LISTENING == False:
+            if self.LISTENING is False:
                 print('listen stop')
                 break
 
@@ -162,15 +161,15 @@ class Pop3:
                 print('the connection is closed')
                 break
 
-            thread = threading.Thread(target = self.clientConn, args = (connection, address), daemon = True)
+            thread = threading.Thread(target=self.clientConn, args=(connection, address), daemon=True)
             thread.start()
 
-            if self.log != None:
+            if self.log is not None:
                 now = datetime.datetime.now()
                 now = now.strftime("%Y-%m-%d-%H:%M:%S")
                 self.log.write('connection from (' + address[0] + ',' + str(address[1]) + ') at ' + now + '\n')
-            
-        if self.connection != None:
+
+        if self.connection is not None:
             self.connection.close()
 
     def getEmail(self, userID):
@@ -184,7 +183,7 @@ class Pop3:
         if allMails:
             for mail in allMails:
                 print('?')
-                if overSize == True:
+                if overSize is True:
                     deleMails.append(mail)
                     continue
 
@@ -197,12 +196,12 @@ class Pop3:
                         mailSize = mailSize + len(mail[6].encode('utf-8'))
                         mailsSize.append(len(mail[6].encode('utf-8')))
                         mails.append(mail)
-        
+
         t = threading.Thread(target=self.delEmail, args=(deleMails, range(len(deleMails))))
         t.start()
 
         return len(mails), mails, mailSize, mailsSize
-    
+
     def delEmail(self, mails, deles):
         if deles and mails:
             for dele in deles:
@@ -228,20 +227,24 @@ class Pop3:
                 try:
                     data = message.decode('utf-8')[0:-2]
 
-                    if self.log != None:
+                    if self.log is not None:
                         now = datetime.datetime.now()
                         now = now.strftime("%Y-%m-%d-%H:%M:%S")
-                        self.log.write('smtp get \'' + data  + '\' at ' + now + ' from (' + address[0] + ', ' + str(address[1]) + ')\n')
-                    
+                        self.log.write(
+                            'smtp get \'' + data +
+                            '\' at ' + now +
+                            ' from (' + address[0] + ', ' + str(address[1]) + ')\n'
+                            )
+
                     if data[0:4].lower() == 'noop':
                         message = '+OK example mail\r\n'
-                        connection.send(message.encode('utf-8')) 
+                        connection.send(message.encode('utf-8'))
                         continue
 
                     if state == 'AUTH_LOGIN':
-                        if re.match('[uU][sS][eE][rR]\s+\S+', data):
-                            valid = re.search('\S+', data[4:])
-                            if valid != None:
+                        if re.match(r'[uU][sS][eE][rR]\s+\S+', data):
+                            valid = re.search(r'\S+', data[4:])
+                            if valid is not None:
                                 username = valid.group()
                                 state = 'AUTH_USER'
                                 message = '+OK example mail\r\n'
@@ -252,52 +255,52 @@ class Pop3:
                             state = 'HANDLE'
                             break
 
-                        elif re.match('pass\s\S+', data) != None:
+                        elif re.match(r'pass\s\S+', data) is not None:
                             message = '-ERR Command not valid in this state\r\n'
 
                         else:
                             message = '-ERR Unknown command ' + data + '\r\n'
-                        
-                        connection.send(message.encode('utf-8')) 
+
+                        connection.send(message.encode('utf-8'))
 
                     elif state == 'AUTH_USER':
-                        if re.match('[pP][aA][sS][sS]\s+\S+', data):
-                            valid = re.search('\S+', data[4:])
-                            if valid != None:
+                        if re.match(r'[pP][aA][sS][sS]\s+\S+', data):
+                            valid = re.search(r'\S+', data[4:])
+                            if valid is not None:
                                 password = valid.group()
                                 auth, userID = self.authentication(username, password)
-                                if auth == True:
+                                if auth is True:
                                     state = 'AUTH_AFTER'
                                     mailsNum, mails, mailSize, mailsSize = self.getEmail(userID)
-                                    message = '+OK ' + str(mailsNum) + ' message(s) [' + str(mailSize) +' byte(s)]\r\n'
+                                    message = '+OK ' + str(mailsNum) + ' message(s) [' + str(mailSize) + ' byte(s)]\r\n'
                                 else:
                                     message = '-ERR Unable to log on\r\n'
 
                         elif data[0:4].lower() == 'quit':
                             message = '+OK example mail\r\n'
-                            connection.send(message.encode('utf-8')) 
+                            connection.send(message.encode('utf-8'))
                             state = 'HANDLE'
                             break
 
-                        elif re.match('[uU][sS][eE][rR]\s+\S+', data):
-                            valid = re.search('\S+', data[4:])
-                            if valid != None:
+                        elif re.match(r'[uU][sS][eE][rR]\s+\S+', data):
+                            valid = re.search(r'\S+', data[4:])
+                            if valid is not None:
                                 username = valid.group()
                                 message = '+OK example mail\r\n'
 
                         else:
                             message = '-ERR Unknown command ' + data + '\r\n'
-                        
-                        connection.send(message.encode('utf-8'))                            
+
+                        connection.send(message.encode('utf-8'))
 
                     elif state == 'AUTH_AFTER':
-                        if re.match('[sS][tT][aA][tT]\s*', data):
-                            message = '+OK ' + str(mailsNum) + ' ' + str(mailSize) +'\r\n'
+                        if re.match(r'[sS][tT][aA][tT]\s*', data):
+                            message = '+OK ' + str(mailsNum) + ' ' + str(mailSize) + '\r\n'
 
-                        elif re.match('[lL][iI][sS][tT]\s*\d*', data):
-                            valid = re.search('\d+', data[4:])
-                            if valid == None:
-                                message = '+OK ' + str(mailsNum) + ' ' + str(mailSize) +'\r\n'
+                        elif re.match(r'[lL][iI][sS][tT]\s*\d*', data):
+                            valid = re.search(r'\d+', data[4:])
+                            if valid is None:
+                                message = '+OK ' + str(mailsNum) + ' ' + str(mailSize) + '\r\n'
                                 for i in range(mailsNum):
                                     message = message + str(i + 1) + ' ' + str(mailsSize[i]) + '\r\n'
                                 message = message + '.\r\n'
@@ -307,10 +310,10 @@ class Pop3:
                                     message = '-Error Unknown message\r\n'
                                 else:
                                     message = str(number) + ' ' + str(mailsSize[number - 1]) + '\r\n'
-                        
-                        elif re.match('[rR][eE][tT][rR]\s*\d*', data):
-                            valid = re.search('\d+', data[4:])
-                            if valid == None:
+
+                        elif re.match(r'[rR][eE][tT][rR]\s*\d*', data):
+                            valid = re.search(r'\d+', data[4:])
+                            if valid is None:
                                 message = '-Error Unknown message\r\n'
                             else:
                                 number = int(valid.group())
@@ -329,9 +332,9 @@ class Pop3:
                                     message = message + '\r\n.\r\n'
                                     print(message)
 
-                        elif re.match('[uU][iI][dD][lL]\s*\d*', data):
-                            valid = re.search('\d+', data[4:])
-                            if valid == None:
+                        elif re.match(r'[uU][iI][dD][lL]\s*\d*', data):
+                            valid = re.search(r'\d+', data[4:])
+                            if valid is None:
                                 message = '-Error Unknown message\r\n'
                             else:
                                 number = int(valid.group())
@@ -342,10 +345,10 @@ class Pop3:
                                     print(mailID)
                                     message = '+OK ' + mailID + '\r\n'
                                     print(message)
-                        
-                        elif re.match('[dD][eE][lL][eE]\s*\d*', data):
-                            valid = re.search('\d+', data[4:])
-                            if valid == None:
+
+                        elif re.match(r'[dD][eE][lL][eE]\s*\d*', data):
+                            valid = re.search(r'\d+', data[4:])
+                            if valid is None:
                                 message = '-Error Unknown message\r\n'
                             else:
                                 number = int(valid.group())
@@ -356,19 +359,19 @@ class Pop3:
                                         deles.append(number)
                                     message = '+OK ' + str(number) + ' delete\r\n'
                                     print(message)
-                                
+
                         elif data[0:4].lower() == 'rest':
                             deles.clear()
                             message = '+OK delete mails cancled\r\n'
 
-                        elif re.match('[rR][eE][sS][tt]\s*', data):
-                            valid = re.search('\d+', data[4:])
-                            if valid == None:
+                        elif re.match(r'[rR][eE][sS][tt]\s*', data):
+                            valid = re.search(r'\d+', data[4:])
+                            if valid is None:
                                 message = '-Error Unknown message\r\n'
                             else:
                                 deles.clear()
                                 message = '+OK delete cancelld\r\n'
-                        
+
                         elif data[0:4].lower() == 'quit':
                             message = '+OK example mail\r\n'
                             state = 'HANDLE'
@@ -379,19 +382,20 @@ class Pop3:
                 except:
                     print('connection lost by accident')
                     break
-        
+
         if state == 'HANDLE':
             t = threading.Thread(target=self.delEmail, args=(mails, deles))
             t.start()
 
         try:
             connection.close()
-            if self.log != None:
-                    now = datetime.datetime.now()
-                    now = now.strftime("%Y-%m-%d-%H:%M:%S")
-                    self.log.write('disconnection from (' + address[0] + ',' + str(address[1]) + ') at ' + now + '\n')
+            if self.log is not None:
+                now = datetime.datetime.now()
+                now = now.strftime("%Y-%m-%d-%H:%M:%S")
+                self.log.write('disconnection from (' + address[0] + ',' + str(address[1]) + ') at ' + now + '\n')
         except:
             print('connection lost by accident')
+
 
 if __name__ == "__main__":
     pop3 = Pop3()

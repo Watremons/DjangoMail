@@ -69,13 +69,29 @@ def SuperAdminAuthenticate(function):
             return JsonResponse({"message": "无登录信息，请先登录", "status": 404})
     return authenticate
 
+
+# Function: Request check
+def Check(request, authLevel: list, methodType: str) -> dict:
+    if request.session.get('isLogin', None):
+        auth = request.session.get('authorityValue', None)
+        if auth not in authLevel:
+            return {"result": False, "message": "您权限不足"}
+        if request.method != methodType:
+            return {"result": False, "message": "请求方式未注册"}
+        else:
+            return {"result": True, "message": "通过验证"}
+    else:
+        return {"result": False, "message": "您尚未登录"}
+
+
 # Function: log in
 
 # Function: log out
 
 # Function: help doc
 
-# Function: 
+# Function:
+
 
 # Function: show config
 def ShowConfig(request):
@@ -104,11 +120,12 @@ def ShowConfig(request):
                 "message": "请求方式未注册",
                 "status": 404
             })
-    else: # 
+    else:
         return JsonResponse({
             "message": "您尚未登录",
             "status": 404
         })
+
 
 # Function: modify config
 def ModifyConfig(request):
@@ -124,7 +141,7 @@ def ModifyConfig(request):
             if configJson != None:
                 updatedConfig = settings.mailSystemServer.config_modify(json.loads(configJson))
                 return JsonResponse({
-                    "data": json.dumps(updatedConfig)
+                    "data": json.dumps(updatedConfig),
                     "message": "修改成功",
                     "status": 200
                 })
@@ -153,7 +170,8 @@ def ResetConfig(request):
                 "message": "您未登录或权限不足",
                 "status": 404
             })
-        elif request.method == 'GET':
+
+        if request.method == 'GET':
             return JsonResponse({
                 "data": json.dumps(settings.mailSystemServer.config_default()),
                 "message": "成功",
@@ -170,15 +188,48 @@ def ResetConfig(request):
             "status": 404
         })
 
-# Function: control pop3
-def ControlPop3Server(request):
-    if request.session.get('isLogin', None):
-        auth = request.session.get('authorityValue', None)
-        if auth != "2":
+
+# Function: control smtp
+def ControlSmtpServer(request):
+    checkRes = Check(request, [1, 2], "POST")
+    if not checkRes["result"]:
+        return JsonResponse({
+            "message": checkRes["message"],
+            "status": 404
+            })
+    elif request.method == "POST":
+        method = request.POST.get("method", None)
+
+        if method == "start":
+            settings.mailSystemServer.stmp.start()
+        elif method == "restart":
+            settings.mailSystemServer.pop3.restart()
+        elif method == "stop":
+            settings.mailSystemServer.pop3.stop()
+        else:
             return JsonResponse({
-                "message": "您未登录或权限不足",
+                "message": "命令错误或未填写命令",
                 "status": 404
                 })
+        return JsonResponse({
+            "message": method+"successfully!",
+            "status": 200
+            })
+    else:
+        return JsonResponse({
+            "message": "请求方式未注册",
+            "status": 404
+            })
+
+
+# Function: control pop3
+def ControlPop3Server(request):
+    checkRes = Check(request, [1, 2], "POST")
+    if not checkRes["result"]:
+        return JsonResponse({
+            "message": checkRes["message"],
+            "status": 404
+            })
     elif request.method == "POST":
         method = request.POST.get("method", None)
 
@@ -206,17 +257,17 @@ def ControlPop3Server(request):
 
 # Function: send mails
 def SendMails(request):
-    if request.session.get('isLogin', None):
-        return JsonResponse({"message": "你已经登录", "status": 404})
-    elif request.method == "POST":
+    CheckRes = Check(request, [0, 1, 2], "POST")
+    if not CheckRes["result"]:
+        return JsonResponse({"message": CheckRes["message"], "status": 404})
+    else:
         receivers = request.POST.get("receviers", None)
         subject = request.POST.get("subject", None)
-        copys = request.POST.get("copys", None)
         content = request.POST.get("content", None)
 
         userNo = request.session.get("userNo", None)
 
-        if receivers and subject and copys and content:
+        if receivers and subject and content:
             receiverList = json.loads(receivers)
 
             try:
@@ -259,11 +310,6 @@ def SendMails(request):
         return JsonResponse({
             "message": "发送完成",
             "status": 200
-            })
-    else:
-        return JsonResponse({
-            "message": "请求方式未注册",
-            "status": 404
             })
 
 # Function: config

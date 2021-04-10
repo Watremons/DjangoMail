@@ -1,8 +1,7 @@
 from MailSystem.mysql import sqlHandle
-from socket import *
-from time import *
+import socket
+import time
 import os
-import sys
 # import signal
 import threading
 import base64
@@ -13,6 +12,7 @@ import uuid
 otherMailDomain = 'other.com'
 otherIP = '127.0.0.1'
 otherPort = 8026
+
 
 class Smtp:
     STOPPED = 0
@@ -41,11 +41,11 @@ class Smtp:
             return True
 
         try:
-            self.server = socket(AF_INET, SOCK_STREAM)
-            self.server.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+            self.server = socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.server.bind((self.ip, self.port))
             self.server.listen(self.maxClient)
-            
+
         except:
             self.state = self.STOPPED
             print('start smtp server failed, error')
@@ -57,7 +57,7 @@ class Smtp:
             self.connection = None
             print('smtp server started.')
             print('smtp server is listening at port ' + str(self.port))
-            t = threading.Thread(target = self.listen)
+            t = threading.Thread(target=self.listen)
             t.start()
 
             try:
@@ -74,18 +74,18 @@ class Smtp:
                 self.log = None
             else:
                 self.log.write('smtp start at ' + now + '\n')
-            
+
             return True
 
     def stop(self):
         if self.state == self.STOPPED:
             print('stop smtp server passed, smtp server is stopped')
             return True
-        
+
         try:
             self.LISTENING = False
-            sleep(1)
-            if self.connection != None:
+            time.sleep(1)
+            if self.connection is not None:
                 self.connection.close()
                 print('connection close!')
             self.server.close()
@@ -118,14 +118,6 @@ class Smtp:
         self.maxClient = maxClient_
         print('max client number set successfully, the server is restarting...')
         self.restart()
-    
-    # def signalHandler(self, signal, frame):
-    #     if self.LISTENING == False:
-    #         sys.exit()
-
-    #     self.LISTENING = False
-    #     print('\nTerminated listen by keyboard.')
-    #     self.stop()
 
     def authentication(self, username, password):
         try:
@@ -144,11 +136,11 @@ class Smtp:
                 return False, -1
 
     def listen(self):
-        if self.LISTENING == True:
-            t = threading.Thread(target = self.smtpServer, daemon = True)
+        if self.LISTENING is True:
+            t = threading.Thread(target=self.smtpServer, daemon=True)
             t.start()
         while True:
-            if self.LISTENING == False:
+            if self.LISTENING is False:
                 print('listen stop')
                 break
 
@@ -166,19 +158,19 @@ class Smtp:
                 print('can\'t connect for the connection is closed')
                 break
 
-            thread = threading.Thread(target = self.clientConn, args = (connection, address,), daemon = True)
+            thread = threading.Thread(target=self.clientConn, args=(connection, address,), daemon=True)
             thread.start()
 
-            if self.log != None:
+            if self.log is not None:
                 now = datetime.datetime.now()
                 now = now.strftime("%Y-%m-%d-%H:%M:%S")
                 self.log.write('connection from (' + address[0] + ',' + str(address[1]) + ') at ' + now + '\n')
-            
-        if self.connection != None:
+
+        if self.connection is not None:
             self.connection.close()
 
     def send(self, email, ip, port):
-        client = socket(AF_INET, SOCK_STREAM)
+        client = socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             client.connect((ip, port))
         except:
@@ -235,26 +227,29 @@ class Smtp:
         if email[1] == -1:
             print('don\'t have this user')
             return
-            
-        sqlHandle('sendmail', 'INSERT', '\'' + email[0] + '\'', str(email[1]),
-                 '\'' + email[2] + '\'', '\'' + email[3] + '\'',
-                 '\'' + email[4] + '\'', '\'' + email[5] + '\'', 
-                 '\'' + email[6] + '\'', '\'' + email[7] + '\'')
-    
-    def recieve(self, email):
+
+        sqlHandle(
+            'sendmail', 'INSERT', '\'' + email[0] + '\'', str(email[1]),
+            '\'' + email[2] + '\'', '\'' + email[3] + '\'',
+            '\'' + email[4] + '\'', '\'' + email[5] + '\'',
+            '\'' + email[6] + '\'', '\'' + email[7] + '\''
+            )
+
+    def receive(self, email):
         results = sqlHandle('user', 'SELECT', 'userID', 'username = \'' + email[5] + '\'')
-        if results != (): 
-            sqlHandle('recvmail', 'INSERT', '\'' + email[0] + '\'', '\'' + str(results[0][0]) + '\'',
-                    '\'' + email[2] + '\'', '\'' + email[3] + '\'',
-                 '\'' + email[4] + '\'', '\'' + email[5] + '\'', 
-                 '\'' + email[6] + '\'', '\'' + email[7] + '\'')
+        if results is not ():
+            sqlHandle(
+                'recvmail', 'INSERT', '\'' + email[0] + '\'', '\'' + str(results[0][0]) + '\'',
+                '\'' + email[2] + '\'', '\'' + email[3] + '\'',
+                '\'' + email[4] + '\'', '\'' + email[5] + '\'',
+                '\'' + email[6] + '\'', '\'' + email[7] + '\'')
 
     def sendMail(self, email):
         domain = email[5][re.search('@', email[5]).span()[0]+1:]
         if domain == self.domain:
-            self.recieve(email)
+            self.receive(email)
         elif domain == otherMailDomain:
-            send = threading.Thread(target = self.send, args = (email, otherIP, otherPort))
+            send = threading.Thread(target=self.send, args=(email, otherIP, otherPort))
             send.start()
             send.join()
         else:
@@ -278,11 +273,14 @@ class Smtp:
             else:
                 try:
                     data = message.decode('utf-8')[0:-2]
-                    
-                    if self.log != None:
+
+                    if self.log is not None:
                         now = datetime.datetime.now()
                         now = now.strftime("%Y-%m-%d-%H:%M:%S")
-                        self.log.write('smtp get \'' + data  + '\' at ' + now + ' from (' + address[0] + ', ' + str(address[1]) + ')\n')
+                        self.log.write(
+                            'smtp get \'' + data +
+                            '\' at ' + now +
+                            ' from (' + address[0] + ', ' + str(address[1]) + ')\n')
 
                     if data[0:4].lower() == 'noop':
                         message = '250 OK\r\n'
@@ -291,8 +289,8 @@ class Smtp:
 
                     if state == 'WAITING':
                         if re.match('[hH][eE][lL][oO]', data):
-                            valid = re.search('\S+', data[4:])
-                            if valid != None:
+                            valid = re.search(r'\S+', data[4:])
+                            if valid is not None:
                                 heloFrom = valid.group()
                                 state = 'AUTH_AFTER'
                                 auth = False
@@ -301,8 +299,8 @@ class Smtp:
                                 message = '500 Error: bad syntax\r\n'
 
                         elif re.match('[eE][hH][lL][oO]', data):
-                            valid = re.search('\S+', data[4:])
-                            if valid != None:
+                            valid = re.search(r'\S+', data[4:])
+                            if valid is not None:
                                 heloFrom = valid.group()
                                 state = 'AUTH_BEFORE'
                                 message = '250 OK\r\n'
@@ -314,7 +312,10 @@ class Smtp:
                             connection.send(message.encode('utf-8'))
                             break
 
-                        elif data[0:10].lower() == 'auth login' or data[0:10].lower() == 'mail from:' or data[0:8].lower() == 'rcpt to:' or data[0:4].lower() == 'data':
+                        elif data[0:10].lower() == 'auth login' or \
+                                data[0:10].lower() == 'mail from:' or \
+                                data[0:8].lower() == 'rcpt to:' or \
+                                data[0:4].lower() == 'data':
                             message = '503 Error: send EHLO first\r\n'
 
                         else:
@@ -331,10 +332,10 @@ class Smtp:
                             message = '221 Bye\r\n'
                             connection.send(message.encode('utf-8'))
                             break
-                        
+
                         elif re.match('[hH][eE][lL][oO]', data):
-                            valid = re.search('\S+', data[4:])
-                            if valid != None:
+                            valid = re.search(r'\S+', data[4:])
+                            if valid is not None:
                                 heloFrom = valid.group()
                                 state = 'AUTH_AFTER'
                                 message = '250 OK\r\n'
@@ -342,8 +343,8 @@ class Smtp:
                                 message = '500 Error: bad syntax\r\n'
 
                         elif re.match('[eE][hH][lL][oO]', data):
-                            valid = re.search('\S+', data[4:])
-                            if valid != None:
+                            valid = re.search(r'\S+', data[4:])
+                            if valid is not None:
                                 heloFrom = valid.group()
                                 state = 'AUTH_BEFORE'
                                 message = '250 OK\r\n'
@@ -352,45 +353,45 @@ class Smtp:
 
                         elif data[0:10].lower() == 'mail from:' or data[0:8].lower() == 'rcpt to:' or data[0:4].lower() == 'data':
                             message = '553 authentication is required\r\n'
-                            
+
                         else:
                             message = '502 Error: command not implemented\r\n'
 
                         connection.send(message.encode('utf-8'))
-                    
+
                     elif state == 'AUTH_LOGIN':
                         username = data
                         state = 'AUTH_USER'
                         message = '334 UGFzc3dvcmQ6\r\n'
-                        
+
                         connection.send(message.encode('utf-8'))
 
                     elif state == 'AUTH_USER':
                         password = data
                         state = 'AUTH_PWD'
-                        
+
                         if state == 'AUTH_PWD':
                             auth, userID = self.authentication(username, password)
 
-                            if auth == True:
+                            if auth is True:
                                 state = 'AUTH_AFTER'
                                 message = '235 Authentication successful\r\n'
-                            
+
                             else:
                                 state = 'AUTH_BEFORE'
                                 message = '535 Error: authentication failed\r\n'
-                            
-                            connection.send(message.encode('utf-8'))                            
+
+                            connection.send(message.encode('utf-8'))
 
                     elif state == 'AUTH_AFTER':
                         mailFrom = ''
-                        
+
                         if data[0:10].lower() == 'mail from:':
                             mailAdd = ''
-                            valid = re.search('<(\w|@|_|-|\.)*>', data[10:])
-                            if valid != None:
+                            valid = re.search(r'<(\w|@|_|-|\.)*>', data[10:])
+                            if valid is not None:
                                 mailAdd = valid.group()[1:-1]
-                                if re.match('(\w|-)+(\.(\w|-)+)*@(\w|-)+(\.(\w|-)+)+', mailAdd) != None:
+                                if re.match(r'(\w|-)+(\.(\w|-)+)*@(\w|-)+(\.(\w|-)+)+', mailAdd) is not None:
                                     domain = mailAdd[re.search('@', mailAdd).span()[0]+1:]
                                     if domain == self.domain or domain == otherMailDomain:
                                         if mailAdd in self.banActs:
@@ -412,8 +413,8 @@ class Smtp:
                             break
 
                         elif re.match('(([hH][eE])|([eE][hH]))[lL][oO]', data):
-                            valid = re.search('\S+', data[4:])
-                            if valid != None:
+                            valid = re.search(r'\S+', data[4:])
+                            if valid is not None:
                                 heloFrom = valid.group()
                                 state = 'AUTH_AFTER'
                                 message = '250 OK\r\n'
@@ -437,10 +438,10 @@ class Smtp:
 
                         if data[0:8].lower() == 'rcpt to:':
                             mailAdd = ''
-                            valid = re.search('<(\w|@|_|-|\.)*>', data[8:])
-                            if valid != None:
+                            valid = re.search(r'<(\w|@|_|-|\.)*>', data[8:])
+                            if valid is not None:
                                 mailAdd = valid.group()[1:-1]
-                                if re.match('(\w|-)+(\.(\w|-)+)*@(\w|-)+(\.(\w|-)+)+', mailAdd) != None:
+                                if re.match(r'(\w|-)+(\.(\w|-)+)*@(\w|-)+(\.(\w|-)+)+', mailAdd) is not None:
                                     domain = mailAdd[re.search('@', mailAdd).span()[0]+1:]
                                     if domain == self.domain or domain == otherMailDomain:
                                         if mailAdd in self.banActs:
@@ -463,10 +464,10 @@ class Smtp:
 
                         elif data[0:10].lower() == 'mail from:':
                             mailAdd = ''
-                            valid = re.search('<(\w|@|_|-|\.)*>', data[10:])
-                            if valid != None:
+                            valid = re.search(r'<(\w|@|_|-|\.)*>', data[10:])
+                            if valid is not None:
                                 mailAdd = valid.group()[1:-1]
-                                if re.match('(\w|-)+(\.(\w|-)+)*@(\w|-)+(\.(\w|-)+)+', mailAdd) != None:
+                                if re.match(r'(\w|-)+(\.(\w|-)+)*@(\w|-)+(\.(\w|-)+)+', mailAdd) is not None:
                                     domain = mailAdd[re.search('@', mailAdd).span()[0]+1:]
                                     if domain == self.domain or domain == otherMailDomain:
                                         if mailAdd in self.banActs:
@@ -475,16 +476,16 @@ class Smtp:
                                             mailFrom = mailAdd
                                             state = 'MAILFROM'
                                             message = '250 Mail OK\r\n'
-                                    else: 
+                                    else:
                                         message = '550 domain not support yet\r\n'
                                 else:
                                     message = '550 Invalid User\r\n'
                             else:
                                 message = '500 Error: bad syntax\r\n'
 
-                        elif re.match('(([hH][eE])|([eE][hH]))[lL][oO]', data):
-                            valid = re.search('\S+', data[4:])
-                            if valid != None:
+                        elif re.match(r'(([hH][eE])|([eE][hH]))[lL][oO]', data):
+                            valid = re.search(r'\S+', data[4:])
+                            if valid is not None:
                                 heloFrom = valid.group()
                                 state = 'MAILFROM'
                                 message = '250 OK\r\n'
@@ -514,10 +515,10 @@ class Smtp:
 
                         elif data[0:8].lower() == 'rcpt to:':
                             mailAdd = ''
-                            valid = re.search('<(\w|@|_|-|\.)*>', data[8:])
-                            if valid != None:
+                            valid = re.search(r'<(\w|@|_|-|\.)*>', data[8:])
+                            if valid is not None:
                                 mailAdd = valid.group()[1:-1]
-                                if re.match('(\w|-)+(\.(\w|-)+)*@(\w|-)+(\.(\w|-)+)+', mailAdd) != None:
+                                if re.match(r'(\w|-)+(\.(\w|-)+)*@(\w|-)+(\.(\w|-)+)+', mailAdd) is not None:
                                     domain = mailAdd[re.search('@', mailAdd).span()[0]+1:]
                                     if domain == self.domain or domain == otherMailDomain:
                                         if mailAdd in self.banActs:
@@ -534,8 +535,8 @@ class Smtp:
                                 message = '500 Error: bad syntax\r\n'
 
                         elif re.match('(([hH][eE])|([eE][hH]))[lL][oO]', data):
-                            valid = re.search('\S+', data[4:])
-                            if valid != None:
+                            valid = re.search(r'\S+', data[4:])
+                            if valid is not None:
                                 heloFrom = valid.group()
                                 state = 'RCPTTO'
                                 message = '250 OK\r\n'
@@ -549,7 +550,7 @@ class Smtp:
                             message = '502 Error: command not implemented\r\n'
 
                         connection.send(message.encode('utf-8'))
-                    
+
                     elif state == 'DATA':
                         mail = mail + data + '\r\n'
                         if mail[-7:] == '\r\n\r\n.\r\n':
@@ -565,7 +566,7 @@ class Smtp:
                                     mailID = str(uuid.uuid4())
                                     ip = address[0]
                                     email = [mailID, userID, heloFrom, ip, mailFrom, rcptTo, mail, time_]
-                                    send = threading.Thread(target = self.sendMail, args = (email,))
+                                    send = threading.Thread(target=self.sendMail, args=(email,))
                                     send.start()
 
                                 state = 'AUTH_AFTER'
@@ -578,12 +579,13 @@ class Smtp:
                     break
         try:
             connection.close()
-            if self.log != None:
-                    now = datetime.datetime.now()
-                    now = now.strftime("%Y-%m-%d-%H:%M:%S")
-                    self.log.write('disconnection from (' + address[0] + ',' + str(address[1]) + ') at ' + now + '\n')
+            if self.log is not None:
+                now = datetime.datetime.now()
+                now = now.strftime("%Y-%m-%d-%H:%M:%S")
+                self.log.write('disconnection from (' + address[0] + ',' + str(address[1]) + ') at ' + now + '\n')
         except:
             print('connection lost by accident')
+
 
 if __name__ == "__main__":
     smtp = Smtp()

@@ -9,8 +9,8 @@ from MailSystem.pop3 import Pop3
 
 class Server:
     default = {
-        'server': {'domain': 'test.com', 'mailMaxSize': 65565, 'logMaxSize': 65535}, 
-        'smtp': {'port': 8025, 'logDir': '/log/smtp', 'banIPs': [], 'banActs': []}, 
+        'server': {'domain': 'test.com', 'mailMaxSize': 65565, 'logMaxSize': 65535},
+        'smtp': {'port': 8025, 'logDir': '/log/smtp', 'banIPs': [], 'banActs': []},
         'pop3': {'port': 8110, 'logDir': '/log/pop3', 'banIPs': [], 'banActs': []}
     }
 
@@ -32,7 +32,7 @@ class Server:
             self.domain = server_config['domain']
             self.mailMaxSize = server_config['mailMaxSize']
             self.logMaxSize = server_config['logMaxSize']
-            self.logDir = [smtp_config['logDir'], pop3_config['logDir']] 
+            self.logDir = [smtp_config['logDir'], pop3_config['logDir']]
 
             self.smtp = Smtp(server_config['domain'], smtp_config['port'], smtp_config['logDir'], smtp_config['banIPs'], smtp_config['banActs'])
             self.pop3 = Pop3(pop3_config['port'], pop3_config['logDir'], pop3_config['banIPs'], pop3_config['banActs'], server_config['mailMaxSize'])
@@ -57,10 +57,7 @@ class Server:
         self.server_shutdown()
         self.server_setup(self.currConfigs)
 
-    def config_modify(self, configJson): # 尚未判断value合法性
-        
-        
-
+    def config_modify(self, configJson):  # 尚未判断value合法性
         newConfigs = self.currConfigs
         try:
             for server in newConfigs.keys():
@@ -80,7 +77,6 @@ class Server:
             return self.currConfigs
 
     def config_show(self):
-        
         try:
             filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'config.json')
 
@@ -89,12 +85,11 @@ class Server:
             return config_json
 
         except Exception as e:
-            logging.error('str(Exception):\t', str(Exception))
-            logging.error('str(e):\t\t', str(e))
-            logging.error('repr(e):\t', repr(e))
-            logging.error('########################################################')
+            # logging.error('str(Exception):\t', str(Exception))
+            # logging.error('str(e):\t\t', str(e))
+            # logging.error('repr(e):\t', repr(e))
+            # logging.error('########################################################')
             return -1
-
 
     def config_default(self):
         self.currConfigs = self.default
@@ -123,10 +118,10 @@ class Server:
         for root, dirs, files in os.walk(dir, topdown=False):
             for name in files:
                 filepath = os.path.join(root, name)
-                if overSize == True or name[-4:] != '.log':
+                if overSize is True or name[-4:] != '.log':
                     os.remove(filepath)
                     continue
-                
+
                 size = os.path.getsize(filepath)
                 if size + allSize > self.logMaxSize:
                     overSize = True
