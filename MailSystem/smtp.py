@@ -558,7 +558,7 @@ class Smtp:
                             state = 'QUEUED'
                             message = '250 Mail OK queued\r\n'
                             connection.send(message.encode('utf-8'))
-                            if state ==  'QUEUED':
+                            if state == 'QUEUED':
                                 for rcptTo in rcptTos:
                                     now = datetime.datetime.now()
                                     now = now.strftime("%Y-%m-%d %H:%M:%S")

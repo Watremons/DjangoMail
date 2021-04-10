@@ -1,5 +1,4 @@
 import os
-import sys
 
 import json
 
@@ -17,47 +16,47 @@ class Server:
     def __init__(self, configs=default):
         self.state = 'stop'
         self.currConfigs = self.default
-        self.server_setup(configs)
+        self.ServerSetup(configs)
 
-    def server_setup(self, configs):
+    def ServerSetup(self, configs):
         if configs is None:
             configs = self.default
 
         if self.state == 'stop':
             self.state = 'setup'
             self.currConfigs = configs
-            server_config = configs['server']
-            smtp_config = configs['smtp']
-            pop3_config = configs['pop3']
-            self.domain = server_config['domain']
-            self.mailMaxSize = server_config['mailMaxSize']
-            self.logMaxSize = server_config['logMaxSize']
-            self.logDir = [smtp_config['logDir'], pop3_config['logDir']]
+            serverConfig = configs['server']
+            smtpConfig = configs['smtp']
+            pop3Config = configs['pop3']
+            self.domain = serverConfig['domain']
+            self.mailMaxSize = serverConfig['mailMaxSize']
+            self.logMaxSize = serverConfig['logMaxSize']
+            self.logDir = [smtpConfig['logDir'], pop3Config['logDir']]
 
-            self.smtp = Smtp(server_config['domain'], smtp_config['port'], smtp_config['logDir'], smtp_config['banIPs'], smtp_config['banActs'])
-            self.pop3 = Pop3(pop3_config['port'], pop3_config['logDir'], pop3_config['banIPs'], pop3_config['banActs'], server_config['mailMaxSize'])
+            self.smtp = Smtp(serverConfig['domain'], smtpConfig['port'], smtpConfig['logDir'], smtpConfig['banIPs'], smtpConfig['banActs'])
+            self.pop3 = Pop3(pop3Config['port'], pop3Config['logDir'], pop3Config['banIPs'], pop3Config['banActs'], serverConfig['mailMaxSize'])
 
             print('server setup')
         else:
             print('server has been setup.')
 
-    def server_run(self):
+    def ServerRun(self):
         self.state = 'run'
         self.smtp.start()
         self.pop3.start()
         print('server start running')
 
-    def server_shutdown(self):
+    def ServerShutdown(self):
         self.state = 'stop'
         self.smtp.stop()
         self.pop3.stop()
         print('server shutdown')
 
-    def server_restart(self):
-        self.server_shutdown()
-        self.server_setup(self.currConfigs)
+    def ServerRestart(self):
+        self.ServerShutdown()
+        self.ServerSetup(self.currConfigs)
 
-    def config_modify(self, configJson):  # 尚未判断value合法性
+    def ConfigModify(self, configJson):  # 尚未判断value合法性
         newConfigs = self.currConfigs
         try:
             for server in newConfigs.keys():
@@ -72,17 +71,17 @@ class Server:
             return -1
         else:
             self.currConfigs = newConfigs
-            self.server_shutdown()
-            self.server_setup(self.currConfigs)
+            self.ServerShutdown()
+            self.ServerSetup(self.currConfigs)
             return self.currConfigs
 
-    def config_show(self):
+    def ConfigShow(self):
         try:
             filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'config.json')
 
             with open(filename, 'r', encoding='utf8')as fp:
-                config_json = json.load(fp)
-            return config_json
+                configJson = json.load(fp)
+            return configJson
 
         except Exception as e:
             # logging.error('str(Exception):\t', str(Exception))
@@ -91,12 +90,12 @@ class Server:
             # logging.error('########################################################')
             return -1
 
-    def config_default(self):
+    def ConfigDefault(self):
         self.currConfigs = self.default
         print('the config set back to default')
         return self.currConfigs
 
-    def config_save(self, filename):
+    def ConfigSave(self, filename):
         filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), filename)
         try:
             with open(filename, 'w') as f:
@@ -104,7 +103,7 @@ class Server:
         except:
             print('save failed')
 
-    def getAllLogFile(self, type):
+    def GetAllLogFile(self, type):
         if type != 0 and type != 1:
             print('parameter error')
             return
@@ -134,13 +133,13 @@ class Server:
 
         return fileNames, filePaths, fileSizes
 
-    def showAllLogFile(self, type):
+    def ShowAllLogFile(self, type):
         fileNames, _, fileSizes = self.getAllLogFile(type)
         print('log files ' + str(len(fileNames)))
         for i in range(len(fileNames)):
             print(str(i+1) + ' : ' + fileNames[i] + ' : ' + str(fileSizes[i]))
 
-    def checkLogFile(self, type, num):
+    def CheckLogFile(self, type, num):
         fileNames, filePaths, filesizes = self.getAllLogFile(type)
         try:
             file = open(filePaths[num-1], 'r')
@@ -152,7 +151,7 @@ class Server:
             content = file.read()
             print(content)
 
-    def delLogFile(self, type, num):
+    def DelLogFile(self, type, num):
         fileNames, filePaths, filesizes = self.getAllLogFile(type)
         try:
             os.remove(filePaths[num-1])
@@ -165,8 +164,8 @@ class Server:
 
 def main():
     server = Server()
-    # server.config_save("config.json")
-    server.showAllLogFile(0)
+    # server.ConfigSave("config.json")
+    server.ShowAllLogFile(0)
 
 
 if __name__ == '__main__':

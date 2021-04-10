@@ -103,7 +103,7 @@ def ShowConfig(request):
                 "status": 404
             })
         elif request.method == "GET":
-            configJson = settings.mailSystemServer.config_show()
+            configJson = settings.mailSystemServer.ConfigShow()
             if configJson == -1:
                 return JsonResponse({
                     "message": "配置文件读取失败",
@@ -139,7 +139,7 @@ def ModifyConfig(request):
         elif request.method == 'POST':  # 判断合法性
             configJson = request.POST.get('configJson', None)
             if configJson != None:
-                updatedConfig = settings.mailSystemServer.config_modify(json.loads(configJson))
+                updatedConfig = settings.mailSystemServer.ConfigModify(json.loads(configJson))
                 return JsonResponse({
                     "data": json.dumps(updatedConfig),
                     "message": "修改成功",
@@ -173,7 +173,7 @@ def ResetConfig(request):
 
         if request.method == 'GET':
             return JsonResponse({
-                "data": json.dumps(settings.mailSystemServer.config_default()),
+                "data": json.dumps(settings.mailSystemServer.ConfigDefault()),
                 "message": "成功",
                 "status": 200
             })
@@ -197,15 +197,15 @@ def ControlSmtpServer(request):
             "message": checkRes["message"],
             "status": 404
             })
-    elif request.method == "POST":
+    else:
         method = request.POST.get("method", None)
 
         if method == "start":
             settings.mailSystemServer.stmp.start()
         elif method == "restart":
-            settings.mailSystemServer.pop3.restart()
+            settings.mailSystemServer.stmp.restart()
         elif method == "stop":
-            settings.mailSystemServer.pop3.stop()
+            settings.mailSystemServer.stmp.stop()
         else:
             return JsonResponse({
                 "message": "命令错误或未填写命令",
@@ -214,11 +214,6 @@ def ControlSmtpServer(request):
         return JsonResponse({
             "message": method+"successfully!",
             "status": 200
-            })
-    else:
-        return JsonResponse({
-            "message": "请求方式未注册",
-            "status": 404
             })
 
 
@@ -230,7 +225,7 @@ def ControlPop3Server(request):
             "message": checkRes["message"],
             "status": 404
             })
-    elif request.method == "POST":
+    else:
         method = request.POST.get("method", None)
 
         if method == "start":
@@ -247,11 +242,6 @@ def ControlPop3Server(request):
         return JsonResponse({
             "message": method+"successfully!",
             "status": 200
-            })
-    else:
-        return JsonResponse({
-            "message": "请求方式未注册",
-            "status": 404
             })
 
 
