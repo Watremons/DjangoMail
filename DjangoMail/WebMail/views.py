@@ -20,6 +20,14 @@ from WebMail import paginations
 
 # Standard libs
 import json
+
+# Import server
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+from MailSystem.server import Server
+mailSystemServer = Server()
+
 # Create your views here.
 
 # Set log file
@@ -95,97 +103,61 @@ def Check(request, authLevel: list, methodType: str) -> dict:
 
 # Function: show config
 def ShowConfig(request):
-    if request.session.get('isLogin', None):
-        auth = request.session.get('authorityValue', None)
-        if auth != '2':
-            return JsonResponse({
-                "message": "您的权限不足",
-                "status": 404
-            })
-        elif request.method == "GET":
-            configJson = settings.mailSystemServer.ConfigShow()
-            if configJson == -1:
-                return JsonResponse({
-                    "message": "配置文件读取失败",
-                    "status": 404
-                })    
-
-            return JsonResponse({
-                "data": json.dumps(configJson),
-                "message": "成功",
-                "status": 200
-            })
-        else:
-            return JsonResponse({
-                "message": "请求方式未注册",
-                "status": 404
-            })
-    else:
+    checkRes = Check(request, [1, 2], 'GET')
+    if not Check["result"]:
         return JsonResponse({
-            "message": "您尚未登录",
+            "message": checkRes["message"],
             "status": 404
+        })
+    else:
+        print(settings.TMP)
+        configJson = mailSystemServer.ConfigShow()
+        if configJson == -1:
+            return JsonResponse({
+                "message": "配置文件读取失败",
+                "status": 404
+            })    
+        return JsonResponse({
+            "data": json.dumps(configJson),
+            "message": "成功",
+            "status": 200
         })
 
 
 # Function: modify config
 def ModifyConfig(request):
-    if request.session.get('isLogin', None):
-        auth = request.session.get('authorityValue', None)
-        if auth != '2':
-            return JsonResponse({
-                "message": "您未登录或权限不足",
-                "status": 404
-            })
-        elif request.method == 'POST':  # 判断合法性
-            configJson = request.POST.get('configJson', None)
-            if configJson != None:
-                updatedConfig = settings.mailSystemServer.ConfigModify(json.loads(configJson))
-                return JsonResponse({
-                    "data": json.dumps(updatedConfig),
-                    "message": "修改成功",
-                    "status": 200
-                })
-            else:
-                pass
-        else:
-            return JsonResponse({
-                "message": "请求方式未注册",
-                "status": 404
-            })
-            
-    else:
+    checkRef = Check(request, [1, 2], 'POST')
+    if not checkRef["result"]:
         return JsonResponse({
-            "message": "您尚未登录",
+            "message": checkRef["message"],
             "status": 404
         })
-
-
-# Function: reset config
-
-def ResetConfig(request):
-    if request.session.get('isLogin', None):
-        auth = request.session.get('authorityValue', None)
-        if auth != '2':
+    else:  # 判断合法性
+        configJson = request.POST.get('configJson', None)
+        if configJson != None:
+            updatedConfig = mailSystemServer.ConfigModify(json.loads(configJson))
             return JsonResponse({
-                "message": "您未登录或权限不足",
-                "status": 404
-            })
-
-        if request.method == 'GET':
-            return JsonResponse({
-                "data": json.dumps(settings.mailSystemServer.ConfigDefault()),
-                "message": "成功",
+                "data": json.dumps(updatedConfig),
+                "message": "修改成功",
                 "status": 200
             })
         else:
-            return JsonResponse({
-                "message": "请求方式未注册",
-                "status": 404
-            })
+            pass
+            
+
+# Function: reset config
+def ResetConfig(request):
+    checkRef = Check(request, [1, 2], 'POST')
+    if not checkRef["result"]:
+        return JsonResponse({
+            "message": checkRef["message"],
+            "status": 404
+        })
     else:
         return JsonResponse({
-            "message": "您尚未登录",
-            "status": 404
+            "data": json.dumps(mailSystemServer.ConfigDefault()),
+            "message": "成功",
+            "status": 200
         })
 
 
