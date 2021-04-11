@@ -1,12 +1,3 @@
-'''
-@Author: One_Random
-@Date: 2020-05-23 23:12:09
-@LastEditors: One_Random
-@LastEditTime: 2020-05-26 22:50:22
-@Description: Copyright © 2020 One_Random. All rights reserved.
-@FilePath: /mail/main.py
-'''
-
 import os
 import sys
 import json
@@ -18,6 +9,7 @@ from socket import *
 from user import *
 from server import *
 from MailSystem.mysql import sqlHandle
+from MailSystem.user import User, UserManager
 type = 0
 connection = None
 state = 0
@@ -107,10 +99,10 @@ def helpInfo_():
     print_('type "logs delete" to delete a log')
 
 
-def sendToMany(sender, allUser, users, data):
+def sendToMany(sender, allUser, users, subject, data):
     if allUser is True:
         users = []
-        results = sqlHandle('Users', 'SELECT', 'username')
+        results = sqlHandle('Users', 'SELECT', 'userName')
         for result in results:
             users.append(result[0])
 
@@ -119,21 +111,22 @@ def sendToMany(sender, allUser, users, data):
         return
 
     for user in users:
-        results = sqlHandle('Users', 'SELECT', 'userID', 'username = \'' + user + '\'')
+        results = sqlHandle('Users', 'SELECT', 'userNo', 'userName = \'' + user + '\'')
         if len(results) == 0:
             print_('send error, no such user, pass')
             continue
-        mailID = str(uuid.uuid4())
-        recvID = str(results[0][0])
-        heloFrom = 'admin'
+
+        isRead = 0
+        isServed = 1
         ip = 'system message'
         mailFrom = sender
         rcptTo = user
         content = data
         time_ = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         if sqlHandle(
-                'recvmail', 'INSERT', '\'' + mailID + '\'', '\'' + recvID + '\'',
-                '\'' + heloFrom + '\'', '\'' + ip + '\'', '\'' + mailFrom + '\'', '\'' + rcptTo + '\'', '\'' + content + '\'', '\'' + time_ + '\''
+                'Mails', 'INSERT', '\'' + rcptTo + '\'', '\'' + mailFrom + '\'',
+                '\'' + subject + '\'', '\'' + ip + '\'', '\'' + isRead + '\'', '\'' + isServed + '\'',
+                '\'' + content + '\'', '\'' + time_ + '\''
                 ) is False:
 
             print_('send to ' + user + 'failed')
@@ -336,7 +329,10 @@ def run(server, config):
                         else:
                             print_('error')
 
-                    send = threading.Thread(target=sendToMany, args=(user.username, allUser, users, mail))
+                    send = threading.Thread(
+                        target=sendToMany,
+                        args=(user.username, allUser, users, "System Admin Message", mail)
+                        )
                     send.start()
                     send.join()
                 elif cmd == 'quit':
@@ -468,7 +464,10 @@ def run(server, config):
                         else:
                             print_('error')
 
-                    send = threading.Thread(target=sendToMany, args=(user.username, allUser, users, mail))
+                    send = threading.Thread(
+                        target=sendToMany,
+                        args=(user.username, allUser, users, "System Admin Message", mail)
+                        )
                     send.start()
                     send.join()
                 elif cmd == 'quit':

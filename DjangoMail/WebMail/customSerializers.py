@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from WebMail.models import Users, LoginData, Contacts
+from WebMail.models import Users, Contacts
 from WebMail.models import Mails, Attachments
 
 
@@ -12,12 +12,6 @@ class UsersSerializer(serializers.ModelSerializer):
 class MailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mails
-        fields = '__all__'
-
-
-class LoginDataSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = LoginData
         fields = '__all__'
 
 

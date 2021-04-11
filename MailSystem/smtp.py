@@ -90,7 +90,7 @@ class Smtp:
                 print('connection close!')
             self.server.close()
 
-            if self.log != None:
+            if self.log is not None:
                 now = datetime.datetime.now()
                 now = now.strftime("%Y-%m-%d-%H:%M:%S")
                 self.log.write('smtp stop at ' + now + '\n')
@@ -261,7 +261,7 @@ class Smtp:
         userID = -1
         auth = False
 
-        message = '220 localhost Example Mail System (EMS(20200501))\r\n'
+        message = '220 localhost Example Mail System (EMS(20210501))\r\n'
         connection.send(message.encode('utf-8'))
         state = 'WAITING'
         while True:
@@ -273,6 +273,7 @@ class Smtp:
             else:
                 try:
                     data = message.decode('utf-8')[0:-2]
+                    # 取得倒数两个字符外的字符
 
                     if self.log is not None:
                         now = datetime.datetime.now()
@@ -283,6 +284,7 @@ class Smtp:
                             ' from (' + address[0] + ', ' + str(address[1]) + ')\n')
 
                     if data[0:4].lower() == 'noop':
+                        # 若报文前四项为noop，为空，直接返回
                         message = '250 OK\r\n'
                         connection.send(message.encode('utf-8'))
                         continue
@@ -570,6 +572,7 @@ class Smtp:
                                     send.start()
 
                                 state = 'AUTH_AFTER'
+
                     else:
                         print(state + 'error')
                         break

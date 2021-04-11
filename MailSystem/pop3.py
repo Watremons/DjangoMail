@@ -115,15 +115,6 @@ class Pop3:
         print('max client number set successfully, the server is restarting...')
         self.restart()
 
-    # def signalHandler(self, signal, frame):
-    #     if self.LISTENING == False:
-    #         print('')
-    #         sys.exit()
-
-    #     self.LISTENING = False
-    #     print('\nTerminated listen by keyboard.')
-    #     self.stop()
-
     def authentication(self, username, password):
         try:
             results = sqlHandle('user', 'SELECT', 'userID, password', 'username = \'' + username + '\'')
@@ -213,7 +204,7 @@ class Pop3:
         mailSize = 0
         mailsSize = []
         deles = []
-        message = '+OK Welcome to localhost Example Mail System Pop3 Server (EMS(20200420))\r\n'
+        message = '+OK Welcome to localhost Example Mail System Pop3 Server (EMS(20210420))\r\n'
         connection.send(message.encode('utf-8'))
 
         state = 'AUTH_LOGIN'

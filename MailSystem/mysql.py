@@ -2,7 +2,7 @@ import pymysql
 
 
 def sqlHandle(tableName, handle, *data):
-    usableTables = ['Mails', 'Users', 'Contacts', 'LoginData', 'Attachments']
+    usableTables = ['Mails', 'Users', 'Contacts', 'Attachments']
     # ip = '123.56.118.225'
     ip = '81.70.104.60'
     sqluser = 'root'

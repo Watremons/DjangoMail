@@ -1,5 +1,4 @@
 # Django lib
-from django.shortcuts import render
 from django.http import JsonResponse
 from django_redis import get_redis_connection
 from django.utils import timezone
@@ -275,7 +274,7 @@ def SendMails(request):
                 newMailList = []
                 for receiver in receiverList:
                     newMailInfo = models.Mails.objects.create(
-                        receivers=receiver,
+                        receiver=receiver,
                         sender=sender.mailAddress,
                         subject=subject,
                         isRead=False,
@@ -302,6 +301,45 @@ def SendMails(request):
             "status": 200
             })
 
+
+# Function: receive mails
+def ReceiveMails(request):
+    CheckRes = Check(request, [0, 1, 2], "POST")
+    if not CheckRes["result"]:
+        return JsonResponse({"message": CheckRes["message"], "status": 404})
+    else:
+        userNo = request.session.get("userNo", None)
+        try:
+            # Search for sender
+            receiver = models.Users.objects.filter(userNo=int(userNo))
+            if not receiver.exist():
+                return JsonResponse({
+                    "message": "当前登录用户不合法！",
+                    "status": 404
+                })
+
+            receiver = receiver.first()
+
+            # Create new mails
+            notReadMailList = []
+            newMails = models.Mails.objects.filter(
+                receiver=receiver.mailAddress,
+                isRead=False
+            ).values()
+            notReadMailList.append(newMails)
+
+            # settings.mailSystemServer.pop3.
+        except Exception as e:
+            logging.error('str(Exception):\t', str(Exception))
+            logging.error('str(e):\t\t', str(e))
+            logging.error('repr(e):\t', repr(e))
+            logging.error('########################################################')
+            return JsonResponse({"message": "数据库出错，邮件发送失败", "status": 404})
+
+        return JsonResponse({
+            "message": "发送完成",
+            "status": 200
+            })
 # Function: config
 
 
