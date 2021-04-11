@@ -11,9 +11,9 @@ from django.utils import timezone
 
 class Users(models.Model):
     userNo = models.AutoField(db_column='userNo', primary_key=True)
-    userName = models.CharField(db_column='userName', max_length=50, blank=True)
+    userName = models.CharField(db_column='userName', max_length=50, default='未命名')
     createDate = models.DateField(db_column='createDate', default=timezone.now)
-    mailAddress = models.CharField(db_column='mailAddress', max_length=50, blank=True)
+    mailAddress = models.CharField(db_column='mailAddress', max_length=50)
     authorityValue = models.IntegerField(db_column='authorityValue', default=0)  # 0:user 1:admin 2:superAdmin
     userState = models.BooleanField(db_column='userState', default=True)  # true:normal false:banned
 
@@ -23,15 +23,14 @@ class Users(models.Model):
 
 class Mails(models.Model):
     mailNo = models.AutoField(db_column='mailNo', primary_key=True)
-    receiver = models.CharField(db_column='receive', max_length=200, blank=True)
-    sender = models.CharField(db_column='sender', max_length=200, blank=True)
-    subject = models.CharField(db_column='subject', max_length=200, blank=True)
+    receiver = models.CharField(db_column='receive', max_length=200)
+    sender = models.CharField(db_column='sender', max_length=200)
+    subject = models.CharField(db_column='subject', max_length=200, default='未命名的主题')
     copy = models.CharField(db_column='copy', max_length=200, blank=True)
     isRead = models.BooleanField(db_column='isRead', default=False)  # false:notRead true:haveRead
     isServed = models.IntegerField(db_column='authorityValue', default=0)  # 0:serving 1:haveServed 2:failToServe
-    content = models.CharField(db_column='content', max_length=500, blank=True)
+    content = models.CharField(db_column='content', max_length=500, default='内容为空')
     rendOrReceiptDate = models.DateField(db_column='rendOrReceiptDate', default=timezone.now)
-    userNo = models.ForeignKey(Users, models.CASCADE, db_column='userNo', default='1')
 
     class Meta:
         db_table = 'Mails'
@@ -50,7 +49,7 @@ class Contacts(models.Model):
     contactNo = models.AutoField(db_column='contactNo', primary_key=True)
     contactName = models.CharField(db_column='userName', max_length=50)
     tel = models.CharField(db_column='tel', max_length=50, blank=True)
-    mailAddress = models.CharField(db_column='mailAddress', max_length=50, blank=True)
+    mailAddress = models.CharField(db_column='mailAddress', max_length=50)
     userNo = models.ForeignKey(Users, models.CASCADE, db_column='userNo', default='1')
 
     class Meta:

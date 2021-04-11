@@ -1,0 +1,64 @@
+[2021-04-11 00:54:01,238][Thread-7:4876][task_id:django.request][log.py:230][ERROR][Internal Server Error: /WebMail/showconfig/]
+Traceback (most recent call last):
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py", line 107, in ShowConfig
+    configJson = settings.mailSystemServer.ConfigShow()
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\conf\__init__.py", line 83, in __getattr__
+    val = getattr(self._wrapped, name)
+AttributeError: 'Settings' object has no attribute 'mailSystemServer'
+[2021-04-11 01:05:26,551][Thread-7:13324][task_id:django.request][log.py:230][ERROR][Internal Server Error: /WebMail/showconfig/]
+Traceback (most recent call last):
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py", line 108, in ShowConfig
+    configJson = settings.mailSystemServer.ConfigShow()
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\conf\__init__.py", line 83, in __getattr__
+    val = getattr(self._wrapped, name)
+AttributeError: 'Settings' object has no attribute 'mailSystemServer'
+[2021-04-11 01:07:07,197][Thread-7:21728][task_id:django.request][log.py:230][ERROR][Internal Server Error: /WebMail/showconfig/]
+Traceback (most recent call last):
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py", line 113, in ShowConfig
+    configJson = settings.mailSystemServer.ConfigShow()
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\conf\__init__.py", line 83, in __getattr__
+    val = getattr(self._wrapped, name)
+AttributeError: 'Settings' object has no attribute 'mailSystemServer'
+[2021-04-11 01:15:45,005][Thread-7:2032][task_id:django.request][log.py:230][ERROR][Internal Server Error: /WebMail/resetconfig/]
+Traceback (most recent call last):
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py", line 107, in ShowConfig
+    if not Check["result"]:
+TypeError: 'function' object is not subscriptable
+[2021-04-11 01:16:12,286][Thread-7:26300][task_id:django.request][log.py:230][ERROR][Internal Server Error: /WebMail/resetconfig/]
+Traceback (most recent call last):
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py", line 158, in ResetConfig
+    "data": json.dumps(settings.mailSystemServer.ConfigDefault()),
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\conf\__init__.py", line 83, in __getattr__
+    val = getattr(self._wrapped, name)
+AttributeError: 'Settings' object has no attribute 'mailSystemServer'
+[2021-04-11 01:16:26,775][Thread-7:26300][task_id:django.request][log.py:230][ERROR][Internal Server Error: /WebMail/resetconfig/]
+Traceback (most recent call last):
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py", line 158, in ResetConfig
+    "data": json.dumps(settings.mailSystemServer.ConfigDefault()),
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\conf\__init__.py", line 83, in __getattr__
+    val = getattr(self._wrapped, name)
+AttributeError: 'Settings' object has no attribute 'mailSystemServer'

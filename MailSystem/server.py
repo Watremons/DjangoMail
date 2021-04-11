@@ -17,6 +17,7 @@ class Server:
         self.state = 'stop'
         self.currConfigs = self.default
         self.ServerSetup(configs)
+        self.path = os.path.abspath(os.path.dirname(__file__))
 
     def ServerSetup(self, configs):
         if configs is None:
@@ -49,20 +50,19 @@ class Server:
     def ServerShutdown(self):
         self.state = 'stop'
         self.smtp.stop()
-        self.pop3.stop()
+        self.pop3.stop() 
         print('server shutdown')
 
     def ServerRestart(self):
         self.ServerShutdown()
         self.ServerSetup(self.currConfigs)
 
-    def ConfigModify(self, configJson):  # 尚未判断value合法性
+    def ConfigModify(self, configJson):
         newConfigs = self.currConfigs
         try:
             for server in newConfigs.keys():
                 for config in newConfigs[server].keys():
                     newConfigs[server][config] = configJson[server][config]
-
             # for serverOld, serverNew in zip(newConfigs.values(), configJson.values()):
             #     for configOld, configNew in zip(serverOld.values(), serverNew.values()):
             #         configOld = configNew
@@ -71,16 +71,18 @@ class Server:
             return -1
         else:
             self.currConfigs = newConfigs
+            filename = os.path.join(self.path, filename)
+            with open(filename, 'w', encoding='utf8') as f:
+                configJson = json.dump(newConfigs, f)
             self.ServerShutdown()
             self.ServerSetup(self.currConfigs)
             return self.currConfigs
 
     def ConfigShow(self):
         try:
-            filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'config.json')
-
-            with open(filename, 'r', encoding='utf8')as fp:
-                configJson = json.load(fp)
+            filename = os.path.join(self.path, 'config.json')
+            with open(filename, 'r', encoding='utf8') as f:
+                configJson = json.load(f)
             return configJson
 
         except Exception as e:
@@ -96,7 +98,7 @@ class Server:
         return self.currConfigs
 
     def ConfigSave(self, filename):
-        filename = os.path.join(os.path.abspath(os.path.dirname(__file__)), filename)
+        filename = os.path.join(self.path, filename)
         try:
             with open(filename, 'w') as f:
                 json.dump(self.currConfigs, f)

@@ -1,0 +1,139 @@
+[2021-04-09 00:28:22,746][MainThread:18640][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-09 00:34:26,126][MainThread:19532][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-09 00:34:36,070][Thread-1:7344][task_id:django.request][log.py:230][WARNING][Not Found: /]
+[2021-04-09 00:34:36,463][Thread-1:7344][task_id:django.request][log.py:230][WARNING][Not Found: /favicon.ico]
+[2021-04-09 00:34:46,549][Thread-3:2752][task_id:django.request][log.py:230][WARNING][Not Found: /docs]
+[2021-04-09 13:36:24,320][MainThread:17696][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 00:49:28,794][MainThread:21476][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 00:51:10,469][MainThread:21476][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\urls.py changed, reloading.]
+[2021-04-11 00:51:13,706][MainThread:3692][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 00:51:45,448][MainThread:3692][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 00:51:48,818][MainThread:32][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 00:51:55,419][MainThread:32][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 00:51:58,778][MainThread:9960][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 00:52:36,234][Thread-7:4876][task_id:django.request][log.py:230][WARNING][Not Found: /]
+[2021-04-11 00:52:36,615][Thread-7:4876][task_id:django.request][log.py:230][WARNING][Not Found: /favicon.ico]
+[2021-04-11 00:52:49,305][Thread-7:4876][task_id:django.request][log.py:230][WARNING][Not Found: /showconfig]
+[2021-04-11 00:52:53,953][Thread-7:4876][task_id:django.request][log.py:230][WARNING][Not Found: /showconfig/]
+[2021-04-11 00:53:33,249][Thread-7:4876][task_id:django.request][log.py:230][WARNING][Not Found: /webmail/showconfig/]
+[2021-04-11 00:53:40,243][Thread-7:4876][task_id:django.request][log.py:230][WARNING][Not Found: /webmails/showconfig/]
+[2021-04-11 00:54:01,238][Thread-7:4876][task_id:django.request][log.py:230][ERROR][Internal Server Error: /WebMail/showconfig/]
+Traceback (most recent call last):
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py", line 107, in ShowConfig
+    configJson = settings.mailSystemServer.ConfigShow()
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\conf\__init__.py", line 83, in __getattr__
+    val = getattr(self._wrapped, name)
+AttributeError: 'Settings' object has no attribute 'mailSystemServer'
+[2021-04-11 01:04:08,680][MainThread:9960][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\DjangoMail\settings.py changed, reloading.]
+[2021-04-11 01:04:11,976][MainThread:16808][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:04:14,837][MainThread:16808][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\DjangoMail\settings.py changed, reloading.]
+[2021-04-11 01:04:18,199][MainThread:24116][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:04:21,187][MainThread:24116][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\DjangoMail\settings.py changed, reloading.]
+[2021-04-11 01:04:24,577][MainThread:17600][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:04:27,571][MainThread:17600][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\DjangoMail\settings.py changed, reloading.]
+[2021-04-11 01:04:30,874][MainThread:6056][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:04:38,599][MainThread:6056][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\DjangoMail\settings.py changed, reloading.]
+[2021-04-11 01:04:42,081][MainThread:26620][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:04:52,512][MainThread:26620][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:04:56,082][MainThread:21556][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:05:01,650][MainThread:21556][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:05:05,191][MainThread:21912][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:05:17,379][Thread-7:13324][task_id:django.request][log.py:230][WARNING][Not Found: /]
+[2021-04-11 01:05:26,551][Thread-7:13324][task_id:django.request][log.py:230][ERROR][Internal Server Error: /WebMail/showconfig/]
+Traceback (most recent call last):
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py", line 108, in ShowConfig
+    configJson = settings.mailSystemServer.ConfigShow()
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\conf\__init__.py", line 83, in __getattr__
+    val = getattr(self._wrapped, name)
+AttributeError: 'Settings' object has no attribute 'mailSystemServer'
+[2021-04-11 01:06:26,397][MainThread:21912][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:06:30,206][MainThread:19712][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:06:41,482][MainThread:19712][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:06:56,296][MainThread:7704][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:07:07,197][Thread-7:21728][task_id:django.request][log.py:230][ERROR][Internal Server Error: /WebMail/showconfig/]
+Traceback (most recent call last):
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py", line 113, in ShowConfig
+    configJson = settings.mailSystemServer.ConfigShow()
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\conf\__init__.py", line 83, in __getattr__
+    val = getattr(self._wrapped, name)
+AttributeError: 'Settings' object has no attribute 'mailSystemServer'
+[2021-04-11 01:08:15,849][MainThread:7704][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\DjangoMail\settings.py changed, reloading.]
+[2021-04-11 01:08:19,203][MainThread:8256][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:08:26,017][MainThread:8256][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:08:29,488][MainThread:6652][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:08:47,987][MainThread:6652][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:08:51,249][MainThread:23892][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:10:42,128][MainThread:23892][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:10:45,688][MainThread:23580][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:10:54,728][MainThread:23580][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:10:58,135][MainThread:17020][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:12:02,830][MainThread:17020][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:12:06,348][MainThread:24048][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:12:16,722][MainThread:24048][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:12:19,896][MainThread:26184][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:12:31,117][MainThread:26184][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:12:34,460][MainThread:18028][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:13:08,718][MainThread:18028][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:13:12,128][MainThread:15272][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:14:03,768][MainThread:15272][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:14:20,872][MainThread:18048][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:14:47,114][MainThread:18048][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\urls.py changed, reloading.]
+[2021-04-11 01:14:50,332][MainThread:17124][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:14:53,280][MainThread:17124][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\urls.py changed, reloading.]
+[2021-04-11 01:14:56,844][MainThread:25740][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:14:59,789][MainThread:25740][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\urls.py changed, reloading.]
+[2021-04-11 01:15:03,295][MainThread:21628][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:15:08,948][MainThread:21628][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\urls.py changed, reloading.]
+[2021-04-11 01:15:12,591][MainThread:26192][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:15:45,005][Thread-7:2032][task_id:django.request][log.py:230][ERROR][Internal Server Error: /WebMail/resetconfig/]
+Traceback (most recent call last):
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py", line 107, in ShowConfig
+    if not Check["result"]:
+TypeError: 'function' object is not subscriptable
+[2021-04-11 01:16:01,409][MainThread:26192][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\urls.py changed, reloading.]
+[2021-04-11 01:16:04,746][MainThread:25740][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:16:12,286][Thread-7:26300][task_id:django.request][log.py:230][ERROR][Internal Server Error: /WebMail/resetconfig/]
+Traceback (most recent call last):
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py", line 158, in ResetConfig
+    "data": json.dumps(settings.mailSystemServer.ConfigDefault()),
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\conf\__init__.py", line 83, in __getattr__
+    val = getattr(self._wrapped, name)
+AttributeError: 'Settings' object has no attribute 'mailSystemServer'
+[2021-04-11 01:16:26,775][Thread-7:26300][task_id:django.request][log.py:230][ERROR][Internal Server Error: /WebMail/resetconfig/]
+Traceback (most recent call last):
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py", line 158, in ResetConfig
+    "data": json.dumps(settings.mailSystemServer.ConfigDefault()),
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\conf\__init__.py", line 83, in __getattr__
+    val = getattr(self._wrapped, name)
+AttributeError: 'Settings' object has no attribute 'mailSystemServer'
+[2021-04-11 01:16:42,248][MainThread:25740][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:16:45,483][MainThread:17052][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:16:50,883][MainThread:17052][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:16:54,263][MainThread:5904][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:17:15,500][MainThread:5904][task_id:django.utils.autoreload][autoreload.py:250][INFO][D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py changed, reloading.]
+[2021-04-11 01:17:19,214][MainThread:23916][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]
+[2021-04-11 01:18:00,566][MainThread:20668][task_id:django.utils.autoreload][autoreload.py:636][INFO][Watching for file changes with StatReloader]

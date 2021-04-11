@@ -22,6 +22,12 @@ urlpatterns = [
     # 邮件发送功能
     path('sendmails/', views.SendMails, name="sendmails"),
 
+    # 显示配置信息
+    path('showconfig/', views.ShowConfig, name='showconfig'),
+
+    # 重置配置信息
+    path('resetconfig/', views.ResetConfig, name='resetconfig'),
+
     # # 注册请求
     # path('signup/', views.Signup, name="signup"),
 
