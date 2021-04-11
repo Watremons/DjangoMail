@@ -125,7 +125,8 @@ def sendToMany(sender, allUser, users, subject, data):
         time_ = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         if sqlHandle(
                 'Mails', 'INSERT', '\'' + rcptTo + '\'', '\'' + mailFrom + '\'',
-                '\'' + subject + '\'', '\'' + ip + '\'', '\'' + isRead + '\'', '\'' + isServed + '\'',
+                '\'' + subject + '\'', '\'' + ip + '\'',
+                '\'' + isRead + '\'', '\'' + isServed + '\'',
                 '\'' + content + '\'', '\'' + time_ + '\''
                 ) is False:
 

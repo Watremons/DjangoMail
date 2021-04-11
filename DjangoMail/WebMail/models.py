@@ -15,7 +15,8 @@ class Users(models.Model):
     createDate = models.DateField(db_column='createDate', default=timezone.now)
     mailAddress = models.CharField(db_column='mailAddress', max_length=50)
     authorityValue = models.IntegerField(db_column='authorityValue', default=0)  # 0:user 1:admin 2:superAdmin
-    userState = models.BooleanField(db_column='userState', default=True)  # true:normal false:banned
+    userState = models.IntegerField(db_column='userState', default=1)  # 1:normal 0:banned
+    userPassword = models.CharField(db_column='userPassword', max_length=32)
 
     class Meta:
         db_table = 'Users'
@@ -26,23 +27,14 @@ class Mails(models.Model):
     receiver = models.CharField(db_column='receive', max_length=200)
     sender = models.CharField(db_column='sender', max_length=200)
     subject = models.CharField(db_column='subject', max_length=200, default='未命名的主题')
-    copy = models.CharField(db_column='copy', max_length=200, blank=True)
-    isRead = models.BooleanField(db_column='isRead', default=False)  # false:notRead true:haveRead
-    isServed = models.IntegerField(db_column='authorityValue', default=0)  # 0:serving 1:haveServed 2:failToServe
+    ip = models.CharField(db_column='ip', max_length=200)
+    isRead = models.IntegerField(db_column='isRead', default=0)  # 0:notRead 1:haveRead
+    isServed = models.IntegerField(db_column='isServed', default=0)  # 0:serving 1:haveServed 2:failToServe
     content = models.CharField(db_column='content', max_length=500, default='内容为空')
     rendOrReceiptDate = models.DateField(db_column='rendOrReceiptDate', default=timezone.now)
 
     class Meta:
         db_table = 'Mails'
-
-
-class LoginData(models.Model):
-    userId = models.OneToOneField(Users, models.CASCADE, db_column='userId', primary_key=True)
-    userPassword = models.CharField(db_column='userPassword', max_length=32)
-    salt = models.CharField(max_length=20)
-
-    class Meta:
-        db_table = 'LoginData'
 
 
 class Contacts(models.Model):

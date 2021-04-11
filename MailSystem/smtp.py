@@ -123,7 +123,7 @@ class Smtp:
         try:
             username = str(base64.b64decode(username.encode('utf-8')), 'utf-8')
             password = str(base64.b64decode(password.encode('utf-8')), 'utf-8')
-            results = sqlHandle('user', 'SELECT', 'userID, password', 'username = \'' + username + '\'')
+            results = sqlHandle('Users', 'SELECT', 'userNo, userPassword', 'userName = \'' + userName + '\'')
         except:
             return False, -1
         else:
@@ -229,17 +229,17 @@ class Smtp:
             return
 
         sqlHandle(
-            'sendmail', 'INSERT', '\'' + email[0] + '\'', str(email[1]),
+            'Mails', 'INSERT', '\'' + email[0] + '\'', str(email[1]),
             '\'' + email[2] + '\'', '\'' + email[3] + '\'',
             '\'' + email[4] + '\'', '\'' + email[5] + '\'',
             '\'' + email[6] + '\'', '\'' + email[7] + '\''
             )
 
     def receive(self, email):
-        results = sqlHandle('user', 'SELECT', 'userID', 'username = \'' + email[5] + '\'')
+        results = sqlHandle('Users', 'SELECT', 'userNo', 'userName = \'' + email[5] + '\'')
         if results is not ():
             sqlHandle(
-                'recvmail', 'INSERT', '\'' + email[0] + '\'', '\'' + str(results[0][0]) + '\'',
+                'Mails', 'INSERT', '\'' + email[0] + '\'', '\'' + str(results[0][0]) + '\'',
                 '\'' + email[2] + '\'', '\'' + email[3] + '\'',
                 '\'' + email[4] + '\'', '\'' + email[5] + '\'',
                 '\'' + email[6] + '\'', '\'' + email[7] + '\'')
