@@ -1,5 +1,6 @@
-from MailSystem.mysql import sqlHandle
+from mysql import sqlHandle
 import datetime
+
 
 class User:
     username = ''
@@ -16,7 +17,7 @@ class User:
             return True
 
         results = sqlHandle(
-            'Users', 'SELECT', 'userPassword, authorityValue, usable',
+            'Users', 'SELECT', 'userPassword, authorityValue, userState',
             'userName = \'' + username_ + '\''
             )
 
@@ -88,7 +89,7 @@ class User:
             print('user manager init error, did not login')
             return False
 
-        if self.type == '0':
+        if self.type == 1 or self.type == 2:
             self.manager = UserManager()
             print('user manager init successfully!')
             return True

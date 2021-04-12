@@ -8,8 +8,8 @@ import threading
 from socket import *
 from user import *
 from server import *
-from MailSystem.mysql import sqlHandle
-from MailSystem.user import User, UserManager
+from mysql import sqlHandle
+from user import User, UserManager
 type = 0
 connection = None
 state = 0
@@ -205,7 +205,7 @@ def remote(tcpServer, server, config):
         if state == 0:
             state = 2
             connection = co
-            
+
             run(server, config)
 
             connection.close()
@@ -346,23 +346,23 @@ def run(server, config):
 
             else:
                 if cmd == 'server start':
-                    server.server_run()
+                    server.ServerRun()
                 elif cmd == 'server stop':
-                    server.server_shutdown()
+                    server.ServerShutdown()
                 elif cmd == 'server restart':
-                    server.server_restart()
+                    server.ServerRestart()
                 elif cmd == 'config show':
-                    server.config_show
+                    print(json.dumps(server.ConfigShow()))
                 elif cmd == 'config set':
-                    service = input_('service:')
+                    service = input_('service(server/smtp/pop3):')
                     newConfig = input_('config:')
                     value = input_('value:')
-                    server.config_update(service, newConfig, value)
+                    server.ConfigUpdate(service, newConfig, value)
                 elif cmd == 'config default':
-                    server.config_default
+                    print(json.dumps(server.ConfigDefault()))
                 elif cmd == 'config save':
                     filename = input_('filename')
-                    server.config_save(filename)
+                    server.ConfigSave(filename)
                 elif cmd == 'smtp start':
                     server.smtp.start()
                 elif cmd == 'pop3 start':
@@ -377,15 +377,15 @@ def run(server, config):
                     server.pop3.restart()
                 elif cmd == 'logs show':
                     t = int(input_('type(0 for smtp, 1 for pop3)'))
-                    server.showAllLogFile(t)
+                    server.ShowAllLogFile(t)
                 elif cmd == 'logs check':
                     t = int(input_('type(0 for smtp, 1 for pop3)'))
                     n = int(input_('the number of file'))
-                    server.checkLogFile(t, n)
+                    server.CheckLogFile(t, n)
                 elif cmd == 'logs delete':
                     t = int(input_('type(0 for smtp, 1 for pop3)'))
                     n = int(input_('the number of file'))
-                    server.checkLogFile(t, n)
+                    server.DelLogFile(t, n)
 
                 elif cmd == 'auth':
                     print_('you has already logined')
@@ -394,7 +394,7 @@ def run(server, config):
                 elif cmd == 'user show':
                     users = user.manager.showUser()
                     for user_ in users:
-                        print_(user_[0] + '    ' + user_[1] + '    ' + user_[2])
+                        print_(str(user_[0]) + '    ' + str(user_[1]) + '    ' + str(user_[2]))
                 elif cmd == 'user new':
                     username = input_('username:')
                     password = input_('password:')

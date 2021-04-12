@@ -1,4 +1,4 @@
-from MailSystem.mysql import sqlHandle
+from mysql import sqlHandle
 import socket
 import time
 import os
@@ -39,7 +39,7 @@ class Pop3:
             return True
 
         try:
-            self.server = socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.server.bind((self.ip, self.port))
             self.server.listen(self.maxClient)
@@ -53,13 +53,13 @@ class Pop3:
             self.LISTENING = True
             self.connection = None
             print('pop3 server started.')
-            print('pop3 server is listening...')
+            print('pop3 server is listening at port ' + str(self.port))
             t = threading.Thread(target=self.listen)
             t.start()
 
             try:
                 now = datetime.datetime.now()
-                now = now.strftime("%Y-%m-%d-%H:%M:%S")
+                now = now.strftime("%Y-%m-%d-%H:%M:%S").replace(":", "_")
                 fileDir = os.path.abspath(os.path.dirname(__file__)) + self.logDir
                 if not os.path.exists(fileDir):
                     os.makedirs(fileDir)

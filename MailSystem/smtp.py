@@ -1,4 +1,4 @@
-from MailSystem.mysql import sqlHandle
+from mysql import sqlHandle
 import socket
 import time
 import os
@@ -40,7 +40,7 @@ class Smtp:
             return True
 
         try:
-            self.server = socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.server.bind((self.ip, self.port))
             self.server.listen(self.maxClient)
@@ -61,8 +61,9 @@ class Smtp:
 
             try:
                 now = datetime.datetime.now()
-                now = now.strftime("%Y-%m-%d-%H:%M:%S")
+                now = now.strftime("%Y-%m-%d-%H:%M:%S").replace(":", "_")
                 fileDir = os.path.abspath(os.path.dirname(__file__)) + self.logDir
+                # print(fileDir)
                 if not os.path.exists(fileDir):
                     os.makedirs(fileDir)
                 os.chdir(fileDir)
@@ -289,15 +290,15 @@ class Smtp:
                             'smtp get \'' + data +
                             '\' at ' + now +
                             ' from (' + address[0] + ', ' + str(address[1]) + ')\n')
-                    ''' NOOP <CRLF> '''
-                    if data[0:4].lower() == 'noop': # noop命令指示服务器收到命令后不用回复 "OK"?
+                    # NOOP <CRLF>
+                    if data[0:4].lower() == 'noop':  # noop命令指示服务器收到命令后不用回复 "OK"?
                         # 若报文前四项为noop，为空，直接返回
                         message = '250 OK\r\n'
                         connection.send(message.encode('utf-8'))
                         continue
 
                     if state == 'WAITING':  # 初始化 SMTP 连接
-                        ''' HELO <SP> <domain> <CRLF> '''
+                        # HELO <SP> <domain> <CRLF>
                         if re.match('[hH][eE][lL][oO]', data):  
                             valid = re.search(r'\S+', data[4:])  # \S: 匹配任意非空字符
                             if valid is not None:
@@ -307,7 +308,7 @@ class Smtp:
                                 message = '250 OK\r\n'
                             else:
                                 message = '500 Error: bad syntax\r\n'
-                        ''' EHLO <SP> <domain /address-literal > <CRLF> '''
+                        # EHLO <SP> <domain /address-literal > <CRLF>
                         elif re.match('[eE][hH][lL][oO]', data):  # 新标准，用于替换HELO命令
                             valid = re.search(r'\S+', data[4:])
                             if valid is not None:
@@ -316,13 +317,13 @@ class Smtp:
                                 message = '250 OK\r\n'
                             else:
                                 message = '500 Error: bad syntax\r\n'
-                        ''' QUIT <CRLF> '''
+                        # QUIT <CRLF> 
                         elif data[0:4].lower() == 'quit':  # 结束会话，直接break
                             message = '221 Bye\r\n'
                             connection.send(message.encode('utf-8'))
                             break
 
-                        elif data[0:10].lower() == 'auth login' or \   
+                        elif data[0:10].lower() == 'auth login' or \
                                 data[0:10].lower() == 'mail from:' or \
                                 data[0:8].lower() == 'rcpt to:' or \
                                 data[0:4].lower() == 'data':  # HELO or EHLO 初始化前尝试发送信息

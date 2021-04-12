@@ -2,15 +2,15 @@ import os
 
 import json
 
-from MailSystem.smtp import Smtp
-from MailSystem.pop3 import Pop3
+from smtp import Smtp
+from pop3 import Pop3
 
 
 class Server:
     default = {
         'server': {'domain': 'test.com', 'mailMaxSize': 65565, 'logMaxSize': 65535},
-        'smtp': {'port': 8025, 'logDir': '/log/smtp', 'banIPs': [], 'banActs': []},
-        'pop3': {'port': 8110, 'logDir': '/log/pop3', 'banIPs': [], 'banActs': []}
+        'smtp': {'port': 8025, 'logDir': '\\log\\smtp', 'banIPs': [], 'banActs': []},
+        'pop3': {'port': 8110, 'logDir': '\\log\\pop3', 'banIPs': [], 'banActs': []}
     }
 
     def __init__(self, configs=default):
@@ -71,12 +71,38 @@ class Server:
             return -1
         else:
             self.currConfigs = newConfigs
-            filename = os.path.join(self.path, filename)
+            filename = os.path.join(self.path, 'config.json')
             with open(filename, 'w', encoding='utf8') as f:
                 configJson = json.dump(newConfigs, f)
             self.ServerShutdown()
             self.ServerSetup(self.currConfigs)
             return self.currConfigs
+
+    def ConfigUpdate(self, serviceName, config, value):
+        if serviceName == 'server':
+            service = 0
+        elif serviceName == 'smtp':
+            service = 1
+        elif serviceName == 'pop3':
+            service = 2
+        else:
+            print('parameter error')
+            return
+
+        newConfigs = self.currConfigs
+        try:
+            if config in newConfigs[service].keys():
+                newConfigs[service][config] = value
+            else:
+                print('parameter error')
+                return
+        except:
+            print('parameter error')
+            return
+        else:
+            self.currConfigs = newConfigs
+            self.ServerShutdown()
+            self.ServerSetup(self.currConfigs)
 
     def ConfigShow(self):
         try:
@@ -136,25 +162,25 @@ class Server:
         return fileNames, filePaths, fileSizes
 
     def ShowAllLogFile(self, type):
-        fileNames, _, fileSizes = self.getAllLogFile(type)
+        fileNames, _, fileSizes = self.GetAllLogFile(type)
         print('log files ' + str(len(fileNames)))
         for i in range(len(fileNames)):
             print(str(i+1) + ' : ' + fileNames[i] + ' : ' + str(fileSizes[i]))
 
     def CheckLogFile(self, type, num):
-        fileNames, filePaths, filesizes = self.getAllLogFile(type)
+        fileNames, filePaths, filesizes = self.GetAllLogFile(type)
         try:
             file = open(filePaths[num-1], 'r')
         except:
             print('parameter error')
             return
         else:
-            print(fileNames[num-1], filesizes[num], 'bytes')
+            print(fileNames[num-1], filesizes[num-1], 'bytes')
             content = file.read()
             print(content)
 
     def DelLogFile(self, type, num):
-        fileNames, filePaths, filesizes = self.getAllLogFile(type)
+        fileNames, filePaths, filesizes = self.GetAllLogFile(type)
         try:
             os.remove(filePaths[num-1])
         except:

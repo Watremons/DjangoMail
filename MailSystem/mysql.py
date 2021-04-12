@@ -14,7 +14,7 @@ def sqlHandle(tableName, handle, *data):
         return False
 
     try:
-        db = pymysql.connect(ip, sqluser, sqlpass, database)
+        db = pymysql.connect(host=ip, user=sqluser, password=sqlpass, database=database, port=3306)
     except:
         print('can\'t connect to the database!')
         return False
