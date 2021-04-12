@@ -13,7 +13,7 @@ class Users(models.Model):
     userNo = models.AutoField(db_column='userNo', primary_key=True)
     userName = models.CharField(db_column='userName', max_length=50, default='未命名')
     createDate = models.DateField(db_column='createDate', default=timezone.now)
-    mailAddress = models.CharField(db_column='mailAddress', max_length=50)
+    # mailAddress = models.CharField(db_column='mailAddress', max_length=50)
     authorityValue = models.IntegerField(db_column='authorityValue', default=0)  # 0:user 1:admin 2:superAdmin
     userState = models.IntegerField(db_column='userState', default=1)  # 1:normal 0:banned
     userPassword = models.CharField(db_column='userPassword', max_length=32)
@@ -24,9 +24,9 @@ class Users(models.Model):
 
 class Mails(models.Model):
     mailNo = models.AutoField(db_column='mailNo', primary_key=True)
+    # userNo = models.ForeignKey(Users, models.CASCADE, db_column='userNo')
     receiver = models.CharField(db_column='receive', max_length=200)
     sender = models.CharField(db_column='sender', max_length=200)
-    subject = models.CharField(db_column='subject', max_length=200, default='未命名的主题')
     ip = models.CharField(db_column='ip', max_length=200)
     isRead = models.IntegerField(db_column='isRead', default=0)  # 0:notRead 1:haveRead
     isServed = models.IntegerField(db_column='isServed', default=0)  # 0:serving 1:haveServed 2:failToServe
@@ -42,7 +42,7 @@ class Contacts(models.Model):
     contactName = models.CharField(db_column='userName', max_length=50)
     tel = models.CharField(db_column='tel', max_length=50, blank=True)
     mailAddress = models.CharField(db_column='mailAddress', max_length=50)
-    userNo = models.ForeignKey(Users, models.CASCADE, db_column='userNo', default='1')
+    userNo = models.ForeignKey(Users, models.CASCADE, db_column='userNo')
 
     class Meta:
         db_table = 'Contacts'
