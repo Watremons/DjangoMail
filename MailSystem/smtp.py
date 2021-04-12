@@ -282,33 +282,33 @@ class Smtp:
                 try:
                     data = message.decode('utf-8')[0:-2]
                     # 取得倒数两个字符外的字符
-
-                    if self.log is not None:
+                    if self.log is not None:  # 日志先不考虑
                         now = datetime.datetime.now()
                         now = now.strftime("%Y-%m-%d-%H:%M:%S")
                         self.log.write(
                             'smtp get \'' + data +
                             '\' at ' + now +
                             ' from (' + address[0] + ', ' + str(address[1]) + ')\n')
-
-                    if data[0:4].lower() == 'noop':
+                    ''' NOOP <CRLF> '''
+                    if data[0:4].lower() == 'noop': # noop命令指示服务器收到命令后不用回复 "OK"?
                         # 若报文前四项为noop，为空，直接返回
                         message = '250 OK\r\n'
                         connection.send(message.encode('utf-8'))
                         continue
 
-                    if state == 'WAITING':
-                        if re.match('[hH][eE][lL][oO]', data):
-                            valid = re.search(r'\S+', data[4:])
+                    if state == 'WAITING':  # 初始化 SMTP 连接
+                        ''' HELO <SP> <domain> <CRLF> '''
+                        if re.match('[hH][eE][lL][oO]', data):  
+                            valid = re.search(r'\S+', data[4:])  # \S: 匹配任意非空字符
                             if valid is not None:
-                                heloFrom = valid.group()
+                                heloFrom = valid.group()   # 获取发送方domain
                                 state = 'AUTH_AFTER'
                                 auth = False
                                 message = '250 OK\r\n'
                             else:
                                 message = '500 Error: bad syntax\r\n'
-
-                        elif re.match('[eE][hH][lL][oO]', data):
+                        ''' EHLO <SP> <domain /address-literal > <CRLF> '''
+                        elif re.match('[eE][hH][lL][oO]', data):  # 新标准，用于替换HELO命令
                             valid = re.search(r'\S+', data[4:])
                             if valid is not None:
                                 heloFrom = valid.group()
@@ -316,16 +316,16 @@ class Smtp:
                                 message = '250 OK\r\n'
                             else:
                                 message = '500 Error: bad syntax\r\n'
-
-                        elif data[0:4].lower() == 'quit':
+                        ''' QUIT <CRLF> '''
+                        elif data[0:4].lower() == 'quit':  # 结束会话，直接break
                             message = '221 Bye\r\n'
                             connection.send(message.encode('utf-8'))
                             break
 
-                        elif data[0:10].lower() == 'auth login' or \
+                        elif data[0:10].lower() == 'auth login' or \   
                                 data[0:10].lower() == 'mail from:' or \
                                 data[0:8].lower() == 'rcpt to:' or \
-                                data[0:4].lower() == 'data':
+                                data[0:4].lower() == 'data':  # HELO or EHLO 初始化前尝试发送信息
                             message = '503 Error: send EHLO first\r\n'
 
                         else:
