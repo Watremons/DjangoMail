@@ -223,12 +223,11 @@ def SendMails(request):
         return JsonResponse({"message": CheckRes["message"], "status": 404})
     else:
         receivers = request.POST.get("receviers", None)
-        subject = request.POST.get("subject", None)
         content = request.POST.get("content", None)
 
         userNo = request.session.get("userNo", None)
 
-        if receivers and subject and content:
+        if receivers and content:
             receiverList = json.loads(receivers)
 
             try:
@@ -247,8 +246,7 @@ def SendMails(request):
                 for receiver in receiverList:
                     newMailInfo = models.Mails.objects.create(
                         receiver=receiver,
-                        sender=sender.mailAddress,
-                        subject=subject,
+                        sender=sender.userName,
                         isRead=False,
                         isServed=0,
                         content=content,
@@ -295,7 +293,7 @@ def ReceiveMails(request):
             # Create new mails
             notReadMailList = []
             newMails = models.Mails.objects.filter(
-                receiver=receiver.mailAddress,
+                receiver=receiver.userName,
                 isRead=False
             ).values()
             notReadMailList.append(newMails)

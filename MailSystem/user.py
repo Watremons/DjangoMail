@@ -71,13 +71,13 @@ class User:
             self.username + '\''
             )
 
-        userID = str(results[0][0])
+        userNo = str(results[0][0])
         password = results[0][1]
 
         if oldPass == password:
             print('change password successfully, please login again')
             self.logout()
-            return sqlHandle('Users', 'UPDATE', 'userPassword = \'' + newPass + '\'', 'userNo = ' + userID)
+            return sqlHandle('Users', 'UPDATE', 'userPassword = \'' + newPass + '\'', 'userNo = ' + userNo)
         else:
             self.state = False
             print('change password error, password wrong')
@@ -107,7 +107,7 @@ class UserManager:
             users.append(user)
         return users
 
-    def addNewUser(self, username, mailaddress, password, type, usable):
+    def addNewUser(self, username, password, type, usable):
         if (type != '0' and type != '1') or (usable != '0' and usable != '1'):
             print('add new user error, parameter wrong')
             return False
@@ -122,11 +122,11 @@ class UserManager:
         return sqlHandle(
             'Users', 'INSERT',
             '\'' + username + '\'',
-            '\'' + password + '\'',
             '\'' + timenow + '\'',
-            '\'' + mailaddress + '\'',
-            type,
-            usable)
+            '\'' + type + '\'',
+            '\'' + usable + '\'',
+            '\'' + password + '\''
+            )
 
     def changeUserType(self, username, type):
         if type != '0' and type != '1':
@@ -159,17 +159,17 @@ class UserManager:
         return sqlHandle('Users', 'UPDATE', 'authorityValue = \'' + usable + '\'', 'userNo = ' + userID)
 
     def deleteUser(self, username):
-        results = sqlHandle('Users', 'SELECT', 'mailAddress', 'userName = \'' + username + '\'')
+        results = sqlHandle('Users', 'SELECT', 'userName', 'userName = \'' + username + '\'')
 
         if len(results) == 0:
             print('delete user errpr, no such user')
             return False
 
-        mailAddress = str(results[0][0])
+        userName = str(results[0][0])
 
-        sqlHandle('Mails', 'DELETE', 'sender = ' + mailAddress)
-        sqlHandle('Mails', 'DELETE', 'receiver = ' + mailAddress)
-        return sqlHandle('user', 'DELETE', 'mailAddress = ' + mailAddress)
+        sqlHandle('Mails', 'DELETE', 'sender = ' + userName)
+        sqlHandle('Mails', 'DELETE', 'receiver = ' + userName)
+        return sqlHandle('user', 'DELETE', 'userName = ' + userName)
 
 
 if __name__ == "__main__":

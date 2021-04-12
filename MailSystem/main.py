@@ -99,7 +99,7 @@ def helpInfo_():
     print_('type "logs delete" to delete a log')
 
 
-def sendToMany(sender, allUser, users, subject, data):
+def sendToMany(sender, allUser, users, data):
     if allUser is True:
         users = []
         results = sqlHandle('Users', 'SELECT', 'userName')
@@ -125,7 +125,7 @@ def sendToMany(sender, allUser, users, subject, data):
         time_ = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         if sqlHandle(
                 'Mails', 'INSERT', '\'' + rcptTo + '\'', '\'' + mailFrom + '\'',
-                '\'' + subject + '\'', '\'' + ip + '\'',
+                '\'' + ip + '\'',
                 '\'' + isRead + '\'', '\'' + isServed + '\'',
                 '\'' + content + '\'', '\'' + time_ + '\''
                 ) is False:

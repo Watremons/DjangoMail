@@ -7,7 +7,6 @@ import threading
 import base64
 import re
 import datetime
-import uuid
 
 otherMailDomain = 'other.com'
 otherIP = '127.0.0.1'
@@ -123,7 +122,11 @@ class Smtp:
         try:
             username = str(base64.b64decode(username.encode('utf-8')), 'utf-8')
             password = str(base64.b64decode(password.encode('utf-8')), 'utf-8')
-            results = sqlHandle('Users', 'SELECT', 'userNo, userPassword', 'userName = \'' + userName + '\'')
+            results = sqlHandle(
+                'Users', 'SELECT',
+                'userNo, userPassword',
+                'userName = \'' + username + '\''
+                )
         except:
             return False, -1
         else:
@@ -229,20 +232,25 @@ class Smtp:
             return
 
         sqlHandle(
-            'Mails', 'INSERT', '\'' + email[0] + '\'', str(email[1]),
+            'Mails', 'INSERT',
+            '\'' + email[0] + '\'', str(email[1]),
             '\'' + email[2] + '\'', '\'' + email[3] + '\'',
             '\'' + email[4] + '\'', '\'' + email[5] + '\'',
-            '\'' + email[6] + '\'', '\'' + email[7] + '\''
+            '\'' + email[6] + '\''
             )
 
     def receive(self, email):
-        results = sqlHandle('Users', 'SELECT', 'userNo', 'userName = \'' + email[5] + '\'')
+        results = sqlHandle('Users', 'SELECT', 'userName', 'userName = \'' + email[5] + '\'')
         if results is not ():
             sqlHandle(
-                'Mails', 'INSERT', '\'' + email[0] + '\'', '\'' + str(results[0][0]) + '\'',
+                'Mails', 'INSERT',
+                '\'' + email[0] + '\'', '\'' + str(results[0][0]) + '\'',
                 '\'' + email[2] + '\'', '\'' + email[3] + '\'',
                 '\'' + email[4] + '\'', '\'' + email[5] + '\'',
-                '\'' + email[6] + '\'', '\'' + email[7] + '\'')
+                '\'' + email[6] + '\'')
+            return True
+        else:
+            return False
 
     def sendMail(self, email):
         domain = email[5][re.search('@', email[5]).span()[0]+1:]
@@ -565,9 +573,18 @@ class Smtp:
                                     now = datetime.datetime.now()
                                     now = now.strftime("%Y-%m-%d %H:%M:%S")
                                     time_ = str(now)
-                                    mailID = str(uuid.uuid4())
                                     ip = address[0]
-                                    email = [mailID, userID, heloFrom, ip, mailFrom, rcptTo, mail, time_]
+                                    isRead = 0
+                                    isServed = 1
+
+                                    email = [
+                                        rcptTo,
+                                        mailFrom,
+                                        ip,
+                                        isRead,
+                                        isServed,
+                                        mail,
+                                        time_]
                                     send = threading.Thread(target=self.sendMail, args=(email,))
                                     send.start()
 

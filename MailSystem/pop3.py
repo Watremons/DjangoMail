@@ -117,7 +117,11 @@ class Pop3:
 
     def authentication(self, username, password):
         try:
-            results = sqlHandle('user', 'SELECT', 'userID, password', 'username = \'' + username + '\'')
+            results = sqlHandle(
+                'Users', 'SELECT',
+                'userNo, userPassword',
+                'userName = \'' + username + '\''
+                )
         except:
             return False, -1
         else:
@@ -163,30 +167,38 @@ class Pop3:
         if self.connection is not None:
             self.connection.close()
 
-    def getEmail(self, userID):
-        allMails = sqlHandle('recvmail', 'SELECT', '*', 'userID = \'' + str(userID) + '\' ORDER BY time DESC')
+    def getEmail(self, username):
+        allMails = sqlHandle(
+            'Mails', 'SELECT',
+            '*',
+            'userName = \'' + str(username) + '\'' +
+            'ORDER BY time DESC'
+            )
         mailsSize = []
         mailSize = 0
         mails = []
         overSize = False
         deleMails = []
         print(allMails)
+
         if allMails:
             for mail in allMails:
                 print('?')
-                if overSize is True:
-                    deleMails.append(mail)
-                    continue
+                if mail[5] == 0 and mail[6] == 1:
 
-                if mailSize + len(mail[6].encode('utf-8')) > self.maxSize:
-                    overSize = True
-                    deleMails.append(mail)
+                    if overSize is True:
+                        deleMails.append(mail)
+                        continue
 
-                else:
-                    if mail[4] not in self.banActs and mail[5] not in self.banActs:
-                        mailSize = mailSize + len(mail[6].encode('utf-8'))
-                        mailsSize.append(len(mail[6].encode('utf-8')))
-                        mails.append(mail)
+                    if mailSize + len(mail[5].encode('utf-8')) > self.maxSize:
+                        overSize = True
+                        deleMails.append(mail)
+
+                    else:
+                        if mail[4] not in self.banActs and mail[0] not in self.banActs:
+                            mailSize = mailSize + len(mail[6].encode('utf-8'))
+                            mailsSize.append(len(mail[6].encode('utf-8')))
+                            mails.append(mail)
 
         t = threading.Thread(target=self.delEmail, args=(deleMails, range(len(deleMails))))
         t.start()
@@ -196,7 +208,10 @@ class Pop3:
     def delEmail(self, mails, deles):
         if deles and mails:
             for dele in deles:
-                sqlHandle('recvmail', 'DELETE', 'mailID = \'' + str(mails[dele][0]) + '\'')
+                sqlHandle(
+                    'recvmail', 'UPDATE',
+                    'isRead = \'' + '1' + '\'',
+                    'mailNo = \'' + str(mails[dele][0]) + '\'')
 
     def clientConn(self, connection, address):
         mailsNum = 0
@@ -259,10 +274,10 @@ class Pop3:
                             valid = re.search(r'\S+', data[4:])
                             if valid is not None:
                                 password = valid.group()
-                                auth, userID = self.authentication(username, password)
+                                auth, userNo = self.authentication(username, password)
                                 if auth is True:
                                     state = 'AUTH_AFTER'
-                                    mailsNum, mails, mailSize, mailsSize = self.getEmail(userID)
+                                    mailsNum, mails, mailSize, mailsSize = self.getEmail(username)
                                     message = '+OK ' + str(mailsNum) + ' message(s) [' + str(mailSize) + ' byte(s)]\r\n'
                                 else:
                                     message = '-ERR Unable to log on\r\n'
