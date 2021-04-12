@@ -2,6 +2,9 @@ import os
 
 import json
 
+import sys
+sys.path.append(os.path.dirname(__file__))
+
 from smtp import Smtp
 from pop3 import Pop3
 

@@ -1,13 +1,12 @@
 import os
 import sys
 import json
-import uuid
 import getopt
 import datetime
 import threading
-from socket import *
+import socket
 from user import *
-from server import *
+from server import Server
 from mysql import sqlHandle
 from user import User, UserManager
 type = 0
@@ -124,9 +123,12 @@ def sendToMany(sender, allUser, users, data):
         content = data
         time_ = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         if sqlHandle(
-                'Mails', 'INSERT', '\'' + rcptTo + '\'', '\'' + mailFrom + '\'',
+                'Mails', 'INSERT',
+                'paralist',
+                'receiver', 'sender', 'ip', 'isRead', 'isServed', 'content', 'rendOrReceiptDate',
+                '\'' + rcptTo + '\'', '\'' + mailFrom + '\'',
                 '\'' + ip + '\'',
-                '\'' + isRead + '\'', '\'' + isServed + '\'',
+                str(isRead), str(isServed),
                 '\'' + content + '\'', '\'' + time_ + '\''
                 ) is False:
 
@@ -142,7 +144,6 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "hic:", [])
     except:
-        flag = False
         print('parameter error')
         print('try to run main.py with -h -i -c [the config json file]')
     else:
@@ -163,7 +164,7 @@ def main(argv):
             print('no such json file, please check')
             return
         try:
-            config = json.load(open(configFile, 'r')) 
+            config = json.load(open(configFile, 'r'))
         except:
             print('config file parameter error, please check')
             return
@@ -175,8 +176,8 @@ def main(argv):
     server = Server(config)
 
     if type == 1:
-        tcpServer = socket(AF_INET, SOCK_STREAM)
-        tcpServer.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        tcpServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        tcpServer.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         tcpServer.bind(('0.0.0.0', 8000))
         tcpServer.listen(1)
 
@@ -184,7 +185,7 @@ def main(argv):
         t.start()
 
     while True:
-        c = input('press any key to control\r\n')
+        input('press any key to control\r\n')
         global state
         if state == 0:
             state = 1
@@ -398,13 +399,13 @@ def run(server, config):
                 elif cmd == 'user new':
                     username = input_('username:')
                     password = input_('password:')
-                    type_ = input_('type(0 for admin, 1 for normal)')
+                    type_ = input_('type(0 for normal, 1 for manager)')
                     usable = '1'
                     if user.manager.addNewUser(username, password, type_, usable) is True:
                         print_('add new user successfully')
                 elif cmd == 'user type':
                     username = input_('username:')
-                    type_ = input_('type(0 for admin, 1 for normal):')
+                    type_ = input_('type(0 for normal, 1 for manager):')
                     if user.manager.changeUserType(username, type_) is True:
                         print_('change user type successfully')
                 elif cmd == 'user usable':
@@ -467,7 +468,7 @@ def run(server, config):
 
                     send = threading.Thread(
                         target=sendToMany,
-                        args=(user.username, allUser, users, "System Admin Message", mail)
+                        args=(user.username, allUser, users, mail)
                         )
                     send.start()
                     send.join()

@@ -234,10 +234,12 @@ class Smtp:
 
         sqlHandle(
             'Mails', 'INSERT',
-            '\'' + email[0] + '\'', str(email[1]),
-            '\'' + email[2] + '\'', '\'' + email[3] + '\'',
-            '\'' + email[4] + '\'', '\'' + email[5] + '\'',
-            '\'' + email[6] + '\''
+            'paralist',
+            'receiver', 'sender', 'ip', 'isRead', 'isServed', 'content', 'rendOrReceiptDate',
+            '\'' + email[0] + '\'', '\'' + str(email[1]) + '\'',
+            '\'' + email[2] + '\'',
+            str(email[3]), str(email[4]),
+            '\'' + email[5] + '\'', '\'' + email[6] + '\''
             )
 
     def receive(self, email):
@@ -245,10 +247,12 @@ class Smtp:
         if results is not ():
             sqlHandle(
                 'Mails', 'INSERT',
+                'paralist',
+                'receiver', 'sender', 'ip', 'isRead', 'isServed', 'content', 'rendOrReceiptDate',
                 '\'' + email[0] + '\'', '\'' + str(results[0][0]) + '\'',
-                '\'' + email[2] + '\'', '\'' + email[3] + '\'',
-                '\'' + email[4] + '\'', '\'' + email[5] + '\'',
-                '\'' + email[6] + '\'')
+                '\'' + email[2] + '\'',
+                str(email[3]), str(email[4]),
+                '\'' + email[5] + '\'', '\'' + email[6] + '\'')
             return True
         else:
             return False

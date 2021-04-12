@@ -25,7 +25,7 @@ class Users(models.Model):
 class Mails(models.Model):
     mailNo = models.AutoField(db_column='mailNo', primary_key=True)
     # userNo = models.ForeignKey(Users, models.CASCADE, db_column='userNo')
-    receiver = models.CharField(db_column='receive', max_length=200)
+    receiver = models.CharField(db_column='receiver', max_length=200)
     sender = models.CharField(db_column='sender', max_length=200)
     ip = models.CharField(db_column='ip', max_length=200)
     isRead = models.IntegerField(db_column='isRead', default=0)  # 0:notRead 1:haveRead

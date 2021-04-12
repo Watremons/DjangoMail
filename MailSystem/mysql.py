@@ -1,4 +1,5 @@
 import pymysql
+import traceback
 
 
 def sqlHandle(tableName, handle, *data):
@@ -37,14 +38,32 @@ def sqlHandle(tableName, handle, *data):
             print('insert handle, parameter error')
             db.close()
             return False
+        elif data[0] == "paralist":
+            sql = 'INSERT INTO ' + tableName + ' ('
 
-        sql = 'INSERT INTO ' + tableName + ' VALUES (' + data[0]
+            sep = (len(data)-1)//2+1
+            sql = sql + data[1]
+            if (len(data) > 2):
+                for di in data[2:sep]:
+                    sql = sql + ',' + di
+            sql = sql + ')'
 
-        if len(data) > 1:
-            for di in data[1:]:
-                sql = sql + ', ' + di
+            sql = sql + ' VALUES (' + data[sep]
 
-        sql = sql + ');'
+            if len(data) > 3:
+                for di in data[sep+1:]:
+                    sql = sql + ', ' + di
+
+            sql = sql + ');'
+            print(sql)
+        else:
+            sql = 'INSERT INTO ' + tableName + ' VALUES (' + data[0]
+
+            if len(data) > 1:
+                for di in data[1:]:
+                    sql = sql + ', ' + di
+
+            sql = sql + ');'
 
     elif handle == 'DELETE':
         if len(data) == 1:
@@ -75,7 +94,8 @@ def sqlHandle(tableName, handle, *data):
 
         db.commit()
 
-    except:
+    except Exception as e:
+        traceback.print_exc()
         print("sql handle error, rollback")
         db.rollback()
 

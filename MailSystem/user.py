@@ -109,8 +109,12 @@ class UserManager:
         return users
 
     def addNewUser(self, username, password, type, usable):
-        if (type != '0' and type != '1') or (usable != '0' and usable != '1'):
+        if (usable != '0' and usable != '1'):
             print('add new user error, parameter wrong')
+            return False
+
+        if (type != '0' and type != '1'):
+            print("User of level" + str(type) + "is not allowed to create")
             return False
 
         results = sqlHandle('Users', 'SELECT', 'userNo', 'userName = \'' + username + '\'')
@@ -122,10 +126,12 @@ class UserManager:
         timenow = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         return sqlHandle(
             'Users', 'INSERT',
+            'paralist',
+            'userName', 'createDate', 'authorityValue', 'userState', 'userPassword',
             '\'' + username + '\'',
             '\'' + timenow + '\'',
-            '\'' + type + '\'',
-            '\'' + usable + '\'',
+            type,
+            usable,
             '\'' + password + '\''
             )
 
@@ -142,7 +148,7 @@ class UserManager:
 
         userID = str(results[0][0])
 
-        return sqlHandle('Users', 'UPDATE', 'type = \'' + type + '\'', 'userNo = ' + userID)
+        return sqlHandle('Users', 'UPDATE', 'authorityValue = ' + type, 'userNo = ' + userID)
 
     def changeUserUsable(self, username, usable):
         if usable != '0' and usable != '1':
@@ -157,7 +163,7 @@ class UserManager:
 
         userID = str(results[0][0])
 
-        return sqlHandle('Users', 'UPDATE', 'authorityValue = \'' + usable + '\'', 'userNo = ' + userID)
+        return sqlHandle('Users', 'UPDATE', 'userState = ' + usable, 'userNo = ' + userID)
 
     def deleteUser(self, username):
         results = sqlHandle('Users', 'SELECT', 'userName', 'userName = \'' + username + '\'')
@@ -168,9 +174,9 @@ class UserManager:
 
         userName = str(results[0][0])
 
-        sqlHandle('Mails', 'DELETE', 'sender = ' + userName)
-        sqlHandle('Mails', 'DELETE', 'receiver = ' + userName)
-        return sqlHandle('user', 'DELETE', 'userName = ' + userName)
+        sqlHandle('Mails', 'DELETE', 'sender = \'' + userName + '\'')
+        sqlHandle('Mails', 'DELETE', 'receiver = \'' + userName + '\'')
+        return sqlHandle('Users', 'DELETE', 'userName = \'' + userName + '\'')
 
 
 if __name__ == "__main__":
