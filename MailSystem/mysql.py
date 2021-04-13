@@ -19,7 +19,6 @@ def sqlHandle(tableName, handle, *data):
     except:
         print('can\'t connect to the database!')
         return False
-
     cursor = db.cursor()
     sql = ''
 

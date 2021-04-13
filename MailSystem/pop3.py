@@ -6,6 +6,7 @@ import os
 import threading
 import re
 import datetime
+import traceback
 
 selfMailDomain = 'test.com'
 otherMailDomain = 'other.com'
@@ -123,6 +124,7 @@ class Pop3:
                 'userName = \'' + username + '\''
                 )
         except:
+            traceback.print_exc()
             return False, -1
         else:
             if len(results) == 0:
@@ -171,20 +173,19 @@ class Pop3:
         allMails = sqlHandle(
             'Mails', 'SELECT',
             '*',
-            'userName = \'' + str(username) + '\'' +
-            'ORDER BY time DESC'
+            'receiver = \'' + str(username) + '\'' +
+            ' ORDER BY rendOrReceiptDate DESC'
             )
         mailsSize = []
         mailSize = 0
         mails = []
-        overSize = False
+        overSize = False  
         deleMails = []
         print(allMails)
 
         if allMails:
-            for mail in allMails:
-                print('?')
-                if mail[5] == 0 and mail[6] == 1:
+            if mail[3] == 0 and mail[4] == 1:
+                for mail in allMails:
 
                     if overSize is True:
                         deleMails.append(mail)
@@ -195,14 +196,14 @@ class Pop3:
                         deleMails.append(mail)
 
                     else:
-                        if mail[4] not in self.banActs and mail[0] not in self.banActs:
-                            mailSize = mailSize + len(mail[6].encode('utf-8'))
-                            mailsSize.append(len(mail[6].encode('utf-8')))
+                        if mail[1] not in self.banActs and mail[2] not in self.banActs:
+                            mailSize = mailSize + len(mail[5].encode('utf-8'))
+                            mailsSize.append(len(mail[5].encode('utf-8')))
                             mails.append(mail)
 
         t = threading.Thread(target=self.delEmail, args=(deleMails, range(len(deleMails))))
         t.start()
-
+ 
         return len(mails), mails, mailSize, mailsSize
 
     def delEmail(self, mails, deles):
@@ -300,15 +301,17 @@ class Pop3:
                         connection.send(message.encode('utf-8'))
 
                     elif state == 'AUTH_AFTER':
-                        if re.match(r'[sS][tT][aA][tT]\s*', data):
+                        if re.match(r'[sS][tT][aA][tT]\s*', data):  # STAT
                             message = '+OK ' + str(mailsNum) + ' ' + str(mailSize) + '\r\n'
 
-                        elif re.match(r'[lL][iI][sS][tT]\s*\d*', data):
+                        elif re.match(r'[lL][iI][sS][tT]\s*\d*', data):  # LIST 不包括标记为删除的邮件！
                             valid = re.search(r'\d+', data[4:])
                             if valid is None:
+                                print('deles:', deles)
                                 message = '+OK ' + str(mailsNum) + ' ' + str(mailSize) + '\r\n'
-                                for i in range(mailsNum):
-                                    message = message + str(i + 1) + ' ' + str(mailsSize[i]) + '\r\n'
+                                for i, mail in enumerate(mails):
+                                    if i not in deles:
+                                        message = message + str(i + 1) + ' ' + str(mailsSize[i]) + '\r\n'
                                 message = message + '.\r\n'
                             else:
                                 number = int(valid.group())
@@ -317,8 +320,8 @@ class Pop3:
                                 else:
                                     message = str(number) + ' ' + str(mailsSize[number - 1]) + '\r\n'
 
-                        elif re.match(r'[rR][eE][tT][rR]\s*\d*', data):
-                            valid = re.search(r'\d+', data[4:])
+                        elif re.match(r'[rR][eE][tT][rR]\s*\d*', data):  # RETR
+                            valid = re.search(r'\d+', data[4:])  # \d [0-9]
                             if valid is None:
                                 message = '-Error Unknown message\r\n'
                             else:
@@ -329,19 +332,23 @@ class Pop3:
                                     mail = mails[number - 1]
                                     print(mail)
                                     message = '+OK ' + str(number) + ' ' + str(mailsSize[number - 1]) + ' octets\r\n'
-                                    message = message + 'Received: from ' + mail[2] + '(' + mail[3] + ')\r\n'
-                                    message = message + '        ' + str(mail[7]) + '\r\n'
-                                    message = message + 'From:<' + mail[4] + '>\r\n'
-                                    message = message + 'To:<' + mail[5] + '>\r\n'
-                                    message = message + 'Date:' + str(mail[7]) + '\r\n'
-                                    message = message + mail[6]
+                                    message = message + 'Received: from ' + mail[2] + '(' + mail[7] + ')\r\n'
+                                    # message = message + '        ' + str(mail[6]) + '\r\n'
+                                    message = message + 'From:<' + mail[2] + '>\r\n'
+                                    message = message + 'To:<' + mail[1] + '>\r\n'
+                                    message = message + 'Date:' + str(mail[6]) + '\r\n'
+                                    message = message + mail[5]
                                     message = message + '\r\n.\r\n'
                                     print(message)
 
-                        elif re.match(r'[uU][iI][dD][lL]\s*\d*', data):
+                        elif re.match(r'[uU][iI][dD][lL]\s*\d*', data):  # UIDL 
                             valid = re.search(r'\d+', data[4:])
                             if valid is None:
-                                message = '-Error Unknown message\r\n'
+                                message = '+OK\r\n'
+                                for i, mail in enumerate(mails):
+                                    if i not in deles:
+                                        message = message + str(mail[0]) + '\r\n'
+                                # message = '-Error Unknown message\r\n'
                             else:
                                 number = int(valid.group())
                                 if (number > mailsNum):
@@ -349,10 +356,10 @@ class Pop3:
                                 else:
                                     mailID = mails[number - 1][0]
                                     print(mailID)
-                                    message = '+OK ' + mailID + '\r\n'
+                                    message = '+OK ' + str(mailID) + '\r\n'
                                     print(message)
 
-                        elif re.match(r'[dD][eE][lL][eE]\s*\d*', data):
+                        elif re.match(r'[dD][eE][lL][eE]\s*\d*', data):  # DELE
                             valid = re.search(r'\d+', data[4:])
                             if valid is None:
                                 message = '-Error Unknown message\r\n'
@@ -362,15 +369,17 @@ class Pop3:
                                     message = '-Error Unknown message\r\n'
                                 else:
                                     if number not in deles:
-                                        deles.append(number)
+                                        deles.append(number - 1)
+                                        mailSize  = mailSize - len(mails[number - 1][5].encode('utf-8'))
+                                        mailsNum = mailsNum - 1
                                     message = '+OK ' + str(number) + ' delete\r\n'
                                     print(message)
-
-                        elif data[0:4].lower() == 'rest':
+                            # print('deles:', deles)
+                        elif data[0:4].lower() == 'rset':  # RSET  
                             deles.clear()
                             message = '+OK delete mails cancled\r\n'
 
-                        elif re.match(r'[rR][eE][sS][tt]\s*', data):
+                        elif re.match(r'[rR][sS][eE][tt]\s*', data): 
                             valid = re.search(r'\d+', data[4:])
                             if valid is None:
                                 message = '-Error Unknown message\r\n'
@@ -386,6 +395,7 @@ class Pop3:
                         connection.send(message.encode('utf-8'))
 
                 except:
+                    traceback.print_exc()
                     print('connection lost by accident')
                     break
 
@@ -400,7 +410,8 @@ class Pop3:
                 now = now.strftime("%Y-%m-%d-%H:%M:%S")
                 self.log.write('disconnection from (' + address[0] + ',' + str(address[1]) + ') at ' + now + '\n')
         except:
-            print('connection lost by accident')
+            traceback.print_exc()
+            print('[state] HANDLE: connection lost by accident')
 
 
 if __name__ == "__main__":
