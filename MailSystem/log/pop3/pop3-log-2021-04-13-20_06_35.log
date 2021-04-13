@@ -1,0 +1,16 @@
+pop3 start at 2021-04-13-20_06_35
+connection from (127.0.0.1,59405) at 2021-04-13-20:06:41
+smtp get 'user admin  ' at 2021-04-13-20:06:45 from (127.0.0.1, 59405)
+smtp get 'pass admin ' at 2021-04-13-20:06:49 from (127.0.0.1, 59405)
+smtp get 'ui' at 2021-04-13-20:07:02 from (127.0.0.1, 59405)
+disconnection from (127.0.0.1,59405) at 2021-04-13-20:07:02
+connection from (127.0.0.1,61618) at 2021-04-13-20:12:21
+smtp get 'user admin' at 2021-04-13-20:12:23 from (127.0.0.1, 61618)
+smtp get 'pass admin ' at 2021-04-13-20:12:28 from (127.0.0.1, 61618)
+smtp get 'ui' at 2021-04-13-20:12:34 from (127.0.0.1, 61618)
+disconnection from (127.0.0.1,61618) at 2021-04-13-20:12:34
+connection from (127.0.0.1,61632) at 2021-04-13-20:12:59
+smtp get 'user admin  ' at 2021-04-13-20:13:02 from (127.0.0.1, 61632)
+smtp get 'pass admin ' at 2021-04-13-20:13:05 from (127.0.0.1, 61632)
+smtp get 'uidl 0 ' at 2021-04-13-20:13:10 from (127.0.0.1, 61632)
+pop3 stop at 2021-04-13-20:13:51

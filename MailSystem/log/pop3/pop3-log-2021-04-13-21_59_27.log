@@ -1,0 +1,10 @@
+pop3 start at 2021-04-13-21_59_27
+connection from (127.0.0.1,64907) at 2021-04-13-21:59:32
+smtp get 'user admin' at 2021-04-13-21:59:35 from (127.0.0.1, 64907)
+smtp get 'pass admin ' at 2021-04-13-21:59:39 from (127.0.0.1, 64907)
+smtp get 'list' at 2021-04-13-21:59:48 from (127.0.0.1, 64907)
+smtp get 'dele 1  ' at 2021-04-13-22:00:02 from (127.0.0.1, 64907)
+smtp get 'list  ' at 2021-04-13-22:00:05 from (127.0.0.1, 64907)
+smtp get 'retr 1 ' at 2021-04-13-22:26:54 from (127.0.0.1, 64907)
+smtp get 'retr 1 ' at 2021-04-13-22:30:03 from (127.0.0.1, 64907)
+pop3 stop at 2021-04-13-23:13:03

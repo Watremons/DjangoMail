@@ -1,0 +1,32 @@
+pop3 start at 2021-04-13-20_18_53
+connection from (127.0.0.1,61745) at 2021-04-13-20:19:09
+smtp get 'user admin ' at 2021-04-13-20:19:15 from (127.0.0.1, 61745)
+smtp get 'pass admin ' at 2021-04-13-20:19:18 from (127.0.0.1, 61745)
+smtp get 'ui' at 2021-04-13-20:19:22 from (127.0.0.1, 61745)
+disconnection from (127.0.0.1,61745) at 2021-04-13-20:19:23
+connection from (127.0.0.1,61756) at 2021-04-13-20:19:56
+smtp get 'user admin ' at 2021-04-13-20:19:58 from (127.0.0.1, 61756)
+smtp get 'pass admin ' at 2021-04-13-20:20:00 from (127.0.0.1, 61756)
+smtp get 'li' at 2021-04-13-20:20:08 from (127.0.0.1, 61756)
+disconnection from (127.0.0.1,61756) at 2021-04-13-20:20:08
+connection from (127.0.0.1,61766) at 2021-04-13-20:20:26
+smtp get 'user admin ' at 2021-04-13-20:20:27 from (127.0.0.1, 61766)
+smtp get 'pass admin ' at 2021-04-13-20:20:29 from (127.0.0.1, 61766)
+smtp get 'uidl ' at 2021-04-13-20:20:33 from (127.0.0.1, 61766)
+smtp get 'dele 0  ' at 2021-04-13-20:24:21 from (127.0.0.1, 61766)
+smtp get 'uidl 0 ' at 2021-04-13-20:26:59 from (127.0.0.1, 61766)
+disconnection from (127.0.0.1,61766) at 2021-04-13-20:27:35
+connection from (127.0.0.1,61900) at 2021-04-13-20:27:55
+smtp get 'user admin ' at 2021-04-13-20:28:02 from (127.0.0.1, 61900)
+smtp get 'pass adm' at 2021-04-13-20:28:07 from (127.0.0.1, 61900)
+smtp get 'uidl 1 ' at 2021-04-13-20:28:14 from (127.0.0.1, 61900)
+smtp get '' at 2021-04-13-20:28:17 from (127.0.0.1, 61900)
+smtp get 'ui' at 2021-04-13-20:28:40 from (127.0.0.1, 61900)
+smtp get 'uidl  ' at 2021-04-13-20:28:46 from (127.0.0.1, 61900)
+smtp get 'uidl  ' at 2021-04-13-20:29:11 from (127.0.0.1, 61900)
+smtp get 'user admin ' at 2021-04-13-20:29:27 from (127.0.0.1, 61900)
+smtp get 'pass admin ' at 2021-04-13-20:29:30 from (127.0.0.1, 61900)
+smtp get 'uidl 1  ' at 2021-04-13-20:29:35 from (127.0.0.1, 61900)
+smtp get 'dele 1  ' at 2021-04-13-20:29:45 from (127.0.0.1, 61900)
+smtp get 'list  ' at 2021-04-13-20:29:49 from (127.0.0.1, 61900)
+pop3 stop at 2021-04-13-21:50:33
