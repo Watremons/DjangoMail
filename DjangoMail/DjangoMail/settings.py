@@ -98,6 +98,9 @@ DATABASES = {
 # Settings Of REST_FRAMEWROK
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.AutoSchema',
+    # 过滤器默认后端
+    'DEFAULT_FILTER_BACKENDS': (
+           'django_filters.rest_framework.DjangoFilterBackend',),
 }
 
 # Password validation
