@@ -313,6 +313,13 @@ def ReceiveMails(request):
 # Function: config
 
 
+# Class: user authority filter
+class UsersView(ListAPIView):
+    queryset = models.Users.objects.all()
+    serializer_class = customSerializers.UsersSerializer
+    filter_class = filters.UserAuthorityFilter
+    pagination_class = paginations.MyFormatResultsSetPagination
+    
 # Classes inherited from ModelViewSet which can generate RESTFUL URI
 # @method_decorator(LoginAuthenticate, name='dispatch')
 class UsersViewSet(viewsets.ModelViewSet):
