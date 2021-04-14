@@ -27,6 +27,9 @@ urlpatterns = [
 
     # 重置配置信息
     path('resetconfig/', views.ResetConfig, name='resetconfig'),
+    
+    # 过滤用户等级及分页
+    path('filterusers/', views.UsersView.as_view()),
 
     # # 注册请求
     # path('signup/', views.Signup, name="signup"),
