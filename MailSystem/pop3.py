@@ -184,9 +184,8 @@ class Pop3:
         print(allMails)
 
         if allMails:
-            if mail[3] == 0 and mail[4] == 1:
-                for mail in allMails:
-
+            for mail in allMails:
+                if mail[3] == 0 and mail[4] == 1:
                     if overSize is True:
                         deleMails.append(mail)
                         continue
@@ -233,7 +232,7 @@ class Pop3:
             else:
                 try:
                     data = message.decode('utf-8')[0:-2]
-
+  
                     if self.log is not None:
                         now = datetime.datetime.now()
                         now = now.strftime("%Y-%m-%d-%H:%M:%S")
@@ -368,7 +367,7 @@ class Pop3:
                                 if number > mailsNum or number <= 0:
                                     message = '-Error Unknown message\r\n'
                                 else:
-                                    if number not in deles:
+                                    if number - 1 not in deles:
                                         deles.append(number - 1)
                                         mailSize  = mailSize - len(mails[number - 1][5].encode('utf-8'))
                                         mailsNum = mailsNum - 1

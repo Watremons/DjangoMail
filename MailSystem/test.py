@@ -24,9 +24,9 @@ if __name__ == "__main__":
             msg_input = input("Input the message:")
             if msg_input == '':
                 continue
-
-            client.send(msg_input.encode())
             if msg_input == 'exit':
                 break
+            client.send(msg_input.encode())
+            
 
         
