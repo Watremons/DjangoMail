@@ -56,10 +56,15 @@ export default {
         return {
             collapse: false,
             items: [
+                // {
+                //     icon: 'el-icon-lx-home',
+                //     index: 'dashboard',
+                //     title: '系统首页'
+                // },
                 {
                     icon: 'el-icon-lx-home',
-                    index: 'dashboard',
-                    title: '系统首页'
+                    index: 'showpage',
+                    title: '首页'
                 },
                 {
                     icon: 'el-icon-lx-people',
@@ -77,14 +82,14 @@ export default {
                     title: '配置管理'
                 },
                 {
-                    icon: 'el-icon-lx-question',
-                    index: 'help',
-                    title: '帮助文档'
-                },
-                {
                     icon: 'el-icon-lx-file',
                     index: 'logmanage',
                     title: '日志管理'
+                },
+                {
+                    icon: 'el-icon-lx-question',
+                    index: 'help',
+                    title: '帮助文档'
                 },
                 // {
                 //     icon: 'el-icon-lx-cascades',
@@ -125,11 +130,11 @@ export default {
                 //         }
                 //     ]
                 // },
-                {
-                    icon: 'el-icon-lx-emoji',
-                    index: 'icon',
-                    title: '自定义图标'
-                },
+                // {
+                //     icon: 'el-icon-lx-emoji',
+                //     index: 'icon',
+                //     title: '自定义图标'
+                // },
                 // {
                 //     icon: 'el-icon-pie-chart',
                 //     index: 'charts',

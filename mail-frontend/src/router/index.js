@@ -7,17 +7,22 @@ export default new Router({
     routes: [
         {
             path: '/',
-            redirect: '/dashboard'
+            redirect: '/showpage'
         },
         {
             path: '/',
             component: () => import(/* webpackChunkName: "home" */ '../components/common/Home.vue'),
             meta: { title: '自述文件' },
             children: [
+                // {
+                //     path: '/dashboard',
+                //     component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Dashboard.vue'),
+                //     meta: { title: '系统首页' }
+                // },
                 {
-                    path: '/dashboard',
-                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Dashboard.vue'),
-                    meta: { title: '系统首页' }
+                    path: '/showpage',
+                    component: () => import(/* webpackChunkName: "showpage" */ '../components/ShowPage.vue'),
+                    meta: { title: '首页' }
                 },
                 {
                     path: '/usermanage',
@@ -26,22 +31,22 @@ export default new Router({
                 },
                 {
                     path: '/servercontrol',
-                    component: () => import(/* webpackChunkName: "usermanage" */ '../components/ServerControl.vue'),
+                    component: () => import(/* webpackChunkName: "servercontrol" */ '../components/ServerControl.vue'),
                     meta: { title: '服务器管理' }
                 },
                 {
                     path: '/serverconfig',
-                    component: () => import(/* webpackChunkName: "usermanage" */ '../components/ServerConfig.vue'),
+                    component: () => import(/* webpackChunkName: "serverconfig" */ '../components/ServerConfig.vue'),
                     meta: { title: '配置管理' }
                 },
                 {
                     path: '/logmanage',
-                    component: () => import(/* webpackChunkName: "usermanage" */ '../components/LogManage.vue'),
-                    meta: { title: '文档管理' }
+                    component: () => import(/* webpackChunkName: "logmanage" */ '../components/LogManage.vue'),
+                    meta: { title: '日志管理' }
                 },
                 {
                     path: '/help',
-                    component: () => import(/* webpackChunkName: "usermanage" */ '../components/Help.vue'),
+                    component: () => import(/* webpackChunkName: "help" */ '../components/Help.vue'),
                     meta: { title: '帮助文档' }
                 },
                 {
