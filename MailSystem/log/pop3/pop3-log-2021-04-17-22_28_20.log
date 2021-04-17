@@ -1,0 +1,21 @@
+pop3 start at 2021-04-17-22_28_20
+connection from (127.0.0.1,51948) at 2021-04-17-22:28:28
+smtp get 'user admin ' at 2021-04-17-22:28:44 from (127.0.0.1, 51948)
+smtp get 'pass admin ' at 2021-04-17-22:28:47 from (127.0.0.1, 51948)
+smtp get 'list ' at 2021-04-17-22:28:52 from (127.0.0.1, 51948)
+smtp get 'stat ' at 2021-04-17-22:29:07 from (127.0.0.1, 51948)
+smtp get 'noop ' at 2021-04-17-22:29:15 from (127.0.0.1, 51948)
+smtp get 'retr 1 ' at 2021-04-17-22:29:26 from (127.0.0.1, 51948)
+smtp get 'list ' at 2021-04-17-22:29:36 from (127.0.0.1, 51948)
+smtp get 'dele 2 ' at 2021-04-17-22:29:43 from (127.0.0.1, 51948)
+smtp get 'list  ' at 2021-04-17-22:29:48 from (127.0.0.1, 51948)
+smtp get 'dele 1  ' at 2021-04-17-22:29:53 from (127.0.0.1, 51948)
+smtp get 'list ' at 2021-04-17-22:29:56 from (127.0.0.1, 51948)
+smtp get 'list  ' at 2021-04-17-22:30:03 from (127.0.0.1, 51948)
+smtp get 'retr 1  ' at 2021-04-17-22:30:09 from (127.0.0.1, 51948)
+smtp get 'retr 2  ' at 2021-04-17-22:30:13 from (127.0.0.1, 51948)
+smtp get 'rset  ' at 2021-04-17-22:30:24 from (127.0.0.1, 51948)
+smtp get 'list  ' at 2021-04-17-22:30:28 from (127.0.0.1, 51948)
+smtp get 'retr 2 ' at 2021-04-17-22:30:35 from (127.0.0.1, 51948)
+smtp get 'retr 2 ' at 2021-04-17-22:30:40 from (127.0.0.1, 51948)
+pop3 stop at 2021-04-17-22:33:47
