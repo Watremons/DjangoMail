@@ -7,6 +7,7 @@ import threading
 import base64
 import re
 import datetime
+from pymysql import escape_string
 
 otherMailDomain = 'other.com'
 otherIP = '127.0.0.1'
@@ -121,8 +122,8 @@ class Smtp:
 
     def authentication(self, username, password):
         try:
-            username = str(base64.b64decode(username.encode('utf-8')), 'utf-8')
-            password = str(base64.b64decode(password.encode('utf-8')), 'utf-8')
+            username = str(username)
+            password = str(password)
             results = sqlHandle(
                 'Users', 'SELECT',
                 'userNo, userPassword',
@@ -239,11 +240,11 @@ class Smtp:
             '\'' + email[0] + '\'', '\'' + str(email[1]) + '\'',
             '\'' + email[2] + '\'',
             str(email[3]), str(email[4]),
-            '\'' + email[5] + '\'', '\'' + email[6] + '\''
+            '\'' + escape_string(email[5]) + '\'', '\'' + email[6] + '\''
             )
 
     def receive(self, email):
-        results = sqlHandle('Users', 'SELECT', 'userName', 'userName = \'' + email[5] + '\'')
+        results = sqlHandle('Users', 'SELECT', 'userName', 'userName = \'' + email[1] + '\'')
         if results is not ():
             sqlHandle(
                 'Mails', 'INSERT',
@@ -252,13 +253,14 @@ class Smtp:
                 '\'' + email[0] + '\'', '\'' + str(results[0][0]) + '\'',
                 '\'' + email[2] + '\'',
                 str(email[3]), str(email[4]),
-                '\'' + email[5] + '\'', '\'' + email[6] + '\'')
+                '\'' + escape_string(email[5]) + '\'', '\'' + email[6] + '\'')
             return True
         else:
             return False
 
     def sendMail(self, email):
-        domain = email[5][re.search('@', email[5]).span()[0]+1:]
+        # print(email[0])
+        domain = email[0][re.search('@', email[0]).span()[0]+1:]
         if domain == self.domain:
             self.receive(email)
         elif domain == otherMailDomain:
@@ -268,7 +270,7 @@ class Smtp:
         else:
             print('email domain do not support yet!')
 
-        self.save(email)
+        # self.save(email)
 
     def clientConn(self, connection, address):
         userID = -1
@@ -403,7 +405,7 @@ class Smtp:
 
                         if data[0:10].lower() == 'mail from:':
                             mailAdd = ''
-                            valid = re.search(r'<(\w|@|_|-|\.)*>', data[10:])
+                            valid = re.search('<(\w|@|_|-|\.)*>', data[10:])
                             if valid is not None:
                                 mailAdd = valid.group()[1:-1]
                                 if re.match(r'(\w|-)+(\.(\w|-)+)*@(\w|-)+(\.(\w|-)+)+', mailAdd) is not None:
@@ -516,7 +518,7 @@ class Smtp:
                         connection.send(message.encode('utf-8'))
 
                     elif state == 'RCPTTO':
-                        if data[0:8].lower() == 'data':
+                        if data[0:4].lower() == 'data':
                             state = 'DATA'
                             mail = ''
                             message = '354 End data with <CR><LF>.<CR><LF>\r\n'
