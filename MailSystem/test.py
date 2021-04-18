@@ -35,6 +35,3 @@ if __name__ == "__main__":
             if msg_input == 'exit':
                 break
             client.send(msg_input.encode())
-            
-
-            client.send(msg_input.encode())
