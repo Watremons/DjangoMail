@@ -1,0 +1,18 @@
+pop3 start at 2021-04-19-10_26_31
+connection from (127.0.0.1,57994) at 2021-04-19-10:26:41
+smtp get 'user admin  ' at 2021-04-19-10:26:56 from (127.0.0.1, 57994)
+smtp get 'pass admin   ' at 2021-04-19-10:27:02 from (127.0.0.1, 57994)
+smtp get 'list   ' at 2021-04-19-10:27:06 from (127.0.0.1, 57994)
+smtp get 'dele 4   ' at 2021-04-19-10:27:10 from (127.0.0.1, 57994)
+smtp get 'list   ' at 2021-04-19-10:27:13 from (127.0.0.1, 57994)
+smtp get 'stat   ' at 2021-04-19-10:27:16 from (127.0.0.1, 57994)
+smtp get 'dele 1    ' at 2021-04-19-10:27:19 from (127.0.0.1, 57994)
+smtp get 'list   ' at 2021-04-19-10:27:22 from (127.0.0.1, 57994)
+smtp get 'retr 1    ' at 2021-04-19-10:27:25 from (127.0.0.1, 57994)
+smtp get 'stat   ' at 2021-04-19-10:27:30 from (127.0.0.1, 57994)
+smtp get 'rset   ' at 2021-04-19-10:27:34 from (127.0.0.1, 57994)
+smtp get 'stat    ' at 2021-04-19-10:27:36 from (127.0.0.1, 57994)
+smtp get 'list   ' at 2021-04-19-10:27:44 from (127.0.0.1, 57994)
+smtp get 'quit' at 2021-04-19-10:28:16 from (127.0.0.1, 57994)
+disconnection from (127.0.0.1,57994) at 2021-04-19-10:28:16
+pop3 stop at 2021-04-19-10:28:24
