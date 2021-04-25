@@ -92,7 +92,48 @@ def Check(request, authLevel: list, methodType: str) -> dict:
 
 
 # Function: log in
+def Signin(request):
+    # 若已经登录，直接进入已登录账号
+    if request.session.get('isLogin', None):
+        return JsonResponse({"message": "你已经登录", "status": 404})
+    elif request.method == "POST":
+        # 从参数获取userName和password
+        username = request.POST.get('username', None)
+        password = request.POST.get('password', None)
+        if username and password:
+            try:
+                # 获取失败则捕捉错误
+                profile = models.Users.objects.filter(userName=username)
+                if not profile.exists():
+                    return JsonResponse({"message": "该账号不存在", "status": 404})
+                profile = profile.first()
+                # accountInfo = models.Users.objects.get(userName=profile.userName)
 
+                if (profile.userPassword == password):
+                    # 若相同，设置登录状态为True，设置登录id为userId，登录权限为对应权限
+                    request.session['isLogin'] = True
+                    request.session['username'] = profile.userName
+                    request.session['userAuthority'] = profile.authorityValue
+                    response = JsonResponse({
+                        "message": "登录成功",
+                        "status": 200,
+                        "username": profile.userName,
+                        "userAuthority": profile.authorityValue
+                        })
+                    return response
+                else:
+                    return JsonResponse({"message": "密码错误", "status": 404})
+            except Exception as e:
+                logging.error('str(Exception):\t', str(Exception))
+                logging.error('str(e):\t\t', str(e))
+                logging.error('repr(e):\t', repr(e))
+                logging.error('e.message:\t', e.args)
+                logging.error('########################################################')
+                return JsonResponse({"message": "数据库错误", "status": 404})
+        else:
+            return JsonResponse({"message": "登录表单填写不完整", "status": 404})
+    else:
+        return JsonResponse({"message": "请求方式未注册", "status": 404})
 # Function: log out
 
 # Function: help doc
@@ -142,7 +183,7 @@ def ModifyConfig(request):
             })
         else:
             pass
-            
+
 
 # Function: reset config
 def ResetConfig(request):
@@ -314,12 +355,13 @@ def ReceiveMails(request):
 
 
 # Class: user authority filter
-class UsersView(ListAPIView):
-    queryset = models.Users.objects.all()
-    serializer_class = customSerializers.UsersSerializer
-    filter_class = filters.UserAuthorityFilter
-    pagination_class = paginations.MyFormatResultsSetPagination
-    
+# class UsersView(ListAPIView):
+#     queryset = models.Users.objects.all()
+#     serializer_class = customSerializers.UsersSerializer
+#     filter_class = filters.UserAuthorityFilter
+#     pagination_class = paginations.MyFormatResultsSetPagination
+
+
 # Classes inherited from ModelViewSet which can generate RESTFUL URI
 # @method_decorator(LoginAuthenticate, name='dispatch')
 class UsersViewSet(viewsets.ModelViewSet):
@@ -346,7 +388,7 @@ class AttachmentsViewSet(viewsets.ModelViewSet):
 
 
 # 为ModelViewSet添加过滤器分页器的样例
-# # @method_decorator(LoginAuthenticate, name='dispatch')
+# @method_decorator(LoginAuthenticate, name='dispatch')
 # class CaseViewSet(viewsets.ModelViewSet):
 #     queryset = models.CaseData.objects.all()
 #     serializer_class = customSerializers.CaseDataSerializer
