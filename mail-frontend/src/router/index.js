@@ -135,8 +135,11 @@ export default new Router({
             ]
         },
         {
-            path: '/login',
-            component: () => import(/* webpackChunkName: "login" */ '../components/page/Login.vue'),
+            // path: '/login',
+            // component: () => import(/* webpackChunkName: "login" */ '../components/page/Login.vue'),
+            // meta: { title: '登录' }
+            path: '/loginpage',
+            component: () => import(/* webpackChunkName: "login" */ '../components/LoginPage.vue'),
             meta: { title: '登录' }
         },
         {

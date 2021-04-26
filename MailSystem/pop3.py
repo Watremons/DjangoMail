@@ -213,6 +213,14 @@ class Pop3:
                     'isRead = \'' + '1' + '\'',
                     'mailNo = \'' + str(mails[dele][0]) + '\'')
 
+    def getLegalIndex(self, mails, number) -> int:
+        legal_idx = -1
+        for i, mail in enumerate(mails):
+            if int(mail[0]) == number:
+                legal_idx = i
+                break
+        return legal_idx
+
     def clientConn(self, connection, address):
         mailsNum = 0
         mails = ()
@@ -309,15 +317,16 @@ class Pop3:
                                 print('deles:', deles)
                                 message = '+OK ' + str(mailsNum) + ' ' + str(mailSize) + '\r\n'
                                 for i, mail in enumerate(mails):
-                                    if i not in deles:
-                                        message = message + str(i + 1) + ' ' + str(mailsSize[i]) + '\r\n'
+                                    if mail[0] not in deles:
+                                        message = message + str(mail[0]) + ' ' + str(mailsSize[i]) + '\r\n'
                                 message = message + '.\r\n'
                             else:
                                 number = int(valid.group())
-                                if (number > mailsNum):
+                                legal_idx = self.getLegalIndex(mails, number)
+                                if (legal_idx == -1 or (mails[legal_idx][0] in deles)):
                                     message = '-Error Unknown message\r\n'
                                 else:
-                                    message = str(number) + ' ' + str(mailsSize[number - 1]) + '\r\n'
+                                    message = str(mails[legal_idx][0]) + ' ' + str(len(mails[legal_idx][5].encode('utf-8'))) + '\r\n'
 
                         elif re.match(r'[rR][eE][tT][rR]\s*\d*', data):  # RETR
                             valid = re.search(r'\d+', data[4:])  # \d [0-9]
@@ -325,12 +334,13 @@ class Pop3:
                                 message = '-Error Unknown message\r\n'
                             else:
                                 number = int(valid.group())
-                                if (number > mailsNum):
+                                legal_idx = self.getLegalIndex(mails, number)
+                                if (legal_idx == -1 or (mails[legal_idx][0] in deles)):
                                     message = '-Error Unknown message\r\n'
                                 else:
-                                    mail = mails[number - 1]
+                                    mail = mails[legal_idx]
                                     print(mail)
-                                    message = '+OK ' + str(number) + ' ' + str(mailsSize[number - 1]) + ' octets\r\n'
+                                    message = '+OK ' + str(number) + ' ' + str(len(mail[5].encode('utf-8'))) + ' octets\r\n'
                                     message = message + 'Received: from ' + mail[2] + '(' + mail[7] + ')\r\n'
                                     # message = message + '        ' + str(mail[6]) + '\r\n'
                                     message = message + 'From:<' + mail[2] + '>\r\n'
@@ -364,17 +374,23 @@ class Pop3:
                                 message = '-Error Unknown message\r\n'
                             else:
                                 number = int(valid.group())
-                                if number > mailsNum or number <= 0:
+                                legal_idx = self.getLegalIndex(mails, number)
+                                if legal_idx == -1:
                                     message = '-Error Unknown message\r\n'
                                 else:
-                                    if number - 1 not in deles:
-                                        deles.append(number - 1)
-                                        mailSize  = mailSize - len(mails[number - 1][5].encode('utf-8'))
+                                    if int(mails[legal_idx][0]) not in deles:
+                                        deles.append(int(mails[legal_idx][0]))
+                                        mailSize  = mailSize - len(mails[legal_idx][5].encode('utf-8'))
                                         mailsNum = mailsNum - 1
-                                    message = '+OK ' + str(number) + ' delete\r\n'
+                                    message = '+OK ' + str(int(mails[legal_idx][0])) + ' delete\r\n'
                                     print(message)
                             # print('deles:', deles)
                         elif data[0:4].lower() == 'rset':  # RSET  
+                            
+                            for dele_id in deles:
+                                mailsNum += 1
+                                index = self.getLegalIndex(mails, dele_id)
+                                mailSize += len(mails[index][5].encode('utf-8'))
                             deles.clear()
                             message = '+OK delete mails cancled\r\n'
 

@@ -150,6 +150,7 @@ def Signin(request):
 
                 if (profile.userPassword == password):
                     # 若相同，设置登录状态为True，设置登录id为userId，登录权限为对应权限
+<<<<<<< HEAD
                     
                     request.session['isLogin'] = True
                     request.session['username'] = profile.userName
@@ -159,6 +160,16 @@ def Signin(request):
                         "status": 200,
                         "username": profile.userName,
                         "userAuthority": profile.authorityValue
+=======
+                    request.session['isLogin'] = True
+                    request.session['userName'] = profile.userName
+                    request.session['authorityValue'] = profile.authorityValue
+                    response = JsonResponse({
+                        "message": "登录成功",
+                        "status": 200,
+                        "userName": profile.userName,
+                        "authorityValue": profile.authorityValue
+>>>>>>> 9a4fe53c8443141d7eac77972bf5ee564abe459d
                         })
                     return response
                 else:
@@ -174,9 +185,12 @@ def Signin(request):
             return JsonResponse({"message": "登录表单填写不完整", "status": 404})
     else:
         return JsonResponse({"message": "请求方式未注册", "status": 404})
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 9a4fe53c8443141d7eac77972bf5ee564abe459d
 # Function: log out
 def Logout(request):
     if not request.session.get('isLogin', None):
@@ -473,7 +487,7 @@ class AttachmentsViewSet(viewsets.ModelViewSet):
     serializer_class = customSerializers.AttachmentsSerializer
 
 # 为ModelViewSet添加过滤器分页器的样例
-# # @method_decorator(LoginAuthenticate, name='dispatch')
+# @method_decorator(LoginAuthenticate, name='dispatch')
 # class CaseViewSet(viewsets.ModelViewSet):
 #     queryset = models.CaseData.objects.all()
 #     serializer_class = customSerializers.CaseDataSerializer

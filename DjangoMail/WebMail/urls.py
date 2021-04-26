@@ -14,10 +14,10 @@ urlpatterns = [
     # path('getIdentity/', views.GetIdentity, name="getIdentity"),
 
     # # 登录请求
-    # path('signin/', views.Signin, name="signin"),
+    path('signin/', views.Signin, name="signin"),
 
     # # 登出请求
-    # path('logout/', views.Logout, name="logout"),
+    path('logout/', views.Logout, name="logout"),
 
     # 邮件发送功能
     path('sendmails/', views.SendMails, name="sendmails"),
@@ -27,15 +27,15 @@ urlpatterns = [
 
     # 重置配置信息
     path('resetconfig/', views.ResetConfig, name='resetconfig'),
-    
+
     # 过滤用户等级及分页
-    path('filterusers/', views.UsersView.as_view()),
+    # path('filterusers/', views.UsersView.as_view()),
 
     # # 注册请求
-    # path('signup/', views.Signup, name="signup"),
+    path('signup/', views.Signup, name="signup"),
 
     # # 修改密码请求
-    # path('changePwd/', views.ChangePwd, name="changePwd"),
+    path('changePwd/', views.ChangePwd, name="changePwd"),
 
     # # 忘记密码请求
     # path('forgetPwd/', views.ForgetPwd, name="forgetPwd"),
