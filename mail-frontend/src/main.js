@@ -23,9 +23,9 @@ const i18n = new VueI18n({
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
     document.title = `${to.meta.title} | mail-system`;
-    const role = localStorage.getItem('username');
-    const authority = localStorage.getItem('userAuthority');
-    if (!role && (authority == 1||authority == 2) && to.path !== '/loginpage') {
+    const role = localStorage.getItem('userName');
+    const authority = localStorage.getItem('authorityValue');
+    if ((!role || !authority || authority === 0 )&& to.path !== '/loginpage') {
         next('/loginpage');
     } else if (to.meta.permission) {
         // 如果是管理员权限则可进入，这里只是简单的模拟管理员权限而已

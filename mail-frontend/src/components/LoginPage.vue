@@ -61,7 +61,7 @@ export default {
                     data.append('username',self.param.username)
                     data.append('password',self.param.password)
                     Axios
-                        .post('http://127.0.0.1:8000/webmail/signin/',data)
+                        .post('/apis/webmail/signin/',data)
                         .then(response => (
                             localStorage.setItem('userName', response.data.userName),
                             localStorage.setItem('authorityValue',response.data.authorityValue),

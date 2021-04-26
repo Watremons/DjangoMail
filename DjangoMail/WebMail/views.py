@@ -8,7 +8,7 @@ import logging
 
 # Django Restful Framework
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework import viewsets
 
 # Other app files
@@ -367,6 +367,10 @@ def ReceiveMails(request):
 class UsersViewSet(viewsets.ModelViewSet):
     queryset = models.Users.objects.all()
     serializer_class = customSerializers.UsersSerializer
+    pagination_class = paginations.MyFormatResultsSetPagination
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['^userName']
+    filter_class = filters.UserFilter
 
 
 # @method_decorator(LoginAuthenticate, name='dispatch')

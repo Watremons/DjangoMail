@@ -54,7 +54,7 @@ urlpatterns = [
     # 以下为对任意模型的增删改查列
     # 关于user的请求：
     # 无参数：get=list all,post=create new
-    path('users/', views.UsersViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('users', views.UsersViewSet.as_view({'get': 'list', 'post': 'create'})),
     # 有参数：get=retrieve one,put=partial_update one,delete=delete one
     path('users/<int:pk>/', views.UsersViewSet.as_view({'get': 'retrieve', 'put': 'partial_update', 'delete': 'destroy'})),
 
