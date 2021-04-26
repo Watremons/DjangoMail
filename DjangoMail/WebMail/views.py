@@ -105,7 +105,7 @@ def Signup(request):
             if sameNameUser:  # 用户名唯一
                 return JsonResponse({"message": "用户名已经存在，请使用其他用户名，或直接登录！", "status": 404})
             else:
-                
+            
 
                 newUser = models.Users.objects.create(
                     userName=username,
