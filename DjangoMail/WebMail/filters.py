@@ -5,10 +5,11 @@ from WebMail.models import Users, Mails
 
 class UserAuthorityFilter(django_filters.rest_framework.FilterSet):
     authority = django_filters.NumberFilter(field_name="authorityValue", lookup_expr='lte')
+
     class Meta:
         model = Users  # 模型名
         fields = {
-            'authorityValue':['gte','lte'],
+            'authorityValue': ['gte', 'lte'],
         }
 # class CaseFilter(django_filters.rest_framework.FilterSet):
 #     """
@@ -21,12 +22,14 @@ class UserAuthorityFilter(django_filters.rest_framework.FilterSet):
 #         fields = ['userId']
 
 
-# class AccountInfoFilter(django_filters.rest_framework.FilterSet):
-#     """
-#     个人信息过滤器
-#     """
-#     authority = django_filters.CharFilter(field_name='authority')
+class UserFilter(django_filters.rest_framework.FilterSet):
+    """
+    个人信息过滤器
+    """
+    minAuthorityValue = django_filters.NumberFilter(field_name='authorityValue', lookup_expr='gte')
+    maxAuthorityValue = django_filters.NumberFilter(field_name='authorityValue', lookup_expr='lte')
+    state = django_filters.CharFilter(field_name='userState')
 
-#     class Meta:
-#         model = AccountInformation
-#         fields = ['authority']
+    class Meta:
+        model = Users
+        fields = ['minAuthorityValue', 'maxAuthorityValue', 'state']
