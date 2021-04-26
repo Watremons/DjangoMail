@@ -24,11 +24,12 @@ const i18n = new VueI18n({
 router.beforeEach((to, from, next) => {
     document.title = `${to.meta.title} | mail-system`;
     const role = localStorage.getItem('username');
-    if (!role && to.path !== '/loginpage') {
+    const authority = localStorage.getItem('userAuthority');
+    if (!role && (authority == 1||authority == 2) && to.path !== '/loginpage') {
         next('/loginpage');
     } else if (to.meta.permission) {
         // 如果是管理员权限则可进入，这里只是简单的模拟管理员权限而已
-        role === 'admin' ? next() : next('/403');
+        authority === 2 ? next() : next('/403');
     } else {
         // 简单的判断IE10及以下不进入富文本编辑器，该组件不兼容
         if (navigator.userAgent.indexOf('MSIE') > -1 && to.path === '/editor') {

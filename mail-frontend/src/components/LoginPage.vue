@@ -64,7 +64,6 @@ export default {
                         .post('http://127.0.0.1:8000/webmail/signin/',data)
                         .then(response => (
                             localStorage.setItem('username', response.data.username),
-                            localStorage.setItem('isLogin', true),
                             localStorage.setItem('userAuthority',response.data.userAuthority),
                             
                             self.loginResponse(response.data)
