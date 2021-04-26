@@ -31,30 +31,21 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="name" label="用户名"></el-table-column>
-                <el-table-column label="账户余额">
-                    <template slot-scope="scope">￥{{scope.row.money}}</template>
+                <el-table-column prop="userNo" label="用户ID" width="70px" align="center"></el-table-column>
+                <el-table-column prop="userName" label="用户名"></el-table-column>
+                <el-table-column label="用户权限">
+                    <template slot-scope="scope">{{scope.row.authorityValue === 0 ? '普通用户':'管理员'}}</template>
                 </el-table-column>
-                <el-table-column label="头像(查看大图)" align="center">
-                    <template slot-scope="scope">
-                        <el-image
-                            class="table-td-thumb"
-                            :src="scope.row.thumb"
-                            :preview-src-list="[scope.row.thumb]"
-                        ></el-image>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="address" label="地址"></el-table-column>
+
                 <el-table-column label="状态" align="center">
                     <template slot-scope="scope">
                         <el-tag
-                            :type="scope.row.state==='成功'?'success':(scope.row.state==='失败'?'danger':'')"
-                        >{{scope.row.state}}</el-tag>
+                            :type="scope.row.userState === 1?'success':(scope.row.userState===0?'danger':'')"
+                        >{{scope.row.userState == 1 ? '可用':'禁用'}}</el-tag>
                     </template>
                 </el-table-column>
 
-                <el-table-column prop="date" label="注册时间"></el-table-column>
+                <el-table-column prop="createDate" label="注册时间"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -102,7 +93,7 @@
 </template>
 
 <script>
-import { fetchData } from '../api/index';
+import Axios from 'axios';
 export default {
     name: 'basetable',
     data() {
@@ -127,13 +118,24 @@ export default {
         this.getData();
     },
     methods: {
-        // 获取 easy-mock 的模拟数据
+        // 获取用户数据
         getData() {
-            fetchData(this.query).then(res => {
-                console.log(res);
-                this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
-            });
+            Axios
+                .get('http://127.0.0.1:8000/webmail/users/')
+                .then(response => (
+                   this.tableData = response.data,
+                   this.$message({
+                       type: 'debug',
+                       message: (JSON.stringify(this.tableData))
+                   })
+                ))
+                .catch(() => {
+                    this.$message({
+                        type: 'error',
+                        message: '数据发送失败'
+                    })
+                })
+            
         },
         // 触发搜索按钮
         handleSearch() {

@@ -45,7 +45,7 @@ export default {
     methods: {
         loginResponse(loginMassege) {
             if (loginMassege.status != 404){
-                if (loginMassege.userAuthority != 0){
+                if (loginMassege.authorityValue != 0){
                     this.$message.success(loginMassege.message)
                     this.$router.push('/')
                 }
@@ -63,8 +63,8 @@ export default {
                     Axios
                         .post('http://127.0.0.1:8000/webmail/signin/',data)
                         .then(response => (
-                            localStorage.setItem('username', response.data.username),
-                            localStorage.setItem('userAuthority',response.data.userAuthority),
+                            localStorage.setItem('userName', response.data.userName),
+                            localStorage.setItem('authorityValue',response.data.authorityValue),
                             
                             self.loginResponse(response.data)
                         ))

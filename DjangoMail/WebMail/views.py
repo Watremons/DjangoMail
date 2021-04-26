@@ -112,13 +112,13 @@ def Signin(request):
                 if (profile.userPassword == password):
                     # 若相同，设置登录状态为True，设置登录id为userId，登录权限为对应权限
                     request.session['isLogin'] = True
-                    request.session['username'] = profile.userName
-                    request.session['userAuthority'] = profile.authorityValue
+                    request.session['userName'] = profile.userName
+                    request.session['authorityValue'] = profile.authorityValue
                     response = JsonResponse({
                         "message": "登录成功",
                         "status": 200,
-                        "username": profile.userName,
-                        "userAuthority": profile.authorityValue
+                        "userName": profile.userName,
+                        "authorityValue": profile.authorityValue
                         })
                     return response
                 else:

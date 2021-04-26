@@ -61,15 +61,16 @@ export default {
     },
     computed: {
         username() {
-            let username = localStorage.getItem('username');
-            return username ? username : this.name;
+            let userName = localStorage.getItem('userName');
+            return userName ? userName : this.name;
         }
     },
     methods: {
         // 用户名下拉菜单选择事件
         handleCommand(command) {
             if (command == 'loginout') {
-                localStorage.removeItem('username');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('authorityValue');
                 this.$router.push('/login');
             }
         },
