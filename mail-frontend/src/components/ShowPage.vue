@@ -77,8 +77,8 @@ export default {
     name: 'dashboard',
     data() {
         return {
-            name: localStorage.getItem('username'),
-            authority: localStorage.getItem('userAuthority'),
+            name: localStorage.getItem('userName'),
+            authority: localStorage.getItem('authorityValue'),
             todoList: [
                 {
                     title: '今天要修复100个bug',
