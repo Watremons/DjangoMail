@@ -79,9 +79,9 @@ def SuperAdminAuthenticate(function):
 
 # Function: Request check
 def Check(request, authLevel: list, methodType: str) -> dict:
-    if request.session.get('isLogin', None):
-        auth = request.session.get('authorityValue', None)
-        if auth not in authLevel:
+    auth = request.POST.get('authorityValue', None)
+    if auth:
+        if int(auth) not in authLevel:
             return {"result": False, "message": "您权限不足"}
         if request.method != methodType:
             return {"result": False, "message": "请求方式未注册"}
@@ -343,42 +343,50 @@ def ControlPop3Server(request):
 
 
 # Function: send mails
-def SendMails(request):
+def SendMail(request):
     CheckRes = Check(request, [0, 1, 2], "POST")
     if not CheckRes["result"]:
         return JsonResponse({"message": CheckRes["message"], "status": 404})
     else:
-        receivers = request.POST.get("receviers", None)
+        sender = request.POST.get("sender", None)
+        receiver = request.POST.get("receiver", None)
         content = request.POST.get("content", None)
+        ipAddr = request.POST.get("ipAddr", None)
 
-        userNo = request.session.get("userNo", None)
-
-        if receivers and content:
-            receiverList = json.loads(receivers)
+        if sender and receiver and content and ipAddr:
 
             try:
                 # Search for sender
-                sender = models.Users.objects.filter(userNo=int(userNo))
-                if not sender.exist():
+                sender = models.Users.objects.filter(userName=sender)
+                if not sender.exists():
                     return JsonResponse({
-                        "message": "当前登录用户不合法！",
+                        "message": "使用的发送用户不合法！",
                         "status": 404
                     })
-
                 sender = sender.first()
-
+                receiver = models.Users.objects.filter(userName=receiver)
+                if not receiver.exists():
+                    return JsonResponse({
+                        "message": "使用的接收用户不合法！",
+                        "status": 404
+                    })
+                
+                receiver = receiver.first()
                 # Create new mails
-                newMailList = []
-                for receiver in receiverList:
-                    newMailInfo = models.Mails.objects.create(
-                        receiver=receiver,
-                        sender=sender.userName,
-                        isRead=False,
-                        isServed=0,
-                        content=content,
-                        userNo=sender
-                    )
-                    newMailList.append(newMailInfo)
+                newMailInfo = models.Mails.objects.create(
+                    receiver=receiver.userName,
+                    sender=sender.userName,
+                    ip=ipAddr,
+                    isRead=0,
+                    isServed=1,
+                    content=content
+                )
+
+                return JsonResponse({
+                    "message": "发送完成",
+                    "sender": sender.userName,
+                    "status": 200
+                    })
 
             except Exception as e:
                 logging.error('str(Exception):\t', str(Exception))
@@ -390,11 +398,6 @@ def SendMails(request):
             return JsonResponse({
                 "message": "表单未填写完整",
                 "status": 404
-            })
-
-        return JsonResponse({
-            "message": "发送完成",
-            "status": 200
             })
 
 
@@ -450,10 +453,11 @@ def ReceiveMails(request):
 # Classes inherited from ModelViewSet which can generate RESTFUL URI
 # @method_decorator(LoginAuthenticate, name='dispatch')
 class UsersViewSet(viewsets.ModelViewSet):
-    queryset = models.Users.objects.all()
+    queryset = models.Users.objects.all().order_by('userNo')
+    # 默认按userNo排序
     serializer_class = customSerializers.UsersSerializer
     pagination_class = paginations.MyFormatResultsSetPagination
-    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     search_fields = ['^userName']
     filter_class = filters.UserFilter
 

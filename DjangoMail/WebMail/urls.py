@@ -20,7 +20,7 @@ urlpatterns = [
     path('logout/', views.Logout, name="logout"),
 
     # 邮件发送功能
-    path('sendmails/', views.SendMails, name="sendmails"),
+    path('sendmail/', views.SendMail, name="sendmail"),
 
     # 显示配置信息
     path('showconfig/', views.ShowConfig, name='showconfig'),
@@ -31,10 +31,10 @@ urlpatterns = [
     # 过滤用户等级及分页
     # path('filterusers/', views.UsersView.as_view()),
 
-    # # 注册请求
+    # 注册请求
     path('signup/', views.Signup, name="signup"),
 
-    # # 修改密码请求
+    # 修改密码请求
     path('changePwd/', views.ChangePwd, name="changePwd"),
 
     # # 忘记密码请求
