@@ -11,6 +11,12 @@
             <div class="handle-box">
                 <el-button
                     type="primary"
+                    icon="el-icon-message"
+                    class="handle-del"
+                    @click="mailEdit"
+                >群发邮件</el-button>
+                <el-button
+                    type="danger"
                     icon="el-icon-delete"
                     class="handle-del mr10"
                     @click="delAllSelection"
@@ -75,7 +81,7 @@
             </div>
         </div>
 
-        <!-- 编辑弹出框 -->
+        <!-- 用户编辑弹出框 -->
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="70px">
                 <el-form-item label="用户名">
@@ -91,6 +97,34 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
                 <el-button type="primary" @click="saveEdit">确 定</el-button>
+            </span>
+        </el-dialog>
+
+        <!-- 邮件内容编辑框 -->
+        <el-dialog title="邮件编辑" :visible.sync="mailVisible" width="30%">
+            <el-form ref="mailForm" :model="mailForm" label-width="70px">
+                <el-form-item label="主题">
+                    <el-input
+                      v-model="mailForm.subject"
+                      maxlength="20"
+                      show-word-limit
+                      clearable
+                    ></el-input>
+                </el-form-item>
+                <el-form-item label="内容">
+                    <el-input
+                      type="textarea"
+                      :autosize="{ minRows: 5, maxRows: 10}"
+                      maxlength="50"
+                      show-word-limit
+                      clearable
+                      v-model="mailForm.content"
+                    ></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="cancelMailSend">取 消</el-button>
+                <el-button type="primary" @click="sendMailAllSelection">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -115,11 +149,14 @@ export default {
             multipleSelection: [],
             delList: [],
             delFailedList: [],
+            mailList: [],
+            mailFailedList: [],
             editVisible: false,
+            mailVisible: false,
             pageTotal: 0,
             form: {},
-            idx: -1,
-            id: -1
+            mailForm: {subject:'',content:''},
+            idx: -1
         };
     },
     created() {
@@ -185,28 +222,28 @@ export default {
             this.$confirm('确定要删除该用户吗？', '提示', {
                 type: 'warning'
             })
-                .then(() => {
-                    let requestURL = '/apis/webmail/users/'
-                    requestURL += row.userNo + '/'
-                    Axios
-                        .delete(requestURL)
-                        .then(response => (
-                            this.$message.success('删除成功'),
-                            this.getData()
-                        ))
-                        .catch(()=>{
-                            this.$message({
-                                type: 'error',
-                                message: '数据发送失败'
-                            })
+            .then(() => {
+                let requestURL = '/apis/webmail/users/'
+                requestURL += row.userNo + '/'
+                Axios
+                    .delete(requestURL)
+                    .then(response => (
+                        this.$message.success('删除成功'),
+                        this.getData()
+                    ))
+                    .catch(()=>{
+                        this.$message({
+                            type: 'error',
+                            message: '数据发送失败'
                         })
-                })
-                .catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '删除操作已取消'
                     })
-                });
+            })
+            .catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '删除操作已取消'
+                })
+            });
         },
         // 多选操作
         handleSelectionChange(val) {
@@ -224,54 +261,139 @@ export default {
             this.$confirm('确定要删除这些用户吗？', '提示', {
                 type: 'warning'
             })
-                .then(() => {
-                    for (let i =0;i < this.multipleSelection.length;i++)
-                    {
-                        let requestURL = '/apis/webmail/users/'
-                        requestURL += this.multipleSelection[i].userNo + '/'
-                        Axios
-                            .delete(requestURL)
-                            .then(response => (
-                                this.delList.push(this.multipleSelection[i].userNo)
-                            ))
-                            .catch(()=>{
-                                // self.delFailedList.push(self.multipleSelection[i].userNo)
-                            })
-                        this.delList.push(this.multipleSelection[i].userNo)
-                    }
+            .then(() => {
+                for (let i =0;i < this.multipleSelection.length;i++)
+                {
+                    let requestURL = '/apis/webmail/users/'
+                    requestURL += this.multipleSelection[i].userNo + '/'
+                    Axios
+                        .delete(requestURL)
+                        .then(response => (
+                            this.delList.push(this.multipleSelection[i].userNo)
+                        ))
+                        .catch(()=>{
+                            self.delFailedList.push(self.multipleSelection[i].userNo)
+                        })
+                    this.delList.push(this.multipleSelection[i].userNo)
+                }
 
-                    this.delList.sort(function (a,b) {return a - b})
-                    this.delFailedList.sort(function (a,b) {return a - b})
+                this.delList.sort(function (a,b) {return a - b})
+                this.delFailedList.sort(function (a,b) {return a - b})
 
-                    let responseStr = `成功删除了ID为 ${this.delList.join(', ')} 的用户`
-                    if (this.delFailedList.length > 0)
-                    {
-                        responseStr += `，对ID为 ${this.delFailList.join(', ')} 的用户删除失败`
-                    }
-                    else
-                    {
-                        responseStr += "，无删除失败"
-                    }
-                    
-                    this.$message.success(responseStr);
+                let responseStr = `成功删除了ID为 ${this.delList.join(', ')} 的用户`
+                if (this.delFailedList.length > 0)
+                {
+                    responseStr += `，对ID为 ${this.delFailList.join(', ')} 的用户删除失败`
+                }
+                else
+                {
+                    responseStr += "，无删除失败"
+                }
+                
+                this.$message.success(responseStr);
 
-                    this.multipleSelection = [];
-                    this.delList = [];
-                    this.delFailList = [];
+                this.multipleSelection = [];
+                this.delList = [];
+                this.delFailList = [];
 
-                    this.$set(this.query, 'pageIndex', 1);
-                    this.getData();
+                this.$set(this.query, 'pageIndex', 1);
+                this.getData();
+            })
+            .catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '删除操作已取消'
                 })
-                .catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '删除操作已取消'
-                    })
-                });
+            });
+        },
+        //邮件编辑操作
+        mailEdit() {
+            if (this.multipleSelection.length == 0)
+            {
+                this.$message.warning("您尚未选择需要发送邮件的用户！");
+            }
+            else{
+                this.mailVisible = true;
+            }
+            
+        },
+        //邮件发送取消操作
+        cancelMailSend() {
+            this.mailForm.subject = '';
+            this.mailForm.content = '';
+            this.mailVisible = false;
+        },
+        //批量发送邮件操作
+        sendMailAllSelection() {
+            let self = this;
+            
+            this.$confirm('确定要向这些用户发送邮件吗？', '提示', {
+                type: 'warning'
+            })
+            .then(() => {
+                this.mailVisible = false;
+                let sender = localStorage.getItem('userName');
+                let authorityValue = localStorage.getItem('authorityValue');
+                let senderIp = "";
+                senderIp = returnCitySN.cip.toString()
+
+                for (let i =0;i < this.multipleSelection.length;i++)
+                {
+                    let requestURL = '/apis/webmail/sendmail/'
+                    let data = new FormData()
+                    
+                    data.append("sender", sender);
+                    data.append("receiver", this.multipleSelection[i].userName);
+                    data.append("content", this.mailForm.subject + "\r\n" + this.mailForm.content);
+                    data.append("ipAddr",senderIp);
+                    data.append("authorityValue",authorityValue);
+                    // for (var [a, b] of data.entries()) {
+                    //     console.log(a, b);
+                    // } 
+
+                    Axios
+                        .post(requestURL,data)
+                        .then(response => (
+                            this.mailList.push(response.userName)
+                        ))
+                        .catch(()=>{
+                            self.delFailedList.push(self.multipleSelection[i].userName)
+                        })
+                    // this.mailList.push(this.multipleSelection[i].userName)
+                }
+
+                this.mailList.sort(function (a,b) {return a - b})
+                this.mailFailedList.sort(function (a,b) {return a - b})
+
+                let responseStr = `成功向ID为 ${this.mailList.join(', ')} 的用户发送邮件`
+                if (this.mailFailedList.length > 0)
+                {
+                    responseStr += `，对ID为 ${this.mailFailList.join(', ')} 的用户邮件发送失败`
+                }
+                else
+                {
+                    responseStr += "，无发送失败"
+                }
+                
+                this.$message.success(responseStr);
+
+                this.multipleSelection = [];
+                this.mailList = [];
+                this.mailFailList = [];
+                this.mailForm.subject = '';
+                this.mailForm.content = '';
+            })
+            .catch((err) => {
+                console.log(err);
+                this.$message({
+                    type: 'info',
+                    message: '群发操作已取消'
+                })
+                this.cancelMailSend();
+            });
         },
         // 编辑操作
-        handleEdit(index, row) {
-            this.idx = index;
+        handleEdit(row) {
             this.form = row;
             this.editVisible = true;
         },
