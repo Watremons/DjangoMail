@@ -7,7 +7,7 @@ import threading
 import base64
 import re
 import datetime
-from pymysql import escape_string
+from pymysql.converters import escape_string
 
 otherMailDomain = 'other.com'
 otherIP = '127.0.0.1'
