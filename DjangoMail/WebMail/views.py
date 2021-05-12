@@ -129,7 +129,7 @@ def Signup(request):
     else:
         return JsonResponse({"message": "请求方式未注册", "status": 404})
 
-                
+
 # Function: log in
 def Signin(request):
     # 若已经登录，直接进入已登录账号
@@ -298,11 +298,11 @@ def ControlSmtpServer(request):
         method = request.POST.get("method", None)
 
         if method == "start":
-            settings.mailSystemServer.stmp.start()
+            mailSystemServer.smtp.start()
         elif method == "restart":
-            settings.mailSystemServer.stmp.restart()
+            mailSystemServer.smtp.restart()
         elif method == "stop":
-            settings.mailSystemServer.stmp.stop()
+            mailSystemServer.smtp.stop()
         else:
             return JsonResponse({
                 "message": "命令错误或未填写命令",
@@ -326,11 +326,11 @@ def ControlPop3Server(request):
         method = request.POST.get("method", None)
 
         if method == "start":
-            settings.mailSystemServer.pop3.start()
+            mailSystemServer.pop3.start()
         elif method == "restart":
-            settings.mailSystemServer.pop3.restart()
+            mailSystemServer.pop3.restart()
         elif method == "stop":
-            settings.mailSystemServer.pop3.stop()
+            mailSystemServer.pop3.stop()
         else:
             return JsonResponse({
                 "message": "命令错误或未填写命令",

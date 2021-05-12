@@ -37,6 +37,14 @@ urlpatterns = [
     # 修改密码请求
     path('changePwd/', views.ChangePwd, name="changePwd"),
 
+    # 控制smtp服务器请求
+    path('controlSmtp/', views.ControlSmtpServer, name="controlSmtp"),
+
+    # 控制pop3服务器请求
+    path('controlPop3/', views.ControlPop3Server, name="controlPop3"),
+
+    
+
     # # 忘记密码请求
     # path('forgetPwd/', views.ForgetPwd, name="forgetPwd"),
 
