@@ -384,7 +384,7 @@ export default {
                 this.mailForm.content = '';
             })
             .catch((err) => {
-                console.log(err);
+                // console.log(err);
                 this.$message({
                     type: 'info',
                     message: '群发操作已取消'
