@@ -19,6 +19,7 @@ from WebMail import paginations
 
 # Standard libs
 import json
+import time
 
 # Import server
 import os
@@ -228,62 +229,114 @@ def ChangePwd(request):
 
 # Function: show config
 def ShowConfig(request):
-    checkRes = Check(request, [1, 2], 'GET')
-    if not Check["result"]:
+    configJson = mailSystemServer.ConfigShow()
+    if configJson == -1:
         return JsonResponse({
-            "message": checkRes["message"],
+            "message": "配置文件读取失败",
             "status": 404
-        })
-    else:
-        print(settings.TMP)
-        configJson = mailSystemServer.ConfigShow()
-        if configJson == -1:
-            return JsonResponse({
-                "message": "配置文件读取失败",
-                "status": 404
-            })    
-        return JsonResponse({
-            "data": json.dumps(configJson),
-            "message": "成功",
-            "status": 200
-        })
+        })    
+    return JsonResponse({
+        "data": json.dumps(configJson),
+        "message": "成功",
+        "status": 200
+    })
 
 
 # Function: modify config
 def ModifyConfig(request):
-    checkRef = Check(request, [1, 2], 'POST')
-    if not checkRef["result"]:
+    configJson = request.POST.get('configJson', None)
+    if configJson is not None:
+        updatedConfig = mailSystemServer.ConfigModify(json.loads(configJson))
         return JsonResponse({
-            "message": checkRef["message"],
-            "status": 404
+            "data": json.dumps(updatedConfig),
+            "message": "修改成功",
+            "status": 200
         })
-    else:  # 判断合法性
-        configJson = request.POST.get('configJson', None)
-        if configJson != None:
-            updatedConfig = mailSystemServer.ConfigModify(json.loads(configJson))
-            return JsonResponse({
-                "data": json.dumps(updatedConfig),
-                "message": "修改成功",
-                "status": 200
-            })
-        else:
-            pass
+    else:
+        pass
 
 
 # Function: reset config
 def ResetConfig(request):
-    checkRef = Check(request, [1, 2], 'POST')
-    if not checkRef["result"]:
-        return JsonResponse({
-            "message": checkRef["message"],
-            "status": 404
-        })
+    return JsonResponse({
+        "data": json.dumps(mailSystemServer.ConfigDefault()),
+        "message": "成功",
+        "status": 200
+    })
+
+
+# Function: get all logs by type
+def GetAllLog(request):
+    if request.method == "POST":
+        logType = request.POST.get('logType', None)
+        if logType and (int(logType) == 0 or int(logType) == 1):
+            logNames, logPaths, logSizes = mailSystemServer.GetAllLogFile(int(logType))
+
+            logList = []
+            for index in range(len(logPaths)):
+                f = open(logPaths[index], 'r', encoding='utf-8')
+                logContent = f.read()
+                logTimestamp = os.path.getatime(logPaths[index])
+                f.close()
+
+                logTime = time.strftime(
+                    '%Y-%m-%d %H:%M:%S',
+                    time.localtime(logTimestamp)
+                )
+                logList.append({
+                    "logName": logNames[index],
+                    "logTime": logTime,
+                    "logContent": logContent
+                    })
+
+            return JsonResponse({
+                "data": json.dumps(logList),
+                "message": "成功",
+                "status": 200
+            })
+        else:
+            return JsonResponse({
+                "message": "日志类型参数错误",
+                "status": 404
+            })
     else:
-        return JsonResponse({
-            "data": json.dumps(mailSystemServer.ConfigDefault()),
-            "message": "成功",
-            "status": 200
-        })
+        return {"status": 404, "message": "请求方式未注册"}
+
+
+# Function: del logs by index and type
+def DelLogsByIdx(request):
+    if request.method == "POST":
+        logIndexListStr = request.POST.get('logIndexList', None)
+        logType = request.POST.get('logType', None)
+        if logIndexListStr and logType and (int(logType) == 0 or int(logType) == 1):
+            logIndexList = json.loads(logIndexListStr)
+            returnList = []
+            flag = True
+            for index in range(len(logIndexList)):
+                if (mailSystemServer.DelLogFile(int(logType), logIndexList[index])):
+                    returnList.append(True)
+                else:
+                    flag = False
+                    returnList.append(False)
+            if flag:
+                return JsonResponse({
+                    "data": json.dumps(returnList),
+                    "message": "全部成功",
+                    "status": 200
+                })
+            else:
+                return JsonResponse({
+                    "data": json.dumps(returnList),
+                    "message": "存在失败",
+                    "status": 201
+                })
+        else:
+            return JsonResponse({
+                "message": "日志类型参数错误或表单填写不完整",
+                "status": 404
+            })
+    else:
+        return {"status": 404, "message": "请求方式未注册"}
 
 
 # Function: control smtp

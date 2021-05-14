@@ -28,6 +28,9 @@ urlpatterns = [
     # 重置配置信息
     path('resetconfig/', views.ResetConfig, name='resetconfig'),
 
+    # 修改配置信息
+    path('modifyconfig/', views.ModifyConfig, name='modifyconfig'),
+
     # 过滤用户等级及分页
     # path('filterusers/', views.UsersView.as_view()),
 
@@ -43,8 +46,10 @@ urlpatterns = [
     # 控制pop3服务器请求
     path('controlPop3/', views.ControlPop3Server, name="controlPop3"),
 
-    
-
+    # 日志管理请求
+    path('getlog/', views.GetAllLog, name="getlog"),
+    # 日志删除请求
+    path('dellog/', views.DelLogsByIdx, name="dellog"),
     # # 忘记密码请求
     # path('forgetPwd/', views.ForgetPwd, name="forgetPwd"),
 
