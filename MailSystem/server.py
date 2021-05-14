@@ -186,9 +186,10 @@ class Server:
         fileNames, filePaths, filesizes = self.GetAllLogFile(type)
         try:
             os.remove(filePaths[num-1])
+            return True
         except:
             print('parameter error')
-            return
+            return False
         else:
             print(fileNames[num-1], 'deleted')
 
