@@ -7,12 +7,13 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.utils import timezone
+import datetime
 
 
 class Users(models.Model):
     userNo = models.AutoField(db_column='userNo', primary_key=True)
     userName = models.CharField(db_column='userName', max_length=50, default='未命名')
-    createDate = models.DateField(db_column='createDate', default=timezone.now)
+    createDate = models.DateField(db_column='createDate', default=datetime.date.today())
     # mailAddress = models.CharField(db_column='mailAddress', max_length=50)
     authorityValue = models.IntegerField(db_column='authorityValue', default=0)  # 0:user 1:admin 2:superAdmin
     userState = models.IntegerField(db_column='userState', default=1)  # 1:normal 0:banned
