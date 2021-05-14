@@ -53,7 +53,15 @@
                 </el-table-column>
 
                 <el-table-column prop="createDate" label="注册时间"></el-table-column>
-                <el-table-column label="操作" width="180" align="center">
+                <el-table-column width="180" align="center">
+                    <template slot="header" slot-scope="scope">
+                        <el-button
+                            type="text"
+                            icon="el-icon-edit"
+                            class="green"
+                            @click="handleAdd()"
+                        >添加用户</el-button>
+                    </template>
                     <template slot-scope="scope">
                         <el-button
                             type="text"
@@ -83,7 +91,7 @@
 
         <!-- 用户编辑弹出框 -->
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px">
+            <el-form ref="form" :model="form" label-width="70px" @submit.native.prevent>
                 <el-form-item label="用户名">
                     <el-input v-model="form.userName"></el-input>
                 </el-form-item>
@@ -102,7 +110,7 @@
 
         <!-- 邮件内容编辑框 -->
         <el-dialog title="邮件编辑" :visible.sync="mailVisible" width="30%">
-            <el-form ref="mailForm" :model="mailForm" label-width="70px">
+            <el-form ref="mailForm" :model="mailForm" label-width="70px" @submit.native.prevent>
                 <el-form-item label="主题">
                     <el-input
                       v-model="mailForm.subject"
@@ -125,6 +133,28 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="cancelMailSend">取 消</el-button>
                 <el-button type="primary" @click="sendMailAllSelection">确 定</el-button>
+            </span>
+        </el-dialog>
+
+        <!-- 用户新增弹出框 -->
+        <el-dialog title="添加" :visible.sync="addVisible" width="30%">
+            <el-form ref="form" :model="addForm" label-width="70px" @submit.native.prevent>
+                <el-form-item label="用户名">
+                    <el-input v-model="addForm.userName"></el-input>
+                </el-form-item>
+                <el-form-item label="用户权限">
+                    <el-input v-model="addForm.authorityValue"></el-input>
+                </el-form-item>
+                <el-form-item label="用户状态">
+                    <el-input v-model="addForm.userState"></el-input>
+                </el-form-item>
+                <el-form-item label="用户密码">
+                    <el-input v-model="addForm.userPassword"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="addVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveAdd">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -153,8 +183,15 @@ export default {
             mailFailedList: [],
             editVisible: false,
             mailVisible: false,
+            addVisible:false,
             pageTotal: 0,
             form: {},
+            addForm :{
+                userName:'',
+                authorityValue:'',
+                userState:'',
+                userPassword:''
+            },
             mailForm: {subject:'',content:''},
             idx: -1
         };
@@ -272,7 +309,7 @@ export default {
                             this.delList.push(this.multipleSelection[i].userNo)
                         ))
                         .catch(()=>{
-                            self.delFailedList.push(self.multipleSelection[i].userNo)
+                            // self.delFailedList.push(self.multipleSelection[i].userNo)
                         })
                     this.delList.push(this.multipleSelection[i].userNo)
                 }
@@ -297,7 +334,9 @@ export default {
                 this.delFailList = [];
 
                 this.$set(this.query, 'pageIndex', 1);
-                this.getData();
+                setTimeout(()=>{
+                    self.getData();
+                },1000);
             })
             .catch(() => {
                 this.$message({
@@ -416,10 +455,54 @@ export default {
                 .catch(()=>{
                     this.$message({
                         type: "error",
-                        message: "数据获取失败",
+                        message: "数据发送失败",
                     });
                 })
             this.getData();
+        },
+        // 新增操作
+        handleAdd() {
+            this.addForm = {
+                userName:'',
+                authorityValue:'',
+                userState:'',
+                userPassword:''
+            };
+            this.addVisible = true;
+        },
+        // 保存新增
+        saveAdd(){
+            this.addVisible = false;
+            let self = this;
+
+            let formdata = new FormData();
+
+            formdata.append("userName",this.addForm.userName);
+            formdata.append("authorityValue",this.addForm.authorityValue);
+            formdata.append("userState",this.addForm.userState);
+            formdata.append("userPassword",this.addForm.userPassword)
+
+            let requestURL = "/apis/webmail/users";
+            Axios
+                .post(requestURL,formdata)
+                .then(response => (
+                    this.$message.success("添加成功")
+                ))
+                .catch(()=>{
+                    this.$message({
+                        type: "error",
+                        message: "数据发送失败",
+                    });
+                })
+            this.addForm = {
+                userName:'',
+                authorityValue:'',
+                userState:'',
+                userPassword:''
+            };
+            setTimeout(()=>{
+                self.getData();
+            },1000);
         },
         // 分页导航
         handlePageChange(val) {
@@ -449,6 +532,9 @@ export default {
 }
 .red {
     color: #ff0000;
+}
+.green {
+    color: rgb(35, 214, 74);
 }
 .mr10 {
     margin-right: 10px;
