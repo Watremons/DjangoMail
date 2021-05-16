@@ -610,6 +610,53 @@ def GetAllMailsbyId(request):
         })
 
 
+# Function: get sendBox mails by id
+# Return mailNo, receiver, isRead, subject
+def GetSendBoxMailsbyId(request):
+    if request.method == "POST":
+        userName = request.POST.get("userName", None)
+        if userName:
+            userObject = models.Users.objects.filter(userName=userName)
+            if not userObject.exists():
+                return JsonResponse({
+                    "status": 404,
+                    "message": "目标用户不存在"
+                })
+            userObject = userObject.first()
+
+            mailList = models.Mails.objects.filter(sender=userObject.userName)
+            mailJsonList = []
+            if not mailList.exists():
+                return JsonResponse({
+                    "status": 200,
+                    "message": "成功",
+                    "data": json.dumps(mailJsonList)
+                })
+            for mail in mailList:
+                mailDict = {}
+                mailDict["mailNo"] = mail.mailNo
+                mailDict["receiver"] = mail.receiver
+                mailDict["isRead"] = mail.isRead
+                mailDict["subject"] = mail.subject
+                mailDict["time"] = str(mail.rendOrReceiptDate)
+                mailJsonList.append(mailDict)
+
+            return JsonResponse({
+                "status": 200,
+                "message": "成功",
+                "data": json.dumps(mailJsonList)
+            })
+        else:
+            return JsonResponse({
+                "status": 404,
+                "message": "表单未填写完整"
+            })
+    else:
+        return JsonResponse({
+            "status": 404,
+            "message": "请求方式未注册"
+        })
+
 # Funtion: get mails have readed by id
 # Return all attr
 def GetReadMailsbyId(request):

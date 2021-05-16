@@ -53,7 +53,8 @@ urlpatterns = [
 
     # 邮件简略信息获取请求
     path('getmaillist/', views.GetAllMailsbyId, name="getmaillist"),
-
+    # 发件箱简略信息获取请求
+    path('getsendbox/', views.GetSendBoxMailsbyId, name="getsendbox"),
     # 邮件信息获取请求
     path('getmail/', views.GetReadMailsbyId, name="getmail"),
 
