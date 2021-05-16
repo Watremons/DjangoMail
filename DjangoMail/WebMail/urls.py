@@ -55,6 +55,11 @@ urlpatterns = [
     path('getmaillist/', views.GetAllMailsbyId, name="getmaillist"),
     # 邮件信息获取请求
     path('getmail/', views.GetReadMailsbyId, name="getmail"),
+
+    # 用户统计信息获取
+    path('getuserstatic/', views.GetStaticUsers, name="getuserstatic"),
+    # 邮件统计信息获取
+    path('getmailstatic/', views.GetStaticMails, name="getmailstatic"),
     # # 忘记密码请求
     # path('forgetPwd/', views.ForgetPwd, name="forgetPwd"),
 

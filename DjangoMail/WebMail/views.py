@@ -22,6 +22,7 @@ from WebMail import paginations
 # Standard libs
 import json
 import time
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 # Import server
@@ -640,42 +641,69 @@ def GetReadMailsbyId(request):
         })
 
 
-# Function: get user static info
+# Function: get user 5 months static info
 def GetStaticUsers(request):
     if request.method == "POST":
-        nowDate = timezone.now().date()
-        pastLimitDate = nowDate + relativedelta(days=-6)
+        nowDate = timezone.now().date().replace(day=1)
+        pastLimitDate = nowDate + relativedelta(months=-4)
 
-        for i in range(7):
+        jsonList = []
+        for i in range(5):
             userCountInfo = models.Users.objects\
-                .filter(createDate=pastLimitDate)\
+                .filter(createDate__gte=pastLimitDate)\
+                .filter(createDate__lt=pastLimitDate + relativedelta(months=+1))\
                 .aggregate(userCount=Count("userNo"))
 
-            mailObject = models.Mails.objects.filter(mailNo=mailNo)
-            if not mailObject.exists():
-                return JsonResponse({
-                    "status": 404,
-                    "message": "目标邮件不存在"
-                })
-
-            mailObject = mailObject.first()
+            statInfoDict = {
+                "date": pastLimitDate.strftime("%Y-%m"),
+                "userCount": userCountInfo["userCount"]
+            }
+            jsonList.append(statInfoDict)
+            pastLimitDate = pastLimitDate + relativedelta(months=+1)
 
         return JsonResponse({
             "status": 200,
             "message": "成功",
-            "data": model_to_dict(mailObject)
+            "data": json.dumps(jsonList)
         })
     else:
         return JsonResponse({
             "status": 404,
             "message": "请求方式未注册"
         })
-    
 
 
 # Function: get mail static info
 def GetStaticMails(request):
-    pass
+    if request.method == "POST":
+        nowDate = timezone.now().date()
+        pastLimitDate = nowDate + relativedelta(days=-6)
+
+        jsonList = []
+        for i in range(7):
+            mailCountInfo = models.Mails.objects\
+                .filter(rendOrReceiptDate__gte=datetime.combine(pastLimitDate, datetime.min.time()))\
+                .filter(rendOrReceiptDate__lt=datetime.combine(pastLimitDate + relativedelta(days=+1), datetime.min.time()))\
+                .aggregate(mailCount=Count("mailNo"))
+
+            statInfoDict = {
+                "date": pastLimitDate.strftime("%Y-%m-%d"),
+                "mailCount": mailCountInfo["mailCount"]
+            }
+            jsonList.append(statInfoDict)
+            pastLimitDate = pastLimitDate + relativedelta(days=+1)
+
+        return JsonResponse({
+            "status": 200,
+            "message": "成功",
+            "data": json.dumps(jsonList)
+        })
+    else:
+        return JsonResponse({
+            "status": 404,
+            "message": "请求方式未注册"
+        })
+
 
 # Class: user authority filter
 # class UsersView(ListAPIView):
