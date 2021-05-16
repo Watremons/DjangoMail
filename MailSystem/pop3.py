@@ -185,19 +185,19 @@ class Pop3:
 
         if allMails:
             for mail in allMails:
-                if mail[3] == 0 and mail[4] == 1:
+                if mail[4] == 0 and mail[5] == 1:
                     if overSize is True:
                         deleMails.append(mail)
                         continue
 
-                    if mailSize + len(mail[5].encode('utf-8')) > self.maxSize:
+                    if mailSize + len(mail[6].encode('utf-8')) > self.maxSize:
                         overSize = True
                         deleMails.append(mail)
 
                     else:
-                        if mail[1] not in self.banActs and mail[2] not in self.banActs:
-                            mailSize = mailSize + len(mail[5].encode('utf-8'))
-                            mailsSize.append(len(mail[5].encode('utf-8')))
+                        if mail[1] not in self.banActs and mail[3] not in self.banActs:
+                            mailSize = mailSize + len(mail[6].encode('utf-8'))
+                            mailsSize.append(len(mail[6].encode('utf-8')))
                             mails.append(mail)
 
         t = threading.Thread(target=self.delEmail, args=(deleMails, range(len(deleMails))))
@@ -208,10 +208,13 @@ class Pop3:
     def delEmail(self, mails, deles):
         if deles and mails:
             for dele in deles:
+                legal_idx = self.getLegalIndex(mails, dele)
+                if legal_idx == -1:
+                    continue
                 sqlHandle(
                     'recvmail', 'UPDATE',
                     'isRead = \'' + '1' + '\'',
-                    'mailNo = \'' + str(mails[dele][0]) + '\'')
+                    'mailNo = \'' + str(mails[legal_idx][0]) + '\'')
 
     def getLegalIndex(self, mails, number) -> int:
         legal_idx = -1
@@ -326,7 +329,7 @@ class Pop3:
                                 if (legal_idx == -1 or (mails[legal_idx][0] in deles)):
                                     message = '-Error Unknown message\r\n'
                                 else:
-                                    message = str(mails[legal_idx][0]) + ' ' + str(len(mails[legal_idx][5].encode('utf-8'))) + '\r\n'
+                                    message = str(mails[legal_idx][0]) + ' ' + str(len(mails[legal_idx][6].encode('utf-8'))) + '\r\n'
 
                         elif re.match(r'[rR][eE][tT][rR]\s*\d*', data):  # RETR
                             valid = re.search(r'\d+', data[4:])  # \d [0-9]
@@ -340,13 +343,14 @@ class Pop3:
                                 else:
                                     mail = mails[legal_idx]
                                     print(mail)
-                                    message = '+OK ' + str(number) + ' ' + str(len(mail[5].encode('utf-8'))) + ' octets\r\n'
-                                    message = message + 'Received: from ' + mail[2] + '(' + mail[7] + ')\r\n'
+                                    message = '+OK ' + str(number) + ' ' + str(len(mail[6].encode('utf-8'))) + ' octets\r\n'
+                                    message = message + 'Received:from ' + mail[2] + ' (' + mail[3] + ')\r\n'
                                     # message = message + '        ' + str(mail[6]) + '\r\n'
-                                    message = message + 'From:<' + mail[2] + '>\r\n'
-                                    message = message + 'To:<' + mail[1] + '>\r\n'
-                                    message = message + 'Date:' + str(mail[6]) + '\r\n'
-                                    message = message + mail[5]
+                                    message = message + 'From:< ' + mail[2] + ' >\r\n'
+                                    message = message + 'To:< ' + mail[1] + ' >\r\n'
+                                    message = message + 'Subject: ' + mail[8] + ' \r\n'
+                                    message = message + 'Date: ' + str(mail[7]) + ' \r\n'
+                                    message = message + mail[6]
                                     message = message + '\r\n.\r\n'
                                     print(message)
 
@@ -380,7 +384,7 @@ class Pop3:
                                 else:
                                     if int(mails[legal_idx][0]) not in deles:
                                         deles.append(int(mails[legal_idx][0]))
-                                        mailSize  = mailSize - len(mails[legal_idx][5].encode('utf-8'))
+                                        mailSize  = mailSize - len(mails[legal_idx][6].encode('utf-8'))
                                         mailsNum = mailsNum - 1
                                     message = '+OK ' + str(int(mails[legal_idx][0])) + ' delete\r\n'
                                     print(message)
@@ -390,7 +394,7 @@ class Pop3:
                             for dele_id in deles:
                                 mailsNum += 1
                                 index = self.getLegalIndex(mails, dele_id)
-                                mailSize += len(mails[index][5].encode('utf-8'))
+                                mailSize += len(mails[index][6].encode('utf-8'))
                             deles.clear()
                             message = '+OK delete mails cancled\r\n'
 
