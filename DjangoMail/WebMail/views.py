@@ -24,6 +24,7 @@ import time
 # Import server
 import os
 import sys
+import socket
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 from MailSystem.server import Server
 mailSystemServer = Server()
@@ -492,8 +493,68 @@ def ReceiveMails(request):
             "message": "发送完成",
             "status": 200
             })
-# Function: config
 
+
+# Function: list all unreaded mails
+def ListUnreadedMails(request):
+    
+    checkRes = Check(request, [1, 2, 3], "POST")
+    if not checkRes["result"]:
+        return JsonResponse({
+            "message": checkRes["message"],
+            "status": 404
+        })
+    else:
+        username = request.POST.get("username", None)
+        password = request.POST.get("password", None)
+        try:
+            client = socket.socket()
+            pop3_ip_port = ('127.0.0.1', 8110)
+            client.connect(pop3_ip_port)
+            data = client.recv(1024)
+            user_cmd = 'USER ' + username + '\r\n'
+            client.send(user_cmd.encode())
+            data = client.recv(1024)
+            pass_cmd = 'PASS ' + password + '\r\n'
+            client.send(pass_cmd.encode())
+            data = client.recv(1024)
+            list_cmd = 'LIST\r\n'
+            client.send(list_cmd.encode())
+            data = client.recv(1024).decode()
+            # print(data)
+            mail_list = data.split('\r\n')[1:-2]
+            # print(mail_list)
+
+            mail_json_list = []
+            for mail in mail_list:
+                
+                retr_cmd = 'RETR ' + mail.split()[0] + '\r\n'
+                client.send(retr_cmd.encode())
+                mail_detail = client.recv(1024).decode()
+                mail_item = mail_detail.split('\r\n')[1:-2]
+
+                mail_dict = {}
+                mail_dict['mailNo'] = int(mail.split()[0])
+                mail_dict['sender'] = mail_item[1].split()[1]
+                mail_dict['subject'] = mail_item[3].split()[1]
+                mail_dict['isRead'] = 0
+                mail_json_list.append(mail_dict)
+
+            return JsonResponse({
+                "message": "Return mail list successfully!",
+                "status": 200,
+                "data": json.dumps(mail_json_list)
+            }) 
+        except:
+            return JsonResponse({
+                "message": "Return mail list error!",
+                "status": 404
+            })
+
+
+# Function: get single mail for detail by id
+def GetMailById(request):
+    pass
 
 # Class: user authority filter
 # class UsersView(ListAPIView):
