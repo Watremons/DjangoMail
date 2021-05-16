@@ -121,15 +121,19 @@ def sendToMany(sender, allUser, users, data):
         mailFrom = sender
         rcptTo = user
         content = data
+        subject = data.split("\r\n")[0]
+        content = "\r\n".join(data.split("\r\n")[1:])
+
         time_ = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         if sqlHandle(
                 'Mails', 'INSERT',
                 'paralist',
-                'receiver', 'sender', 'ip', 'isRead', 'isServed', 'content', 'rendOrReceiptDate',
+                'receiver', 'sender', 'ip', 'isRead', 'isServed', 'content', 'rendOrReceiptDate','subject',
                 '\'' + rcptTo + '\'', '\'' + mailFrom + '\'',
                 '\'' + ip + '\'',
                 str(isRead), str(isServed),
-                '\'' + content + '\'', '\'' + time_ + '\''
+                '\'' + content + '\'', '\'' + time_ + '\'',
+                '\'' + subject + '\''
                 ) is False:
 
             print_('send to ' + user + 'failed')
@@ -333,7 +337,7 @@ def run(server, config):
 
                     send = threading.Thread(
                         target=sendToMany,
-                        args=(user.username, allUser, users, "System Admin Message", mail)
+                        args=(user.username, allUser, users, "System Admin Message\r\n"+mail)
                         )
                     send.start()
                     send.join()

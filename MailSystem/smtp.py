@@ -207,6 +207,10 @@ class Smtp:
             data = client.recv(1024)
             print(data)
 
+            message = email[7] + '\r\n'
+            print(message)
+            client.send(message.encode('utf-8'))
+
             message = email[6]
             print(message)
             client.send(message.encode('utf-8'))
@@ -236,11 +240,12 @@ class Smtp:
         sqlHandle(
             'Mails', 'INSERT',
             'paralist',
-            'receiver', 'sender', 'ip', 'isRead', 'isServed', 'content', 'rendOrReceiptDate',
+            'receiver', 'sender', 'ip', 'isRead', 'isServed', 'content', 'rendOrReceiptDate', 'subject',
             '\'' + email[0] + '\'', '\'' + str(email[1]) + '\'',
             '\'' + email[2] + '\'',
             str(email[3]), str(email[4]),
-            '\'' + escape_string(email[5]) + '\'', '\'' + email[6] + '\''
+            '\'' + escape_string(email[5]) + '\'', '\'' + email[6] + '\'',
+            '\'' + escape_string(email[7]) + '\''
             )
 
     def receive(self, email):
@@ -249,11 +254,12 @@ class Smtp:
             sqlHandle(
                 'Mails', 'INSERT',
                 'paralist',
-                'receiver', 'sender', 'ip', 'isRead', 'isServed', 'content', 'rendOrReceiptDate',
+                'receiver', 'sender', 'ip', 'isRead', 'isServed', 'content', 'rendOrReceiptDate', 'subject',
                 '\'' + email[0] + '\'', '\'' + str(results[0][0]) + '\'',
                 '\'' + email[2] + '\'',
                 str(email[3]), str(email[4]),
-                '\'' + escape_string(email[5]) + '\'', '\'' + email[6] + '\'')
+                '\'' + escape_string(email[5]) + '\'', '\'' + email[6] + '\'',
+                '\'' + escape_string(email[7]) + '\'')
             return True
         else:
             return False
@@ -583,6 +589,8 @@ class Smtp:
                                     ip = address[0]
                                     isRead = 0
                                     isServed = 1
+                                    subject = mail.split("\r\n")[0]
+                                    mail = "\r\n".join(mail.split("\r\n")[1:])
 
                                     email = [
                                         rcptTo,
@@ -591,7 +599,8 @@ class Smtp:
                                         isRead,
                                         isServed,
                                         mail,
-                                        time_]
+                                        time_,
+                                        subject]
                                     send = threading.Thread(target=self.sendMail, args=(email,))
                                     send.start()
 
