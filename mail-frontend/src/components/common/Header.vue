@@ -49,6 +49,7 @@
     </div>
 </template>
 <script>
+import Axios from 'axios';
 import bus from '../common/bus';
 export default {
     data() {
@@ -71,7 +72,33 @@ export default {
             if (command == 'loginout') {
                 localStorage.removeItem('userName');
                 localStorage.removeItem('authorityValue');
-                this.$router.push('/login');
+                let requestURL = "/apis/webmail/logout/";
+                
+                Axios
+                    .post(requestURL)
+                    .then(response => {
+                        if (response.data.status == 200)
+                        {
+                            this.$message({
+                                "type": "success",
+                                "message": "已成功退出登录"
+                            })
+                            this.$router.push('/login');
+                        }
+                        else if (response.data.status == 404)
+                        {
+                            this.$message({
+                                "type": "error",
+                                "message": response.data.message
+                            })
+                        }
+                    })
+                    .catch(()=>{
+                        this.$message({
+                            "type": "error",
+                            "message": "信息发送失败"
+                        })
+                    })
             }
         },
         // 侧边栏折叠
