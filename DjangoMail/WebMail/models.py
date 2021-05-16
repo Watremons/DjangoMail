@@ -33,7 +33,8 @@ class Mails(models.Model):
     isServed = models.IntegerField(db_column='isServed', default=0)  # 0:serving 1:haveServed 2:failToServe
     content = models.CharField(db_column='content', max_length=500, default='内容为空')
     rendOrReceiptDate = models.DateField(db_column='rendOrReceiptDate', default=timezone.now)
-
+    subject = models.CharField(db_column='subject', max_length=500, default='无主题')
+    
     class Meta:
         db_table = 'Mails'
 

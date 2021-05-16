@@ -50,6 +50,11 @@ urlpatterns = [
     path('getlog/', views.GetAllLog, name="getlog"),
     # 日志删除请求
     path('dellog/', views.DelLogsByIdx, name="dellog"),
+
+    # 邮件简略信息获取请求
+    path('getmaillist/', views.GetAllMailsbyId, name="getmaillist"),
+    # 邮件信息获取请求
+    path('getmail/', views.GetReadMailsbyId, name="getmail"),
     # # 忘记密码请求
     # path('forgetPwd/', views.ForgetPwd, name="forgetPwd"),
 

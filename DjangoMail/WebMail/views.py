@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django_redis import get_redis_connection
 from django.utils import timezone
 from django.core import paginator
+from django.forms.models import model_to_dict
 from django.conf import settings   # = DjangoMail?
 import logging
 
@@ -174,7 +175,6 @@ def Signin(request):
             return JsonResponse({"message": "登录表单填写不完整", "status": 404})
     else:
         return JsonResponse({"message": "请求方式未注册", "status": 404})
-
 
 
 # Function: log out
@@ -495,6 +495,84 @@ def ReceiveMails(request):
 # Function: config
 
 
+# Function: get mails by id
+# Return mailNo, sender, isRead, subject
+def GetAllMailsbyId(request):
+    if request.method == "POST":
+        userName = request.POST.get("userName", None)
+        if userName:
+            userObject = models.Users.objects.filter(userName=userName)
+            if not userObject.exists():
+                return JsonResponse({
+                    "status": 404,
+                    "message": "目标用户不存在"
+                })
+            userObject = userObject.first()
+
+            mailList = models.Mails.objects.filter(receiver=userObject.userName)
+            mailJsonList = []
+            if not mailList.exists():
+                return JsonResponse({
+                    "status": 200,
+                    "message": "成功",
+                    "data": json.dumps(mailJsonList)
+                })
+            for mail in mailList:
+                mailDict = {}
+                mailDict["mailNo"] = mail.mailNo
+                mailDict["sender"] = mail.sender
+                mailDict["isRead"] = mail.isRead
+                mailDict["subject"] = mail.subject
+                mailJsonList.append(mailDict)
+
+            return JsonResponse({
+                "status": 200,
+                "message": "成功",
+                "data": json.dumps(mailJsonList)
+            })
+        else:
+            return JsonResponse({
+                "status": 404,
+                "message": "表单未填写完整"
+            })
+    else:
+        return JsonResponse({
+            "status": 404,
+            "message": "请求方式未注册"
+        })
+
+
+# Funtion: get mails have readed by id
+# Return all attr
+def GetReadMailsbyId(request):
+    if request.method == "POST":
+        mailNo = request.POST.get("mailNo", None)
+        mailNo = int(mailNo)
+        if mailNo:
+            mailObject = models.Mails.objects.filter(mailNo=mailNo)
+            if not mailObject.exists():
+                return JsonResponse({
+                    "status": 404,
+                    "message": "目标邮件不存在"
+                })
+            mailObject = mailObject.first()
+
+            return JsonResponse({
+                "status": 200,
+                "message": "成功",
+                "data": model_to_dict(mailObject)
+            })
+        else:
+            return JsonResponse({
+                "status": 404,
+                "message": "表单未填写完整"
+            })
+    else:
+        return JsonResponse({
+            "status": 404,
+            "message": "请求方式未注册"
+        })
+
 # Class: user authority filter
 # class UsersView(ListAPIView):
 #     queryset = models.Users.objects.all()
@@ -531,20 +609,3 @@ class ContactsViewSet(viewsets.ModelViewSet):
 class AttachmentsViewSet(viewsets.ModelViewSet):
     queryset = models.Attachments.objects.all()
     serializer_class = customSerializers.AttachmentsSerializer
-
-# 为ModelViewSet添加过滤器分页器的样例
-# @method_decorator(LoginAuthenticate, name='dispatch')
-# class CaseViewSet(viewsets.ModelViewSet):
-#     queryset = models.CaseData.objects.all()
-#     serializer_class = customSerializers.CaseDataSerializer
-#     pagination_class = paginations.MyFormatResultsSetPagination
-#     filter_backends = (OrderingFilter, DjangoFilterBackend)
-#     filter_class = filters.CaseFilter
-#     ordering_fields = ('caseName', 'initTotal', 'initTotalInfected', 'cityNumber', 'roadNumber',)
-#     ordering = ('caseId',)
-
-#     def destroy(self, request, *args, **kwargs):
-#         instance = self.get_object()
-#         if (instance):
-#             models.AccountInformation.objects.filter(userId=instance.userId.userId).update(caseNumber=F("caseNumber") - 1)
-#         return super(CaseViewSet, self).destroy(request, *args, **kwargs)
