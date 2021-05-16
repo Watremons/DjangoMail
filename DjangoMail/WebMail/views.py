@@ -405,8 +405,9 @@ def SendMail(request):
         receiver = request.POST.get("receiver", None)
         content = request.POST.get("content", None)
         ipAddr = request.POST.get("ipAddr", None)
+        subject = request.POST.get("subject", None)
 
-        if sender and receiver and content and ipAddr:
+        if sender and receiver and content and ipAddr and subject:
 
             try:
                 # Search for sender
@@ -432,7 +433,8 @@ def SendMail(request):
                     ip=ipAddr,
                     isRead=0,
                     isServed=1,
-                    content=content
+                    content=content,
+                    subject=subject
                 )
 
                 return JsonResponse({
