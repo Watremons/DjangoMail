@@ -383,9 +383,10 @@ export default {
                     
                     data.append("sender", sender);
                     data.append("receiver", this.multipleSelection[i].userName);
-                    data.append("content", this.mailForm.subject + "\r\n" + this.mailForm.content);
+                    data.append("content", this.mailForm.content);
                     data.append("ipAddr",senderIp);
                     data.append("authorityValue",authorityValue);
+                    data.append("subject",this.mailForm.subject)
                     // for (var [a, b] of data.entries()) {
                     //     console.log(a, b);
                     // } 
@@ -416,7 +417,6 @@ export default {
                 
                 this.$message.success(responseStr);
 
-                this.multipleSelection = [];
                 this.mailList = [];
                 this.mailFailList = [];
                 this.mailForm.subject = '';
