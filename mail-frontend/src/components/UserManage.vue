@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-loading="loading">
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item>
@@ -193,7 +193,8 @@ export default {
                 userPassword:''
             },
             mailForm: {subject:'',content:''},
-            idx: -1
+            idx: -1,
+            loading: false
         };
     },
     created() {
@@ -202,6 +203,8 @@ export default {
     methods: {
         // 获取用户数据
         getData() {
+            this.loading = true;
+            
             if(this.authorityValue ==  2)
             {
                 this.$set(this.query,'minAuthorityValue','0');
@@ -233,14 +236,15 @@ export default {
                 .then(response => (
                     this.tableData = response.data.data,
                     // ,"pagination":7,"pageSize":6,"page":1
-                    this.pageTotal = response.data.pagination
-
+                    this.pageTotal = response.data.pagination,
+                    this.loading = false
                     // this.$message({
                     //     type:'debug',
                     //     message: JSON.stringify(response.data)
                     // })
                 ))
                 .catch(() => {
+                    this.loading = false;
                     this.$message({
                         type: 'error',
                         message: '数据发送失败'
@@ -260,20 +264,29 @@ export default {
                 type: 'warning'
             })
             .then(() => {
+                this.loading = true;
+
                 let requestURL = '/apis/webmail/users/'
                 requestURL += row.userNo + '/'
                 Axios
                     .delete(requestURL)
                     .then(response => (
                         this.$message.success('删除成功'),
-                        this.getData()
+                        this.getData(),
+                        this.loading = false
                     ))
                     .catch(()=>{
+                        this.loading = false;
                         this.$message({
                             type: 'error',
                             message: '数据发送失败'
                         })
                     })
+                
+                this.$set(this.query, 'pageIndex', 1);
+                setTimeout(()=>{
+                    self.getData();
+                },1000);
             })
             .catch(() => {
                 this.$message({
@@ -299,6 +312,7 @@ export default {
                 type: 'warning'
             })
             .then(() => {
+                this.loading = true;
                 for (let i =0;i < this.multipleSelection.length;i++)
                 {
                     let requestURL = '/apis/webmail/users/'
@@ -310,6 +324,7 @@ export default {
                         ))
                         .catch(()=>{
                             // self.delFailedList.push(self.multipleSelection[i].userNo)
+                            this.$message.error("删除时出错");
                         })
                     this.delList.push(this.multipleSelection[i].userNo)
                 }
@@ -370,6 +385,7 @@ export default {
                 type: 'warning'
             })
             .then(() => {
+                this.loading = true;
                 this.mailVisible = false;
                 let sender = localStorage.getItem('userName');
                 let authorityValue = localStorage.getItem('authorityValue');
@@ -438,6 +454,7 @@ export default {
         },
         // 保存编辑
         saveEdit() {
+            this.loading = true;
             this.editVisible = false;
 
             let formdata = new FormData();
@@ -450,15 +467,16 @@ export default {
             Axios
                 .put(requestURL,formdata)
                 .then(response => (
-                    this.$message.success("修改成功")
+                    this.$message.success("修改成功"),
+                    this.getData()
                 ))
                 .catch(()=>{
                     this.$message({
                         type: "error",
                         message: "数据发送失败",
                     });
+                    this.getData();
                 })
-            this.getData();
         },
         // 新增操作
         handleAdd() {
@@ -472,6 +490,7 @@ export default {
         },
         // 保存新增
         saveAdd(){
+            this.loading = true;
             this.addVisible = false;
             let self = this;
 

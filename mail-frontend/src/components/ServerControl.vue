@@ -1,5 +1,5 @@
 <template>
-    <section class="main">
+    <section class="main" v-loading="loading">
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item><i class="el-icon-rank"></i> 服务器管理</el-breadcrumb-item>
@@ -105,7 +105,8 @@ export default {
         return {
             visible: false,
             method: "",
-            type:""
+            type:"",
+            loading:false
         }
     },
     methods: {
@@ -119,6 +120,7 @@ export default {
             {
                 requestURL = '/apis/webmail/controlPop3/';
             }
+            let self = this;
             
             let data = new FormData();
             data.append("method",this.method)
@@ -131,7 +133,7 @@ export default {
                     {
                         this.$message({
                             type: 'success',
-                            message: '操作成功'
+                            message: self.type + '服务器操作成功'
                         })
                     }
                     else
@@ -141,9 +143,12 @@ export default {
                             message: '未能连接到服务器或服务器出错'
                         })
                     }
+                    
+                    this.loading = false;
                 })
                 .catch((err) => {
                     // console.log(err);
+                    this.loading = false;
                     this.$message({
                         type: 'error',
                         message: '未能连接到服务器或服务器出错'
@@ -157,6 +162,7 @@ export default {
                 type: 'warning'
             })
             .then(() =>{
+                this.loading = true;
                 this.method = "start";
                 this.type = "smtp";
                 this.serverControl();
@@ -177,6 +183,7 @@ export default {
                 type: 'warning'
             })
             .then(() =>{
+                this.loading = true;
                 this.method = "stop";
                 this.type = "smtp";
                 this.serverControl();
@@ -197,6 +204,7 @@ export default {
                 type: 'warning'
             })
             .then(() =>{
+                this.loading = true;
                 this.method = "restart";
                 this.type = "smtp";
                 this.serverControl();
@@ -217,6 +225,7 @@ export default {
                 type: 'warning'
             })
             .then(() =>{
+                this.loading = true;
                 this.method = "start";
                 this.type = "smtp";
                 this.serverControl();
@@ -234,6 +243,7 @@ export default {
                 type: 'warning'
             })
             .then(() =>{
+                this.loading = true;
                 this.method = "stop";
                 this.type = "smtp";
                 this.serverControl();
@@ -251,6 +261,7 @@ export default {
                 type: 'warning'
             })
             .then(() =>{
+                this.loading = true;
                 this.method = "restart";
                 this.type = "smtp";
                 this.serverControl();
@@ -268,6 +279,7 @@ export default {
                 type: 'warning'
             })
             .then(() =>{
+                this.loading = true;
                 this.method = "start";
                 this.type = "pop3";
                 this.serverControl();
@@ -285,6 +297,7 @@ export default {
                 type: 'warning'
             })
             .then(() =>{
+                this.loading = true;
                 this.method = "stop";
                 this.type = "pop3";
                 this.serverControl();
@@ -302,6 +315,7 @@ export default {
                 type: 'warning'
             })
             .then(() =>{
+                this.loading = true;
                 this.method = "restart";
                 this.type = "pop3";
                 this.serverControl();
