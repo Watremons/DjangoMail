@@ -503,13 +503,13 @@ def ReceiveMails(request):
 # Function: list all unreaded mails
 def ListUnreadedMails(request):
     
-    checkRes = Check(request, [1, 2, 3], "POST")
-    if not checkRes["result"]:
-        return JsonResponse({
-            "message": checkRes["message"],
-            "status": 404
-        })
-    else:
+    # checkRes = Check(request, [1, 2, 3], "POST")
+    # if not checkRes["result"]:
+    #     return JsonResponse({
+    #         "message": checkRes["message"],
+    #         "status": 404
+    #     })
+    # else:
         username = request.POST.get("username", None)
         password = request.POST.get("password", None)
         try:
@@ -590,6 +590,7 @@ def GetAllMailsbyId(request):
                 mailDict["sender"] = mail.sender
                 mailDict["isRead"] = mail.isRead
                 mailDict["subject"] = mail.subject
+                mailDict["time"] = str(mail.rendOrReceiptDate)
                 mailJsonList.append(mailDict)
 
             return JsonResponse({
