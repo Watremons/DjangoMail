@@ -1,0 +1,32 @@
+pop3 start at 2021-05-16-10_15_36
+connection from (127.0.0.1,50883) at 2021-05-16-10:16:27
+smtp get '' at 2021-05-16-10:16:27 from (127.0.0.1, 50883)
+disconnection from (127.0.0.1,50883) at 2021-05-16-10:16:27
+connection from (127.0.0.1,50975) at 2021-05-16-10:17:48
+smtp get 'USER bossq
+PASS 123456
+LIST' at 2021-05-16-10:17:48 from (127.0.0.1, 50975)
+smtp get '' at 2021-05-16-10:17:48 from (127.0.0.1, 50975)
+disconnection from (127.0.0.1,50975) at 2021-05-16-10:17:48
+smtp get 'USER bossq
+PASS 123456
+LIST' at 2021-05-16-10:18:20 from (127.0.0.1, 51019)
+connection from (127.0.0.1,51019) at 2021-05-16-10:18:20
+smtp get '' at 2021-05-16-10:18:20 from (127.0.0.1, 51019)
+disconnection from (127.0.0.1,51019) at 2021-05-16-10:18:20
+connection from (127.0.0.1,51051) at 2021-05-16-10:19:01
+smtp get 'USER bossq' at 2021-05-16-10:19:01 from (127.0.0.1, 51051)
+smtp get 'PASS 123456
+LIST' at 2021-05-16-10:19:01 from (127.0.0.1, 51051)
+disconnection from (127.0.0.1,51051) at 2021-05-16-10:19:02
+connection from (127.0.0.1,51075) at 2021-05-16-10:19:32
+smtp get 'user bossq' at 2021-05-16-10:19:57 from (127.0.0.1, 51075)
+smtp get 'pass 123456' at 2021-05-16-10:22:58 from (127.0.0.1, 51075)
+smtp get 'list' at 2021-05-16-10:27:33 from (127.0.0.1, 51075)
+smtp get 'quit' at 2021-05-16-10:29:14 from (127.0.0.1, 51075)
+disconnection from (127.0.0.1,51075) at 2021-05-16-10:29:14
+connection from (127.0.0.1,51446) at 2021-05-16-10:29:21
+smtp get 'user bossq' at 2021-05-16-10:29:26 from (127.0.0.1, 51446)
+smtp get 'pass 123456' at 2021-05-16-10:29:31 from (127.0.0.1, 51446)
+smtp get 'list' at 2021-05-16-10:29:41 from (127.0.0.1, 51446)
+pop3 stop at 2021-05-16-10:48:53
