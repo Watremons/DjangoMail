@@ -4,6 +4,7 @@ from django_redis import get_redis_connection
 from django.utils import timezone
 from django.core import paginator
 from django.forms.models import model_to_dict
+from django.db.models import Count
 from django.conf import settings   # = DjangoMail?
 import logging
 
@@ -21,6 +22,7 @@ from WebMail import paginations
 # Standard libs
 import json
 import time
+from dateutil.relativedelta import relativedelta
 
 # Import server
 import os
@@ -558,6 +560,7 @@ def ListUnreadedMails(request):
 def GetMailById(request):
     pass
 
+
 # Function: get mails by id
 # Return mailNo, sender, isRead, subject
 def GetAllMailsbyId(request):
@@ -635,6 +638,44 @@ def GetReadMailsbyId(request):
             "status": 404,
             "message": "请求方式未注册"
         })
+
+
+# Function: get user static info
+def GetStaticUsers(request):
+    if request.method == "POST":
+        nowDate = timezone.now().date()
+        pastLimitDate = nowDate + relativedelta(days=-6)
+
+        for i in range(7):
+            userCountInfo = models.Users.objects\
+                .filter(createDate=pastLimitDate)\
+                .aggregate(userCount=Count("userNo"))
+
+            mailObject = models.Mails.objects.filter(mailNo=mailNo)
+            if not mailObject.exists():
+                return JsonResponse({
+                    "status": 404,
+                    "message": "目标邮件不存在"
+                })
+
+            mailObject = mailObject.first()
+
+        return JsonResponse({
+            "status": 200,
+            "message": "成功",
+            "data": model_to_dict(mailObject)
+        })
+    else:
+        return JsonResponse({
+            "status": 404,
+            "message": "请求方式未注册"
+        })
+    
+
+
+# Function: get mail static info
+def GetStaticMails(request):
+    pass
 
 # Class: user authority filter
 # class UsersView(ListAPIView):
