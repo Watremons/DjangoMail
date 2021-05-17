@@ -443,7 +443,7 @@ def SendMail(request):
 
                 return JsonResponse({
                     "message": "发送完成",
-                    "sender": sender.userName,
+                    "receiver": receiver.userName,
                     "status": 200
                     })
 
