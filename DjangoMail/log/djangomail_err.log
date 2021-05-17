@@ -150,3 +150,12 @@ Traceback (most recent call last):
   File "D:\Anaconda3\envs\mail\lib\site-packages\rest_framework\fields.py", line 1299, in to_representation
     'Expected a `date`, but got a `datetime`. Refusing to coerce, '
 AssertionError: Expected a `date`, but got a `datetime`. Refusing to coerce, as this may mean losing timezone information. Use a custom read-only field and deal with timezone issues explicitly.
+[2021-05-16 23:48:52,476][Thread-10:25436][task_id:django.request][log.py:230][ERROR][Internal Server Error: /webmail/getmail/]
+Traceback (most recent call last):
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\exception.py", line 47, in inner
+    response = get_response(request)
+  File "D:\Anaconda3\envs\mail\lib\site-packages\django\core\handlers\base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\_2021Spring\计网\课设\DjangoMail\DjangoMail\WebMail\views.py", line 617, in GetReadMailsbyId
+    mailNo = int(mailNo)
+ValueError: invalid literal for int() with base 10: 'undefined'

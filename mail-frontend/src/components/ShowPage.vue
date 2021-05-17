@@ -1,22 +1,14 @@
 <template>
-    <div>
+    <div v-loading="loading">
         <el-row :gutter="20">
             <el-col :span="8">
                 <el-card shadow="hover" class="mgb20" style="height:180px;">
                     <div class="user-info">
                         <div class="user-info-cont">
                             <div class="user-info-name">{{name}}</div>
-                            <div>{{role}}</div>
                         </div>
                     </div>
-                    <div class="user-info-list">
-                        上次登录时间：
-                        <span>2019-11-01</span>
-                    </div>
-                    <div class="user-info-list">
-                        上次登录地点：
-                        <span>东莞</span>
-                    </div>
+                    <div>{{role}}</div>
                 </el-card>
             </el-col>
             <el-col :span="16">
@@ -25,8 +17,8 @@
                         <div class="grid-content grid-con-1">
                             <i class="el-icon-lx-people grid-con-icon"></i>
                             <div class="grid-cont-right">
-                                <div class="grid-num">1234</div>
-                                <div>用户访问量</div>
+                                <div class="grid-num">{{ userNum }}</div>
+                                <div>用户总量</div>
                             </div>
                         </div>
                     </el-card>
@@ -34,10 +26,10 @@
                 <el-col :span='8'>
                     <el-card shadow="hover" :body-style="{padding: '0px'}">
                         <div class="grid-content grid-con-2">
-                            <i class="el-icon-lx-notice grid-con-icon"></i>
+                            <i class="el-icon-lx-mail grid-con-icon"></i>
                             <div class="grid-cont-right">
-                                <div class="grid-num">321</div>
-                                <div>系统消息</div>
+                                <div class="grid-num">{{ mailNum }}</div>
+                                <div>邮件总数</div>
                             </div>
                         </div>
                     </el-card>
@@ -45,10 +37,9 @@
                 <el-col :span='8'>
                     <el-card shadow="hover" :body-style="{padding: '0px'}">
                         <div class="grid-content grid-con-3">
-                            <i class="el-icon-lx-goods grid-con-icon"></i>
+                            <i class="el-icon-lx-time grid-con-icon"></i>
                             <div class="grid-cont-right">
-                                <div class="grid-num">5000</div>
-                                <div>数量</div>
+                                <div class="grid-num" style="white-space: pre-line">{{ nowDatetime}}</div>
                             </div>
                         </div>
                     </el-card>
@@ -73,6 +64,7 @@
 <script>
 import Schart from 'vue-schart';
 import bus from './common/bus';
+import Axios from 'axios'
 export default {
     name: 'dashboard',
     data() {
@@ -105,79 +97,29 @@ export default {
                     status: true
                 }
             ],
-            data: [
-                {
-                    name: '2018/09/04',
-                    value: 1083
-                },
-                {
-                    name: '2018/09/05',
-                    value: 941
-                },
-                {
-                    name: '2018/09/06',
-                    value: 1139
-                },
-                {
-                    name: '2018/09/07',
-                    value: 816
-                },
-                {
-                    name: '2018/09/08',
-                    value: 327
-                },
-                {
-                    name: '2018/09/09',
-                    value: 228
-                },
-                {
-                    name: '2018/09/10',
-                    value: 1065
-                }
-            ],
             options: {
                 type: 'bar',
                 title: {
-                    text: '最近一周各品类销售图'
+                    text: '最近一周邮件量图'
                 },
                 xRorate: 25,
-                labels: ['周一', '周二', '周三', '周四', '周五'],
-                datasets: [
-                    {
-                        label: '家电',
-                        data: [234, 278, 270, 190, 230]
-                    },
-                    {
-                        label: '百货',
-                        data: [164, 178, 190, 135, 160]
-                    },
-                    {
-                        label: '食品',
-                        data: [144, 198, 150, 235, 120]
-                    }
-                ]
+                labels: [],
+                datasets: []
             },
             options2: {
                 type: 'line',
                 title: {
-                    text: '最近几个月各品类销售趋势图'
+                    text: '最近五个月新增用户数图'
                 },
-                labels: ['6月', '7月', '8月', '9月', '10月'],
-                datasets: [
-                    {
-                        label: '家电',
-                        data: [234, 278, 270, 190, 230]
-                    },
-                    {
-                        label: '百货',
-                        data: [164, 178, 150, 135, 160]
-                    },
-                    {
-                        label: '食品',
-                        data: [74, 118, 200, 235, 90]
-                    }
-                ]
-            }
+                labels: [],
+                datasets: []
+            },
+            userNum: 0,
+            mailNum: 0,
+            nowDatetime: "",
+            userInfos: [],
+            mailInfos: [],
+            loading: false
         };
     },
     components: {
@@ -188,39 +130,95 @@ export default {
             return this.authority === '1' ? '管理员' : '超级管理员';
         }
     },
-    // created() {
-    //     this.handleListener();
-    //     this.changeDate();
-    // },
-    // activated() {
-    //     this.handleListener();
-    // },
-    // deactivated() {
-    //     window.removeEventListener('resize', this.renderChart);
-    //     bus.$off('collapse', this.handleBus);
-    // },
+    mounted() {
+        this.setTime(1000);
+    },
+    created() {
+        this.getData();
+        this.setTime(0);
+    },
     methods: {
+        setTime(timespan) {
+            setInterval(this.getDatetime,timespan);
+        },
+        getDatetime() {
+            let myDate = new Date();
+            
+            this.nowDatetime = 
+                myDate.toLocaleDateString() + "\n" + 
+                myDate.toLocaleTimeString()
+        },
         changeDate() {
             const now = new Date().getTime();
             this.data.forEach((item, index) => {
                 const date = new Date(now - (6 - index) * 86400000);
                 item.name = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
             });
-        }
-        // handleListener() {
-        //     bus.$on('collapse', this.handleBus);
-        //     // 调用renderChart方法对图表进行重新渲染
-        //     window.addEventListener('resize', this.renderChart);
-        // },
-        // handleBus(msg) {
-        //     setTimeout(() => {
-        //         this.renderChart();
-        //     }, 200);
-        // },
-        // renderChart() {
-        //     this.$refs.bar.renderChart();
-        //     this.$refs.line.renderChart();
-        // }
+        },
+        getData() {
+            this.loading = true;
+            let requestURL = "/apis/webmail/users";
+            Axios
+                .get(requestURL)
+                .then(response => {
+                    this.userNum = response.data.data.length;
+                })
+                .catch((err) => {
+                    this.$message.error("获取数据失败");
+                })
+            
+            requestURL = "/apis/webmail/mails/";
+            Axios
+                .get(requestURL)
+                .then(response => {
+                    this.mailNum = response.data.length;
+                })
+                .catch((err) => {
+                    this.$message.error("获取数据失败");
+                })
+
+            requestURL = "/apis/webmail/getmailstatic/"
+            Axios
+                .post(requestURL)
+                .then(response => {
+                    this.mailInfos = JSON.parse(response.data.data);
+                    this.options.datasets.push({
+                        "label": "邮件数",
+                        "data": []
+                    });
+                    for (let i=0;i<this.mailInfos.length;i++)
+                    {
+                        this.options.labels.push(this.mailInfos[i].date);
+                        this.options.datasets[0].data.push(this.mailInfos[i].mailCount);
+                    }
+                })
+                .catch((err) => {
+                    this.$message.error("获取数据失败");
+                })
+
+            requestURL = "/apis/webmail/getuserstatic/"
+            Axios
+                .post(requestURL)
+                .then(response => {
+                    this.userInfos = JSON.parse(response.data.data);
+                    this.options2.datasets.push({
+                        "label": "用户数",
+                        "data": []
+                    });
+                    for (let i=0;i<this.userInfos.length;i++)
+                    {
+                        this.options2.labels.push(this.userInfos[i].date);
+                        this.options2.datasets[0].data.push(this.userInfos[i].userCount);
+                    }
+                })
+                .catch((err) => {
+                    this.$message.error("获取数据失败");
+                })
+
+            setTimeout(() => {
+                this.loading = false;
+            }, 1000);
+        }   
     }
 };
 </script>
@@ -302,8 +300,8 @@ export default {
     color: #222;
 }
 
-.user-info-cont div:nth-child(2) {
-    padding-left: 130px;
+.mgb20 div:nth-child(2) {
+    padding-left: 50%;
 }
 
 .user-info-list {

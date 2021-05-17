@@ -22,6 +22,7 @@ from WebMail import paginations
 # Standard libs
 import json
 import time
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 # Import server
@@ -609,6 +610,53 @@ def GetAllMailsbyId(request):
         })
 
 
+# Function: get sendBox mails by id
+# Return mailNo, receiver, isRead, subject
+def GetSendBoxMailsbyId(request):
+    if request.method == "POST":
+        userName = request.POST.get("userName", None)
+        if userName:
+            userObject = models.Users.objects.filter(userName=userName)
+            if not userObject.exists():
+                return JsonResponse({
+                    "status": 404,
+                    "message": "目标用户不存在"
+                })
+            userObject = userObject.first()
+
+            mailList = models.Mails.objects.filter(sender=userObject.userName)
+            mailJsonList = []
+            if not mailList.exists():
+                return JsonResponse({
+                    "status": 200,
+                    "message": "成功",
+                    "data": json.dumps(mailJsonList)
+                })
+            for mail in mailList:
+                mailDict = {}
+                mailDict["mailNo"] = mail.mailNo
+                mailDict["receiver"] = mail.receiver
+                mailDict["isRead"] = mail.isRead
+                mailDict["subject"] = mail.subject
+                mailDict["time"] = str(mail.rendOrReceiptDate)
+                mailJsonList.append(mailDict)
+
+            return JsonResponse({
+                "status": 200,
+                "message": "成功",
+                "data": json.dumps(mailJsonList)
+            })
+        else:
+            return JsonResponse({
+                "status": 404,
+                "message": "表单未填写完整"
+            })
+    else:
+        return JsonResponse({
+            "status": 404,
+            "message": "请求方式未注册"
+        })
+
 # Funtion: get mails have readed by id
 # Return all attr
 def GetReadMailsbyId(request):
@@ -641,42 +689,191 @@ def GetReadMailsbyId(request):
         })
 
 
-# Function: get user static info
+# Function: get user 5 months static info
 def GetStaticUsers(request):
     if request.method == "POST":
-        nowDate = timezone.now().date()
-        pastLimitDate = nowDate + relativedelta(days=-6)
+        nowDate = timezone.now().date().replace(day=1)
+        pastLimitDate = nowDate + relativedelta(months=-4)
 
-        for i in range(7):
+        jsonList = []
+        for i in range(5):
             userCountInfo = models.Users.objects\
-                .filter(createDate=pastLimitDate)\
+                .filter(createDate__gte=pastLimitDate)\
+                .filter(createDate__lt=pastLimitDate + relativedelta(months=+1))\
                 .aggregate(userCount=Count("userNo"))
 
-            mailObject = models.Mails.objects.filter(mailNo=mailNo)
-            if not mailObject.exists():
-                return JsonResponse({
-                    "status": 404,
-                    "message": "目标邮件不存在"
-                })
-
-            mailObject = mailObject.first()
+            statInfoDict = {
+                "date": pastLimitDate.strftime("%Y-%m"),
+                "userCount": userCountInfo["userCount"]
+            }
+            jsonList.append(statInfoDict)
+            pastLimitDate = pastLimitDate + relativedelta(months=+1)
 
         return JsonResponse({
             "status": 200,
             "message": "成功",
-            "data": model_to_dict(mailObject)
+            "data": json.dumps(jsonList)
         })
     else:
         return JsonResponse({
             "status": 404,
             "message": "请求方式未注册"
         })
-    
 
 
 # Function: get mail static info
 def GetStaticMails(request):
-    pass
+    if request.method == "POST":
+        nowDate = timezone.now().date()
+        pastLimitDate = nowDate + relativedelta(days=-6)
+
+        jsonList = []
+        for i in range(7):
+            mailCountInfo = models.Mails.objects\
+                .filter(rendOrReceiptDate__gte=datetime.combine(pastLimitDate, datetime.min.time()))\
+                .filter(rendOrReceiptDate__lt=datetime.combine(pastLimitDate + relativedelta(days=+1), datetime.min.time()))\
+                .aggregate(mailCount=Count("mailNo"))
+
+            statInfoDict = {
+                "date": pastLimitDate.strftime("%Y-%m-%d"),
+                "mailCount": mailCountInfo["mailCount"]
+            }
+            jsonList.append(statInfoDict)
+            pastLimitDate = pastLimitDate + relativedelta(days=+1)
+
+        return JsonResponse({
+            "status": 200,
+            "message": "成功",
+            "data": json.dumps(jsonList)
+        })
+    else:
+        return JsonResponse({
+            "status": 404,
+            "message": "请求方式未注册"
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Function: send a mail by smtp
+def SendMailBySmtp(request):
+    sender = request.POST.get("sender", None)
+    password = request.POST.get("password", None)
+    subject = request.POST.get("subject", None)
+    content = request.POST.get("content", None)
+    receiver = request.POST.get("receiver", None)
+    if subject == '':
+        subject = '无主题'
+    try:
+        client = socket.socket()
+        smtp_ip_port = ('127.0.0.1', 8025)
+        client.connect(smtp_ip_port)
+        data = client.recv(1024)
+        print(data.decode())
+
+        ehlo_cmd = 'ehlo ' + sender + '\r\n'
+        client.send(ehlo_cmd.encode())
+        data = client.recv(1024)
+        print(data.decode())
+
+
+        login_cmd = 'auth login\r\n'
+        client.send(login_cmd.encode())
+        data = client.recv(1024)
+        login_cmd = sender + '\r\n'
+        client.send(login_cmd.encode())
+        data = client.recv(1024)
+        login_cmd = password + '\r\n'
+        client.send(login_cmd.encode())
+        data = client.recv(1024)
+        print(data.decode())
+
+        mailfrom_cmd = 'mail from:<' + sender + '>\r\n'
+        client.send(mailfrom_cmd.encode())
+        data = client.recv(1024)
+        print(data.decode())
+
+        rcptto_cmd = 'rcpt to:<' + receiver + '>\r\n'
+        client.send(rcptto_cmd.encode())
+        data = client.recv(1024)
+        print(data.decode())
+
+        data_cmd = 'data\r\n'
+        client.send(data_cmd.encode())
+        data = client.recv(1024)
+
+        content = subject + '\r\n' + content + '\r\n\r\n.'
+        content_list = content.split('\r\n')
+        print(content_list)
+        for line in content_list:
+            line = line + '\r\n'
+            client.send(line.encode())
+
+        data = client.recv(1024).decode()
+        print(data)
+
+        return JsonResponse({
+            "message": "Send mail successfully!",
+            "status": 200
+        }) 
+    except:
+        return JsonResponse({
+            "message": "Send mail error!",
+            "status": 404
+        })
 
 # Class: user authority filter
 # class UsersView(ListAPIView):

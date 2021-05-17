@@ -53,14 +53,21 @@ urlpatterns = [
 
     # 邮件简略信息获取请求
     path('getmaillist/', views.GetAllMailsbyId, name="getmaillist"),
-
+    # 发件箱简略信息获取请求
+    path('getsendbox/', views.GetSendBoxMailsbyId, name="getsendbox"),
     # 邮件信息获取请求
     path('getmail/', views.GetReadMailsbyId, name="getmail"),
 
-    # 未读邮件信息获取请求
-    path('listunreadedmails/', views.ListUnreadedMails, name="getmail"),
+    # 用户统计信息获取
+    path('getuserstatic/', views.GetStaticUsers, name="getuserstatic"),
+    # 邮件统计信息获取
+    path('getmailstatic/', views.GetStaticMails, name="getmailstatic"),
 
+    # 未读邮件信息获取请求
+    path('listunreadedmails/', views.ListUnreadedMails, name="listunreadedmails"),
     
+    # 通过smtp发送邮件 
+    path('sendmailbysmtp/', views.SendMailBySmtp, name="sendmailbysmtp"),
     # # 忘记密码请求
     # path('forgetPwd/', views.ForgetPwd, name="forgetPwd"),
 
