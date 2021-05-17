@@ -576,7 +576,7 @@ def GetAllMailsbyId(request):
                 })
             userObject = userObject.first()
 
-            mailList = models.Mails.objects.filter(receiver=userObject.userName)
+            mailList = models.Mails.objects.filter(receiver=userObject.userName).order_by("-rendOrReceiptDate")
             mailJsonList = []
             if not mailList.exists():
                 return JsonResponse({
@@ -624,7 +624,7 @@ def GetSendBoxMailsbyId(request):
                 })
             userObject = userObject.first()
 
-            mailList = models.Mails.objects.filter(sender=userObject.userName)
+            mailList = models.Mails.objects.filter(sender=userObject.userName).order_by("-rendOrReceiptDate")
             mailJsonList = []
             if not mailList.exists():
                 return JsonResponse({
@@ -656,6 +656,7 @@ def GetSendBoxMailsbyId(request):
             "status": 404,
             "message": "请求方式未注册"
         })
+
 
 # Funtion: get mails have readed by id
 # Return all attr
