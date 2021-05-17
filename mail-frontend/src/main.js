@@ -25,11 +25,11 @@ router.beforeEach((to, from, next) => {
     document.title = `${to.meta.title} | mail-system`;
     const role = localStorage.getItem('userName');
     const authority = localStorage.getItem('authorityValue');
-    if ((!role || !authority || authority === 0 )&& to.path !== '/loginpage') {
+    if ((!role || !authority || authority == 0 || authority === undefined ) && to.path !== '/loginpage') {
         next('/loginpage');
     } else if (to.meta.permission) {
         // 如果是管理员权限则可进入，这里只是简单的模拟管理员权限而已
-        authority === 2 ? next() : next('/403');
+        (authority == 2 || authority == 1) ? next() : next('/403');
     } else {
         // 简单的判断IE10及以下不进入富文本编辑器，该组件不兼容
         if (navigator.userAgent.indexOf('MSIE') > -1 && to.path === '/editor') {

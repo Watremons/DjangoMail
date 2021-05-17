@@ -402,7 +402,15 @@ export default {
                     data.append("content", this.mailForm.content);
                     data.append("ipAddr",senderIp);
                     data.append("authorityValue",authorityValue);
-                    data.append("subject",this.mailForm.subject)
+                    if (this.mailForm.subject != "")
+                    {
+                        data.append("subject",this.mailForm.subject);
+                    }
+                    else
+                    {
+                        data.append("subject", "无主题")
+                    }
+                    
                     // for (var [a, b] of data.entries()) {
                     //     console.log(a, b);
                     // } 
@@ -410,7 +418,8 @@ export default {
                     Axios
                         .post(requestURL,data)
                         .then(response => (
-                            this.mailList.push(response.userName)
+                            this.mailList.push(response.data.receiver),
+                            console.log(JSON.stringify(response.data))
                         ))
                         .catch(()=>{
                             self.delFailedList.push(self.multipleSelection[i].userName)
@@ -437,6 +446,10 @@ export default {
                 this.mailFailList = [];
                 this.mailForm.subject = '';
                 this.mailForm.content = '';
+
+                setTimeout(() => {
+                    this.getData();
+                }, 1000);
             })
             .catch((err) => {
                 // console.log(err);

@@ -22,88 +22,88 @@ export default new Router({
                 {
                     path: '/showpage',
                     component: () => import(/* webpackChunkName: "showpage" */ '../components/ShowPage.vue'),
-                    meta: { title: '首页' }
+                    meta: { title: '首页' , permission: true}
                 },
                 {
                     path: '/usermanage',
                     component: () => import(/* webpackChunkName: "usermanage" */ '../components/UserManage.vue'),
-                    meta: { title: '用户管理' }
+                    meta: { title: '用户管理' , permission: true}
                 },
                 {
                     path: '/servercontrol',
                     component: () => import(/* webpackChunkName: "servercontrol" */ '../components/ServerControl.vue'),
-                    meta: { title: '服务器管理' }
+                    meta: { title: '服务器管理' , permission: true}
                 },
                 {
                     path: '/serverconfig',
                     component: () => import(/* webpackChunkName: "serverconfig" */ '../components/ServerConfig.vue'),
-                    meta: { title: '配置管理' }
+                    meta: { title: '配置管理' , permission: true}
                 },
                 {
                     path: '/logmanage',
                     component: () => import(/* webpackChunkName: "logmanage" */ '../components/LogManage.vue'),
-                    meta: { title: '日志管理' }
+                    meta: { title: '日志管理' , permission: true}
                 },
                 {
                     path: '/help',
                     component: () => import(/* webpackChunkName: "help" */ '../components/Help.vue'),
-                    meta: { title: '帮助文档' }
+                    meta: { title: '帮助文档' , permission: true}
                 },
                 {
                     path: '/icon',
                     component: () => import(/* webpackChunkName: "icon" */ '../components/page/Icon.vue'),
-                    meta: { title: '自定义图标' }
+                    meta: { title: '自定义图标' , permission: true}
                 },
                 {
                     path: '/table',
                     component: () => import(/* webpackChunkName: "table" */ '../components/page/BaseTable.vue'),
-                    meta: { title: '基础表格' }
+                    meta: { title: '基础表格' , permission: true}
                 },
                 {
                     path: '/tabs',
                     component: () => import(/* webpackChunkName: "tabs" */ '../components/page/Tabs.vue'),
-                    meta: { title: 'tab选项卡' }
+                    meta: { title: 'tab选项卡' , permission: true}
                 },
                 {
                     path: '/form',
                     component: () => import(/* webpackChunkName: "form" */ '../components/page/BaseForm.vue'),
-                    meta: { title: '基本表单' }
+                    meta: { title: '基本表单' , permission: true}
                 },
                 {
                     // 富文本编辑器组件
                     path: '/editor',
                     component: () => import(/* webpackChunkName: "editor" */ '../components/page/VueEditor.vue'),
-                    meta: { title: '富文本编辑器' }
+                    meta: { title: '富文本编辑器' , permission: true}
                 },
                 {
                     // markdown组件
                     path: '/markdown',
                     component: () => import(/* webpackChunkName: "markdown" */ '../components/page/Markdown.vue'),
-                    meta: { title: 'markdown编辑器' }
+                    meta: { title: 'markdown编辑器' , permission: true}
                 },
                 {
                     // 图片上传组件
                     path: '/upload',
                     component: () => import(/* webpackChunkName: "upload" */ '../components/page/Upload.vue'),
-                    meta: { title: '文件上传' }
+                    meta: { title: '文件上传' , permission: true}
                 },
                 {
                     // vue-schart组件
                     path: '/charts',
                     component: () => import(/* webpackChunkName: "chart" */ '../components/page/BaseCharts.vue'),
-                    meta: { title: 'schart图表' }
+                    meta: { title: 'schart图表' , permission: true}
                 },
                 {
                     // 拖拽列表组件
                     path: '/drag',
                     component: () => import(/* webpackChunkName: "drag" */ '../components/page/DragList.vue'),
-                    meta: { title: '拖拽列表' }
+                    meta: { title: '拖拽列表' , permission: true}
                 },
                 {
                     // 拖拽Dialog组件
                     path: '/dialog',
                     component: () => import(/* webpackChunkName: "dragdialog" */ '../components/page/DragDialog.vue'),
-                    meta: { title: '拖拽弹框' }
+                    meta: { title: '拖拽弹框' , permission: true}
                 },
                 // {
                 //     // 国际化组件
