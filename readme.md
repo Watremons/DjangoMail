@@ -2,6 +2,8 @@
 
 This is a Computer Network class program of HNU
 
+项目地址：https://github.com/Watremons/DjangoMail
+
 ## 项目环境：    
 
 - ### Web环境：
