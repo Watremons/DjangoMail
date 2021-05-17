@@ -65,8 +65,8 @@ urlpatterns = [
 
     # 未读邮件信息获取请求
     path('listunreadedmails/', views.ListUnreadedMails, name="listunreadedmails"),
-    
-    # 通过smtp发送邮件 
+
+    # 通过smtp发送邮件
     path('sendmailbysmtp/', views.SendMailBySmtp, name="sendmailbysmtp"),
     # # 忘记密码请求
     # path('forgetPwd/', views.ForgetPwd, name="forgetPwd"),
